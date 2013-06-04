@@ -61,6 +61,20 @@
     }
 }
 
+- (NSDictionary *)dictionaryWithError:(NSError *)error
+{
+    if (error)
+    {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        dict[@"code"] = @(error.code);
+        if (error.domain) dict[@"domain"] = error.domain;
+        if ([error localizedDescription]) dict[@"description"] = [error localizedDescription];
+        if ([error localizedFailureReason]) dict[@"reason"] = [error localizedFailureReason];
+        return dict;
+    }
+    return nil;
+}
+
 #pragma mark Document methods
 
 - (void)present:(CDVInvokedUrlCommand *)command
@@ -147,6 +161,13 @@
     
     [self.commandDelegate sendPluginResult:pluginResult
                                 callbackId:command.callbackId];
+}
+
+- (void)saveChangedAnnotations:(CDVInvokedUrlCommand *)command
+{
+    NSError *error = nil;
+    [_pdfController.document saveChangedAnnotationsWithError:&error];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryWithError:error]] callbackId:command.callbackId];
 }
 
 #pragma mark Configuration

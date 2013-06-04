@@ -48,6 +48,10 @@ This method reloads the current PDF.
     search(query, [animated]);
     
 This method triggers a search for the specified query text. The optional animated argument determines if the search should be animated (if omitted, the search will not be animated).
+
+    saveChangedAnnotations(callback(error));
+    
+This method saves any changed annotations in the current or last opened document. On success the error callback parameter will be null, on failure it will be an object containing an error domain, code, and (possibly) a description and reason.
     
     setOptions(options);
     
@@ -61,11 +65,11 @@ This method can be used to set a single document or view controller option. All 
     
 This method will scroll to the specified page (0-indexed). The optional animated argument determines if the scroll should be animated (if omitted, the scroll will not be animated).
     
-    getPage(callback);
+    getPage(callback(page));
     
 This method returns the current page (0-indexed). The page will be returned as the first argument to the callback function provided. The function itself returns no value.
     
-    getScreenPage(callback);
+    getScreenPage(callback(page));
     
 This method returns the current screen page (see online documentation for details). The page will be returned as the first argument to the callback function provided. The function itself returns no value.
 

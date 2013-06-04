@@ -34,6 +34,7 @@ window.PSPDFKit = new function() {
         dismiss: [],
         reload: [],
         search: ['query', 'animated'],
+        saveChangedAnnotations: ['callback']
     });
     
     //configuration
