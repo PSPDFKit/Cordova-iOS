@@ -1,0 +1,219 @@
+/*
+  Localization.strings
+  PSPDFKit
+
+ Copyright (c) 2012-2013 PSPDFKit GmbH. All rights reserved.
+
+ THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
+ AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
+ UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ This notice may not be removed from this file.
+*/
+
+// general
+"Close" = "Fermer";
+"Cancel" = "Annuler";
+"Open" = "Ouvrir";
+"Untitled" = "Sans titre";
+"File Not Found" = "Fichier non trouvé";
+"Unnamed PDF" = "PDF sans nom";
+"Page %d" = "Page %d";
+
+// toolbar
+"Outline" = "Sommaire";
+"No Outline" = "Aucune Sommaire";
+"Search Outline" = "Search Outline";
+"Search" = "Rechercher";
+"Email" = "Email";
+"Email document" = "Envoyer le document par email";
+"Email flattened document" = "Envoyer e document aplati par email";
+"Email document files" = "Envoyer les fichier par email";
+"Email visible page" = "Envoyer la page en cours par email";
+"Email flattened page" = "Envoyer la page aplatie par email";
+"Email visible pages" = "Envoyer les pages visibles par email";
+"Email flattened pages" = "Envoyer les pages aplaties par email";
+"Open in..." = "Ouvrir dans…";
+"Sending to %@..." = "Envoyer à %@…";
+"Open original document" = "Ouvrir le document d'origine";
+"Open flattened document" = "Ouvrir le document aplati";
+"Print with annotations" = "Imprimer avec les annotations";
+"Print document only" = "Imprimer le document seul";
+"No Applications found" = "Aucune application pouvant ouvrir le document PDF.";
+"Print" = "Imprimer";
+"Annotations" = "Annotations";
+"No Annotations" = "Aucune Annotations";
+"%d Annotation" = "%d Annotation";
+"%d Annotations" = "%d Annotations";
+"Bookmarks" = "Marque-page";
+"No Bookmarks" = "Aucune Marque-page";
+"Add Bookmark" = "Ajouter marque-page";
+"Remove Bookmark" = "Supprimer marque-page";
+"Bookmark added" = "Marque-page ajouté";
+"Brightness" = "Luminosité";
+"Share..." = "Partager…";
+"Preparing..." = "Preparation…";
+"Loading..." = "Loading…";
+
+// thumbnails
+"Bookmarked" = "Marquées";
+"Annotated" = "Annotées";
+"All" = "Toutes";
+
+// password
+"Unlock" = "Déverrouiller";
+"Please enter the password." = "Merci de saisir le mot de passe.";
+"This document cannot be unlocked. %@ is unsupported." = "Ce document ne peut pas être déverrouillé. %@ n'est pas supporté.";
+
+// page
+"%d of %d" = "%d sur %d";
+"%d-%d of %d" = "%d-%d sur %d";
+"%@ (%d of %d)" = "%@ (%d sur %d)";
+
+// search
+"Search Document" = "Recherche";
+"No matches found" = "Aucun résultat";
+"One match found" = "Un résultat trouvé";
+"%d matches found" = "%d résultats trouvés";
+"Searching Page %d of %d..." = "Recherche %d sur %d…";
+"Search Completed" = "Recherche terminée";
+"Search Cancelled" = "Recherche annulée";
+
+// inline browser
+"Copy Link" = "Copier le lien";
+"Open in Safari" = "Ouvrir dans Safari";
+"Mail Link to this Page" = "Envoyer cette adresse URL";
+"Your %@ is not configured to send emails." = "Votre %@ n'est pas configuré pour envoyer des emails.";
+"The link is requesting to open %@Would you like to continue?" = "Ce lien demande à lancer %@Voulez vous continuer?";
+"an external application" = "une application externe";
+"the App Store" = "l'App Store";
+"Mail" = "Email";
+"No handler found for %@" = "Pas de gestionnaire trouvé pour %@";
+
+// text selection
+"Save To Camera Roll" = "Enregistrer dans pellicule";
+"Failed to extract image." = "Failed to extract image.";
+
+// annotations
+"Remove" = "Supprimer";
+"Edit" = "Editer";
+"Undo" = "Défaire";
+"Redo" = "Refaire";
+"Type..." = "Type…";
+"Font..." = "Typographie…";
+"Size..." = "Taille…";
+"Font" = "Typographie";
+"Choose Color" = "Choisir une couleur";
+"Rainbow" = "Arc en ciel";
+"Monochrome" = "Camaïeu";
+"Color..." = "Couleur…";
+"Color" = "Couleur";
+"Border..." = "Bordure…";
+"Fill Color..." = "Couleur De Remplissage…";
+"Opacity..." = "Opacité…";
+"Opacity" = "Opacité";
+"Custom..." = "Personnalisé…";
+"Thickness..." = "Epaisseur…";
+"Thickness" = "Epaisseur";
+"%@ pt" = "%@ points";
+"Note..." = "Texte…";
+"Yellow" = "Jaune";
+"Green" = "Vert";
+"Red" = "Rouge";
+"Blue" = "Bleu";
+"Pink" = "Rose";
+"Black" = "Noir";
+"Transparent" = "Transparent";
+"Define" = "Définir";
+"Wikipedia" = "Wikipedia";
+"Copy" = "Copier";
+"Highlight" = "Surligner";
+"Underline" = "Souligner";
+"Strikeout" = "Barrer";
+"Sketch" = "Esquisse";
+"Rectangle" = "Rectangle";
+"Ellipse" = "Ellipse";
+"Line" = "Ligne";
+"Signature" = "Signature";
+"Signatures" = "Signatures";
+"Stamp" = "Timbre";
+"Add Stamp" = "Ajouter timbre";
+"Custom" = "Personnalisé";
+"Create Stamp" = "Créer timbre";
+"Preview" = "Avant-première";
+"Stamp Text" = "Texte du timbre";
+"Add Signature" = "Ajouter Signature";
+"My Signature" = "Ma Signature";
+"Customer Signature" = "Signature Du Client";
+"New Note" = "Nouvelle Note";
+"Note" = "Note";
+"Text" = "Texte";
+"Drawing Color" = "Couleur de dessin";
+"Free Text" = "Texte libre";
+"Delete Note" = "Supprimer la note";
+"Delete Highlight" = "Supprimer le surlignage";
+"Delete Free Text" = "Supprimer le texte libre";
+"%@ could not be found." = "%@ n'a pu être trouvé.";
+"Photo Library" = "Photothèque";
+"Camera" = "Caméra";
+"Image" = "Image";
+"Low Quality" = "Qualité Basse";
+"Medium Quality" = "Qualité Moyenne";
+"High Quality" = "Qualité Haute";
+"Clear All" = "Clear All";
+"Style" = "Style";
+"Style..." = "Style…";
+"Link" = "Link";
+"Ink" = "Ink";
+"FreeText" = "Free Text";
+"Screen" = "Screen";
+"RichMedia" = "Rich Media";
+"Left" = "Left";
+"Center" = "Center";
+"Right" = "Right";
+"Alignment..." = "Alignment…";
+"Preview File" = "Preview File";
+"Copy" = "Copy";
+"Paste" = "Paste";
+
+// named actions
+"NextPage" = "Next Page";
+"PrevPage" = "Previous Page";
+"FirstPage" = "First Page";
+"LastPage" = "Last Page";
+"GoBack" = "Go Back";
+"GoForward" = "Go Forward";
+"GoToPage" = "Go To Page";
+"Find" = "Find";
+// Print, Outline, Search, Brightness are translated via toolbar
+"ZoomIn" = "Zoom In";
+"ZoomOut" = "Zoom Out";
+
+// line annotations
+"Start..." = "Start…";
+"End..." = "End…";
+"None" = "None";
+"ClosedArrow" = "Closed Arrow";
+"OpenArrow" = "Open Arrow";
+"Square" = "Square";
+"Circle" = "Circle";
+"Diamond" = "Diamond";
+"ROpenArrow" = "Reverse Open Arrow";
+"RClosedArrow" = "Reverse Closed Arrow";
+"Slash" = "Slash";
+"Butt" = "Butt";
+
+// link annotation editing
+"Create Link..." = "Créer hyperlien...";
+"Add Link" = "Ajouter hyperlien";
+"Edit Link" = "Editer hyperlien";
+"Move Link" = "Déplacer hyperlien";
+"Remove Link" = "Supprimer hyperlien";
+"Open Link" = "Ouvrir hyperlien";
+"Go to page %d" = "Aller à la page %d";
+"Save" = "Enregistrer";
+"Link Destination" = "Destination du lien";
+"Enter page index or a http:// address to link to an URL." = "Entrer l'index de page ou une adresse http:// pour lier à une URL.";
+
+// voiceover accessibility
+"Page" = "Page";
+"Grid" = "Grille";

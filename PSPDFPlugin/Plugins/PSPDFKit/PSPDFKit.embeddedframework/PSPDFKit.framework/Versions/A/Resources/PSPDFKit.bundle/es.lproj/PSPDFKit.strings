@@ -1,0 +1,219 @@
+/*
+  Localization.strings
+  PSPDFKit
+
+ Copyright (c) 2012-2013 PSPDFKit GmbH. All rights reserved.
+
+ THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
+ AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
+ UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+ This notice may not be removed from this file.
+*/
+
+// general
+"Close" = "Cerrar";
+"Cancel" = "Cancelar";
+"Open" = "Abrir";
+"Untitled" = "Sin título";
+"File Not Found" = "Archivo no encontrado";
+"Unnamed PDF" = "PDF sin nombre";
+"Page %d" = "Página %d";
+
+// toolbar
+"Outline" = "Índice";
+"No Outline" = "Ningún Índice";
+"Search Outline" = "Search Índice";
+"Search" = "Buscar";
+"Email" = "Email";
+"Email document" = "Mandar el documento por email";
+"Email flattened document" = "Mandar el documento aplanado por email";
+"Email document files" = "Mandar los archivos por email";
+"Email visible page" = "Mandar la página visible por email";
+"Email flattened page" = "Mandar la página aplanada por email";
+"Email visible pages" = "Mandar las páginas visibles por email";
+"Email flattened pages" = "Mandar las páginas aplanadas por email";
+"Open in..." = "Abrir en…";
+"Sending to %@..." = "Enviando a %@…";
+"Open original document" = "Abrir el documento original";
+"Open flattened document" = "Abrir el documento aplanado";
+"Print with annotations" = "Imprimir con anotaciones";
+"Print document only" = "Imprimir el documento solamente";
+"No Applications found" = "Ninguna aplicación puede abrir el documento PDF.";
+"Print" = "Imprimir";
+"Annotations" = "Anotaciones";
+"No Annotations" = "Ninguna Anotación";
+"%d Annotation" = "%d Anotación";
+"%d Annotations" = "%d Anotaciones";
+"Bookmarks" = "Marcador";
+"No Bookmarks" = "Ningún Marcador";
+"Add Bookmark" = "Agregar marcador";
+"Remove Bookmark" = "Remover marcador";
+"Bookmark added" = "Marcador agregado";
+"Brightness" = "Luminosidad";
+"Share..." = "Compartir…";
+"Preparing..." = "Preparando…";
+"Loading..." = "Loading…";
+
+// thumbnails
+"Bookmarked" = "Marcadas";
+"Annotated" = "Anotadas";
+"All" = "Todas";
+
+// password
+"Unlock" = "Desbloquear";
+"Please enter the password." = "Por favor introduzca la contraseña.";
+"This document cannot be unlocked. %@ is unsupported." = "Este documento no puede ser desbloqueado. %@ no está soportado.";
+
+// page
+"%d of %d" = "%d de %d";
+"%d-%d of %d" = "%d-%d de %d";
+"%@ (%d of %d)" = "%@ (%d de %d)";
+
+// search
+"Search Document" = "Buscar en el documento";
+"No matches found" = "No se encontraron resultados";
+"One match found" = "Se encontró un resultado";
+"%d matches found" = "Se encontraron %d resultados";
+"Searching Page %d of %d..." = "Buscando en la página %d de %d…";
+"Search Completed" = "Búsqueda completa";
+"Search Cancelled" = "Búsqueda cancelada";
+
+// inline browser
+"Copy Link" = "Copiar enlace";
+"Open in Safari" = "Abrir en Safari";
+"Mail Link to this Page" = "Enviar enlace a esta página por email";
+"Your %@ is not configured to send emails." = "Su %@ no está configurado para enviar emails.";
+"The link is requesting to open %@Would you like to continue?" = "El enlace solicita abrir %@Desea continuar?";
+"an external application" = "una aplicación externa";
+"the App Store" = "la App Store";
+"Mail" = "Email";
+"No handler found for %@" = "No se encontró manejador para %@";
+
+// text selection
+"Save To Camera Roll" = "Guardar al rollo de la cámara";
+"Failed to extract image." = "No se pudo extraer la imagen.";
+
+// annotations
+"Remove" = "Remover";
+"Edit" = "Editar";
+"Undo" = "Deshacer";
+"Redo" = "Rehacer";
+"Type..." = "Tipo…";
+"Font..." = "Tipografía…";
+"Size..." = "Tamaño…";
+"Font" = "Tipografía";
+"Choose Color" = "Elija un color";
+"Rainbow" = "Arco iris";
+"Monochrome" = "Monocromo";
+"Color..." = "Color…";
+"Color" = "Color";
+"Border..." = "Borde…";
+"Fill Color..." = "Color De Relleno…";
+"Opacity..." = "Opacidad…";
+"Opacity" = "Opacidad";
+"Custom..." = "Personalizado…";
+"Thickness..." = "Espesor…";
+"Thickness" = "Espesor";
+"%@ pt" = "%@ puntos";
+"Note..." = "Texto…";
+"Yellow" = "Amarillo";
+"Green" = "Verde";
+"Red" = "Rojo";
+"Blue" = "Azul";
+"Pink" = "Rosado";
+"Black" = "Negro";
+"Transparent" = "Transparent";
+"Define" = "Definir";
+"Wikipedia" = "Wikipedia";
+"Copy" = "Copiar";
+"Highlight" = "Destacar";
+"Underline" = "Subrayar";
+"Strikeout" = "Tachar";
+"Sketch" = "Dibujar";
+"Rectangle" = "Rectángulo";
+"Ellipse" = "Elipse";
+"Line" = "Línea";
+"Signature" = "Firma";
+"Signatures" = "Firmas";
+"Stamp" = "Sello";
+"Add Stamp" = "Agregar sello";
+"Custom" = "Personalizado";
+"Create Stamp" = "Crear sello";
+"Preview" = "Avance";
+"Stamp Text" = "Texto del sello";
+"Add Signature" = "Agregar Firma";
+"My Signature" = "Mi Firma";
+"Customer Signature" = "Firma Del Cliente";
+"New Note" = "Nota Nueva";
+"Note" = "Nota";
+"Text" = "Texto";
+"Drawing Color" = "Color de dibujo";
+"Free Text" = "Texto libre";
+"Delete Note" = "Borrar la nota";
+"Delete Highlight" = "Borrar el destacamiento";
+"Delete Free Text" = "Borrar el texto libre";
+"%@ could not be found." = "%@ no se pudo encontrar.";
+"Photo Library" = "Fototeca";
+"Camera" = "Cámara";
+"Image" = "Imagen";
+"Low Quality" = "Baja Calidad";
+"Medium Quality" = "Media Calidad";
+"High Quality" = "Alta Calidad";
+"Clear All" = "Clear All";
+"Style" = "Style";
+"Style..." = "Style…";
+"Link" = "Link";
+"Ink" = "Ink";
+"FreeText" = "Free Text";
+"Screen" = "Screen";
+"RichMedia" = "Rich Media";
+"Left" = "Left";
+"Center" = "Center";
+"Right" = "Right";
+"Alignment..." = "Alignment…";
+"Preview File" = "Preview File";
+"Copy" = "Copy";
+"Paste" = "Paste";
+
+// named actions
+"NextPage" = "Next Page";
+"PrevPage" = "Previous Page";
+"FirstPage" = "First Page";
+"LastPage" = "Last Page";
+"GoBack" = "Go Back";
+"GoForward" = "Go Forward";
+"GoToPage" = "Go To Page";
+"Find" = "Find";
+// Print, Outline, Search, Brightness are translated via toolbar
+"ZoomIn" = "Zoom In";
+"ZoomOut" = "Zoom Out";
+
+// line annotations
+"Start..." = "Start…";
+"End..." = "End…";
+"None" = "None";
+"ClosedArrow" = "Closed Arrow";
+"OpenArrow" = "Open Arrow";
+"Square" = "Square";
+"Circle" = "Circle";
+"Diamond" = "Diamond";
+"ROpenArrow" = "Reverse Open Arrow";
+"RClosedArrow" = "Reverse Closed Arrow";
+"Slash" = "Slash";
+"Butt" = "Butt";
+
+// link annotation editing
+"Create Link..." = "Crear enlace...";
+"Add Link" = "Agregar enlace";
+"Edit Link" = "Editar enlace";
+"Move Link" = "Mover enlace";
+"Remove Link" = "Remover enlace";
+"Open Link" = "Abrir enlace";
+"Go to page %d" = "Ir a la página %d";
+"Save" = "Guardar";
+"Link Destination" = "Destino del enlace";
+"Enter page index or a http:// address to link to an URL." = "Introduzca un índice de página o una dirección http:// para enlazar a un URL.";
+
+// voiceover accessibility
+"Page" = "Página";
+"Grid" = "Cuadrícula";
