@@ -11,17 +11,18 @@ The plugin is accessed via the PSPDFKit singleton. Here are some example calls:
         shadowEnabled: false
     });
     
-    //scroll to page 1 after a 500ms delay
-    setTimeout(function(){
-        PSPDFKit.setPage(1, true);
-    }, 500);
+    //show pdf with callback
+    PSPDFKit.present('pdf/castles.pdf', function() {
+        alert('pdf has appeared');
+    });
     
-    //get the page number after a 1s delay
-    setTimeout(function(){
-        PSPDFKit.getPage(function(page) {
-            alert('Current page: ' + page);
-        });
-    }, 1000);
+    //scroll to page 1
+    PSPDFKit.setPage(1, true);
+    
+    //get the page number
+    PSPDFKit.getPage(function(page) {
+        alert('Current page: ' + page);
+    });
 
 
 Functions
@@ -29,17 +30,17 @@ Functions
 
 The plugin functions currently implemented are:
 
-    present(path, [options]);
+    present(path, [callback], [options]);
     
-Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the page has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf".
+Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the page has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
 
 The options parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
 
-Calling present() when there is already a PDF presented will load the new PDF in the current modal.
+The optional callback will be called once the PDF controller has fully appeared on screen. Calling present() when there is already a PDF presented will load the new PDF in the current modal (in which case the callback will fire immediately).
 
-    dismiss();
+    dismiss([callback]);
     
-This method dismisses the modally presented PDF view.
+This method dismisses the modally presented PDF view. The optional callback will be called once the PDF controller has dissapeared from the screen.
     
     reload();
     

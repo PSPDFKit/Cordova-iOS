@@ -30,8 +30,8 @@ window.PSPDFKit = new function() {
     //document methods
     
     addMethods({
-        present: ['path', 'options'],
-        dismiss: [],
+        present: ['path', 'callback', 'options'],
+        dismiss: ['callback'],
         reload: [],
         search: ['query', 'animated'],
         saveChangedAnnotations: ['callback']

@@ -104,10 +104,14 @@
 
 - (void)present:(CDVInvokedUrlCommand *)command
 {
-    CDVPluginResult *pluginResult = nil;
-    NSString *path = [command argumentAtIndex:0 withDefault:nil];
-    NSDictionary *options = [command argumentAtIndex:1 withDefault:nil];
+    NSString *path = [command argumentAtIndex:0];
+    NSDictionary *options = [command argumentAtIndex:1] ?: [command argumentAtIndex:2];
     
+    //merge options with defaults
+    NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
+    [newOptions addEntriesFromDictionary:options];
+    
+    PSPDFDocument *document = nil;
     if (path)
     {
         //convert to absolute path
@@ -116,48 +120,45 @@
         {
             path = [[NSBundle mainBundle] pathForResource:path ofType:nil inDirectory:@"www"];
         }
-        
-        //merge options with defaults
-        NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
-        [newOptions addEntriesFromDictionary:options];
-                
+             
         //configure document
         NSURL *url = [NSURL fileURLWithPath:path];
-        PSPDFDocument *document = [PSPDFDocument documentWithURL:url];
+        document = [PSPDFDocument documentWithURL:url];
         [self setOptions:newOptions forObject:document animated:NO];
+    }
         
-        //configure controller
-        if (!_pdfController)
-        {
-            _pdfController = [[PSPDFViewController alloc] init];
-            _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
-        }
-        [self setOptions:newOptions forObject:_pdfController animated:NO];
-        _pdfController.document = document;
-        
-        //present controller
-        if (!_navigationController.presentingViewController)
-        {
-            [self.viewController presentViewController:_navigationController animated:YES completion:NULL];
-        }
-
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    //configure controller
+    if (!_pdfController)
+    {
+        _pdfController = [[PSPDFViewController alloc] init];
+        _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
+    }
+    [self setOptions:newOptions forObject:_pdfController animated:NO];
+    _pdfController.document = document;
+    
+    //present controller
+    if (!_navigationController.presentingViewController)
+    {
+        [self.viewController presentViewController:_navigationController animated:YES completion:^{
+            
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                        callbackId:command.callbackId];
+        }];
     }
     else
     {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"'path' argument was null"];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:command.callbackId];
     }
-    
-    [self.commandDelegate sendPluginResult:pluginResult
-                                callbackId:command.callbackId];
 }
 
 - (void)dismiss:(CDVInvokedUrlCommand *)command
 {
-    [_navigationController.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
-                                callbackId:command.callbackId];
+    [_navigationController.presentingViewController dismissViewControllerAnimated:YES completion:^{
+        
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:command.callbackId];
+    }];
 }
 
 - (void)reload:(CDVInvokedUrlCommand *)command
@@ -170,7 +171,7 @@
 - (void)search:(CDVInvokedUrlCommand *)command
 {
     CDVPluginResult *pluginResult = nil;
-    NSString *query = [command argumentAtIndex:0 withDefault:nil];
+    NSString *query = [command argumentAtIndex:0];
     BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
     
     if (query)
@@ -199,7 +200,7 @@
 
 - (void)setOptions:(CDVInvokedUrlCommand *)command
 {
-    NSDictionary *options = [command argumentAtIndex:0 withDefault:nil];
+    NSDictionary *options = [command argumentAtIndex:0];
     BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
     [self setOptionsWithDictionary:options animated:animated];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
@@ -209,8 +210,8 @@
 - (void)setOption:(CDVInvokedUrlCommand *)command
 {
     CDVPluginResult *pluginResult = nil;
-    NSString *key = [command argumentAtIndex:0 withDefault:nil];
-    id value = [command argumentAtIndex:1 withDefault:nil];
+    NSString *key = [command argumentAtIndex:0];
+    id value = [command argumentAtIndex:1];
     BOOL animated = [[command argumentAtIndex:2 withDefault:@NO] boolValue];
     
     if (key && value)
