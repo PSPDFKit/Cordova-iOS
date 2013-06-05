@@ -402,4 +402,20 @@
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:_pdfController.screenPage] callbackId:command.callbackId];
 }
 
+- (void)scrollToNextPage:(CDVInvokedUrlCommand *)command
+{
+    BOOL animated = [[command argumentAtIndex:0 withDefault:@NO] boolValue];
+    [_pdfController scrollToNextPageAnimated:animated];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
+- (void)scrollToPreviousPage:(CDVInvokedUrlCommand *)command
+{
+    BOOL animated = [[command argumentAtIndex:0 withDefault:@NO] boolValue];
+    [_pdfController scrollToPreviousPageAnimated:animated];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
 @end

@@ -75,6 +75,14 @@ This method returns the current page (0-indexed). The page will be returned as t
     
 This method returns the current screen page (see online documentation for details). The page will be returned as the first argument to the callback function provided. The function itself returns no value.
 
+    scrollToNextPage([animated]);
+    
+Scrolls to the next page. The optional animated argument determines if the scroll should be animated (if omitted, the scroll will not be animated).
+
+    scrollToPreviousPage([animated]);
+    
+Scrolls to the previous page. The optional animated argument determines if the scroll should be animated (if omitted, the scroll will not be animated).
+
 
 Options
 ------------

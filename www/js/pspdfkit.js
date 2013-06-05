@@ -34,7 +34,7 @@ window.PSPDFKit = new function() {
         dismiss: ['callback'],
         reload: [],
         search: ['query', 'animated'],
-        saveChangedAnnotations: ['callback']
+        saveChangedAnnotations: ['callback'],
     });
     
     //configuration
@@ -42,7 +42,7 @@ window.PSPDFKit = new function() {
     addMethods({
         setOptions: ['options', 'animated'],
         setOption: ['name', 'value', 'animated'],
-        //getOption: ['name', 'callback']
+        //getOption: ['name', 'callback'],
     });
     
     //page scrolling
@@ -50,7 +50,9 @@ window.PSPDFKit = new function() {
     addMethods({
         setPage: ['page', 'animated'],
         getPage: ['callback'],
-        getScreenPage: ['callback']
+        getScreenPage: ['callback'],
+        scrollToNextPage: ['animated'],
+        scrollToPreviousPage: ['animated'],
     });
     
 };
