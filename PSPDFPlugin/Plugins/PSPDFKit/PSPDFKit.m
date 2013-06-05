@@ -8,6 +8,7 @@
 
 #import "PSPDFKit.h"
 #import <PSPDFKit/PSPDFKit.h>
+#import <objc/message.h>
 
 
 @interface PSPDFKit ()
@@ -56,11 +57,11 @@
     {
         NSString *setterString = [NSString stringWithFormat:@"set%@%@:", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
         
-        SEL setter = NSSelectorFromString([setterString stringByAppendingString:@"animated:"]);
+        SEL setter = NSSelectorFromString([setterString stringByAppendingString:@"forObject:animated:"]);
         if ([self respondsToSelector:setter])
         {
             //use custom setter
-            [self performSelector:setter withObject:options[key] withObject:@(animated)];
+            objc_msgSend(self, setter, options[key], object, @(animated));
         }
         else
         {
@@ -88,16 +89,155 @@
     return nil;
 }
 
-#pragma mark Special-case setters
-
-- (void)setHUDVisible:(NSNumber *)visible animated:(NSNumber *)animated
+- (UIColor *)colorWithString:(NSString *)string
 {
-    [_pdfController setHUDVisible:[visible boolValue] animated:[animated boolValue]];
+    //TODO: should we support all the standard css color names here?
+    static NSDictionary *colors = nil;
+    if (colors == nil)
+    {
+        colors = [[NSDictionary alloc] initWithObjectsAndKeys:
+                  [UIColor blackColor], @"black", // 0.0 white
+                  [UIColor darkGrayColor], @"darkgray", // 0.333 white
+                  [UIColor lightGrayColor], @"lightgray", // 0.667 white
+                  [UIColor whiteColor], @"white", // 1.0 white
+                  [UIColor grayColor], @"gray", // 0.5 white
+                  [UIColor redColor], @"red", // 1.0, 0.0, 0.0 RGB
+                  [UIColor greenColor], @"green", // 0.0, 1.0, 0.0 RGB
+                  [UIColor blueColor], @"blue", // 0.0, 0.0, 1.0 RGB
+                  [UIColor cyanColor], @"cyan", // 0.0, 1.0, 1.0 RGB
+                  [UIColor yellowColor], @"yellow", // 1.0, 1.0, 0.0 RGB
+                  [UIColor magentaColor], @"magenta", // 1.0, 0.0, 1.0 RGB
+                  [UIColor orangeColor], @"orange", // 1.0, 0.5, 0.0 RGB
+                  [UIColor purpleColor], @"purple", // 0.5, 0.0, 0.5 RGB
+                  [UIColor brownColor], @"brown", // 0.6, 0.4, 0.2 RGB
+                  [UIColor clearColor], @"clear", // 0.0 white, 0.0 alpha
+                  nil];
+    }
+
+    //convert to lowercase
+    string = [string lowercaseString];
+
+    //try standard colors first
+    UIColor *color = colors[string];
+    if (color) return color;
+    
+    //try rgb(a)
+    if ([string hasPrefix:@"rgb"])
+    {
+        string = [string substringToIndex:[string length] - 1];
+        if ([string hasPrefix:@"rgb("])
+        {
+            string = [string substringFromIndex:4];
+        }
+        else if ([string hasPrefix:@"rgba("])
+        {
+            string = [string substringFromIndex:5];
+        }
+        CGFloat alpha = 1.0f;
+        NSArray *components = [string componentsSeparatedByString:@","];
+        if ([components count] > 3)
+        {
+            alpha = [[components[3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] floatValue];
+        }
+        if ([components count] > 2)
+        {
+            NSString *red = [components[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            NSString *green = [components[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            NSString *blue = [components[2] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            return [UIColor colorWithRed:[red floatValue] / 255.0f
+                                   green:[green floatValue] / 255.0f
+                                    blue:[blue floatValue] / 255.0f
+                                   alpha:alpha];
+        }
+        return nil;
+    }
+    
+    //try hex
+    string = [string stringByReplacingOccurrencesOfString:@"#" withString:@""];
+    switch ([string length])
+    {
+        case 0:
+        {
+            string = @"00000000";
+            break;
+        }
+        case 3:
+        {
+            NSString *red = [string substringWithRange:NSMakeRange(0, 1)];
+            NSString *green = [string substringWithRange:NSMakeRange(1, 1)];
+            NSString *blue = [string substringWithRange:NSMakeRange(2, 1)];
+            string = [NSString stringWithFormat:@"%1$@%1$@%2$@%2$@%3$@%3$@ff", red, green, blue];
+            break;
+        }
+        case 6:
+        {
+            string = [string stringByAppendingString:@"ff"];
+            break;
+        }
+        default:
+        {
+            return nil;
+        }
+    }
+    uint32_t rgba;
+    NSScanner *scanner = [NSScanner scannerWithString:string];
+    [scanner scanHexInt:&rgba];
+    CGFloat red = ((rgba & 0xFF000000) >> 24) / 255.0f;
+    CGFloat green = ((rgba & 0x00FF0000) >> 16) / 255.0f;
+	CGFloat blue = ((rgba & 0x0000FF00) >> 8) / 255.0f;
+	return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
 }
 
-- (void)setPage:(NSNumber *)page animated:(NSNumber *)animated
+#pragma mark Special-case setters
+
+//TODO: these would work much better as category methods on the respective objects
+
+- (void)setHUDVisible:(NSNumber *)visible forObject:(id)object animated:(NSNumber *)animated
 {
-    [_pdfController setPage:[page integerValue] animated:[animated boolValue]];
+    if (object == _pdfController)
+    {
+        [_pdfController setHUDVisible:[visible boolValue] animated:[animated boolValue]];
+    }
+}
+
+- (void)setPage:(NSNumber *)page forObject:(id)object animated:(NSNumber *)animated
+{
+    if (object == _pdfController)
+    {
+        [_pdfController setPage:[page integerValue] animated:[animated boolValue]];
+    }
+}
+
+//TODO: use introspection to automatically detect and set color properties
+
+- (void)setTintColor:(NSString *)color forObject:(id)object animated:(NSNumber *)animated
+{
+    if (object == _pdfController)
+    {
+        [_pdfController setTintColor:[self colorWithString:color]];
+    }
+}
+
+- (void)setBackgroundColor:(NSString *)color forObject:(id)object animated:(NSNumber *)animated
+{
+    if (object == _pdfController)
+    {
+        [_pdfController setBackgroundColor:[self colorWithString:color]];
+    }
+    else
+    {
+        //do nothing - we don't support setting document color in this way because
+        //it would conflict with the view controller background color.
+        //use pageBackgroundColor instead
+    }
+}
+
+- (void)setPageBackgroundColor:(NSString *)color forObject:(id)object animated:(NSNumber *)animated
+{
+    if ([object isKindOfClass:[PSPDFDocument class]])
+    {
+        [(PSPDFDocument *)object setBackgroundColor:[self colorWithString:color]];
+    }
 }
 
 #pragma mark Document methods

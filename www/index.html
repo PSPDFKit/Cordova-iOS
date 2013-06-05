@@ -45,9 +45,10 @@
             
             function buttonAction() {
                 
-                //show pdf with shadows disabled
+                //show pdf with shadows disabled and a red background
                 PSPDFKit.present('pdf/castles.pdf', {
-                    shadowEnabled: false
+                    shadowEnabled: false,
+                    backgroundColor: 'red'
                 });
                 
                 //scroll to page 1 after a 500ms delay

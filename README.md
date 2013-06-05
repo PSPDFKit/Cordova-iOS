@@ -6,9 +6,10 @@ Usage
 
 The plugin is accessed via the PSPDFKit singleton. Here are some example calls:
 
-    //show pdf with shadows disabled
+    //show pdf with shadows disabled and a red background
     PSPDFKit.present('pdf/castles.pdf', {
-        shadowEnabled: false
+        shadowEnabled: false,
+        backgroundColor: 'red'
     });
     
     //show pdf with callback
@@ -97,11 +98,16 @@ Document hints
 Password Protection and Security
 
     password
+    allowsCopying
     
 Parser options
 
     bookmarksEnabled
     pageLabelsEnabled
+    
+Page appearance
+
+    pageBackgroundColor (this maps to the native backgroundColor property)
 
 PDF Controller options
     
@@ -143,8 +149,10 @@ Appearance options
     transparentHUD
     shouldHideNavigationBarWithHUD
     shouldHideStatusBarWithHUD
+    tintColor
     shouldTintPopovers
     shouldTintAlertView
+    backgroundColor
     navigationBarHidden
     annotationAnimationDuration
     createAnnotationMenuEnabled
