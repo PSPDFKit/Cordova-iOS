@@ -62,6 +62,22 @@ This method can be used to set multiple document and view controller settings at
     setOption(name, value, [animated]);
     
 This method can be used to set a single document or view controller option. All currently supported values are listed below under Options. The optional animated argument determines if the property should be animated. Not all property changes can be animated, so if the property does not support animation the animated argument will be ignored.
+
+    addEventListener(type, callback(event));
+    
+This method adds an event listener callback function for a specific event type. The list of possible event types is listed below under events. The callback will receive a single parameter called event, which will always contain the type and may contain other parameters, depending on the event type.
+
+Some events expect a boolean return value. If a value is not returned for these events, the return value is assumed to be true. Returning false from any event listener will prevent any subsequent listeners on that event from being called.
+
+Note that although this API is designed to mimic the standard DOM event binding mechanism as much as possible, the event parameter is not a true event, and features such as capturing or bubbling are not supported.
+
+    addEventListeners(listeners);
+    
+This method allows you to add several event listeners at once. The listeners argument is an object containing listener functions keyed by event type. Note that it is not possible to bind multiple functions to a single event type with a single call.
+
+    removeEventListener(type, listener);
+    
+This method unbinds the specified event listener function from the specified event.
     
     setPage(page, [animated]);
     
@@ -86,6 +102,8 @@ Scrolls to the previous page. The optional animated argument determines if the s
 
 Options
 ------------
+
+The following document and controller options can be set using the setOption(s) methods, or the options parameter of the present method.
 
 Document options
 
@@ -165,3 +183,34 @@ Appearance options
     annotationAnimationDuration
     createAnnotationMenuEnabled
     showAnnotationMenuAfterCreation
+    
+Events
+-------------
+
+The following events are supported by the PSPDFKit class
+
+    shouldSetDocument
+    willDisplayDocument
+    didDisplayDocument
+    shouldScrollToPage
+    didShowPageView
+    didRenderPageView
+    didLoadPageView
+    willUnloadPageView
+    didBeginPageDragging
+    didBeginPageDragging
+    didEndPageScrollingAnimation
+    didBeginPageZooming
+    didEndPageZooming
+    didTapOnPageView
+    didLongPressOnPageView
+    shouldSelectText
+    didSelectText
+    willDismiss
+    didDismiss
+    shouldShowHUD
+    willShowHUD
+    didShowHUD
+    shouldHideHUD
+    willHideHUD
+    didHideHUD

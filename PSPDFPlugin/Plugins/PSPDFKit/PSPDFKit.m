@@ -11,7 +11,7 @@
 #import <objc/message.h>
 
 
-@interface PSPDFKit ()
+@interface PSPDFKit () <PSPDFViewControllerDelegate>
 
 @property (nonatomic, strong) UINavigationController *navigationController;
 @property (nonatomic, strong) PSPDFViewController *pdfController;
@@ -188,6 +188,17 @@
 	return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
 }
 
+- (BOOL)sendEventWithJSON:(id)JSON
+{
+    if ([JSON isKindOfClass:[NSDictionary class]])
+    {
+        JSON = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:JSON options:0 error:NULL] encoding:NSUTF8StringEncoding];
+    }
+    NSString *script = [NSString stringWithFormat:@"PSPDFKit.dispatchEvent(%@)", JSON];
+    NSString *result = [self.webView stringByEvaluatingJavaScriptFromString:script];
+    return [result length]? [result boolValue]: YES;
+}
+
 #pragma mark Special-case setters
 
 //TODO: these would work much better as category methods on the respective objects
@@ -271,6 +282,7 @@
     if (!_pdfController)
     {
         _pdfController = [[PSPDFViewController alloc] init];
+        _pdfController.delegate = self;
         _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
     }
     [self setOptions:newOptions forObject:_pdfController animated:NO];
@@ -416,6 +428,208 @@
     [_pdfController scrollToPreviousPageAnimated:animated];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                 callbackId:command.callbackId];
+}
+
+#pragma mark Delegate methods
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSetDocument:(PSPDFDocument *)document
+{
+    return [self sendEventWithJSON:@{@"type": @"shouldSetDocument", @"path": [document.fileURL path]?: [NSNull null]}];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController willDisplayDocument:(PSPDFDocument *)document
+{
+    [self sendEventWithJSON:@{@"type": @"willDisplayDocument", @"path": [document.fileURL path]?: [NSNull null]}];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didDisplayDocument:(PSPDFDocument *)document
+{
+    [self sendEventWithJSON:@{@"type": @"didDisplayDocument", @"path": [document.fileURL path]?: [NSNull null]}];
+}
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldScrollToPage:(NSUInteger)page
+{
+    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'shouldScrollToPage',page:%i}", page]];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didShowPageView:(PSPDFPageView *)pageView
+{
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didShowPageView',page:%i}", pageView.page]];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didRenderPageView:(PSPDFPageView *)pageView
+{
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didRenderPageView',page:%i}", pageView.page]];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didLoadPageView:(PSPDFPageView *)pageView
+{
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLoadPageView',page:%i}", pageView.page]];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController willUnloadPageView:(PSPDFPageView *)pageView
+{
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'willUnloadPageView',page:%i}", pageView.page]];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didBeginPageDragging:(UIScrollView *)scrollView
+{
+    [self sendEventWithJSON:@"{type:'didBeginPageDragging'}"];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didBeginPageDragging',willDecelerate:%@,velocity:{%g,%g}}", decelerate? @"true": @"false", velocity.x, velocity.y]];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageScrollingAnimation:(UIScrollView *)scrollView
+{
+    [self sendEventWithJSON:@"{type:'didEndPageScrollingAnimation'}"];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didBeginPageZooming:(UIScrollView *)scrollView
+{
+    [self sendEventWithJSON:@"{type:'didBeginPageZooming'}"];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageZooming:(UIScrollView *)scrollView atScale:(CGFloat)scale
+{
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didEndPageZooming',scale:%g}", scale]];
+}
+
+//- (PSPDFDocument *)pdfViewController:(PSPDFViewController *)pdfController documentForRelativePath:(NSString *)relativePath
+//{
+//    
+//}
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController didTapOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint
+{
+    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didTapOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
+}
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController didLongPressOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint gestureRecognizer:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLongPressOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
+}
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
+{
+    return [self sendEventWithJSON:@{@"type": @"shouldSelectText", @"text": text, @"rect": [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height]}];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
+{
+    [self sendEventWithJSON:@{@"type": @"didSelectText", @"text": text, @"rect": [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height]}];
+}
+
+//- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forSelectedText:(NSString *)selectedText inRect:(CGRect)textRect onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forSelectedImage:(PSPDFImageInfo *)selectedImage inRect:(CGRect)textRect onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forAnnotation:(PSPDFAnnotation *)annotation inRect:(CGRect)annotationRect onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldDisplayAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController didTapOnAnnotation:(PSPDFAnnotation *)annotation annotationPoint:(CGPoint)annotationPoint annotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView pageView:(PSPDFPageView *)pageView viewPoint:(CGPoint)viewPoint
+//{
+//    
+//}
+
+//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSelectAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (void)pdfViewController:(PSPDFViewController *)pdfController didSelectAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (UIView <PSPDFAnnotationViewProtocol> *)pdfViewController:(PSPDFViewController *)pdfController annotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView forAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (void)pdfViewController:(PSPDFViewController *)pdfController willShowAnnotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (void)pdfViewController:(PSPDFViewController *)pdfController didShowAnnotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView onPageView:(PSPDFPageView *)pageView
+//{
+//    
+//}
+
+//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldShowController:(id)viewController embeddedInController:(id)controller animated:(BOOL)animated
+//{
+//    
+//}
+
+//- (void)pdfViewController:(PSPDFViewController *)pdfController didShowController:(id)viewController embeddedInController:(id)controller animated:(BOOL)animated
+//{
+//    
+//}
+
+//- (void)pdfViewController:(PSPDFViewController *)pdfController requestsUpdateForBarButtonItem:(UIBarButtonItem *)barButtonItem animated:(BOOL)animated
+//{
+//    
+//}
+
+//- (void)pdfViewController:(PSPDFViewController *)pdfController didChangeViewMode:(PSPDFViewMode)viewMode
+//{
+//    
+//}
+
+- (void)pdfViewControllerWillDismiss:(PSPDFViewController *)pdfController
+{
+    [self sendEventWithJSON:@"{type:'willDismiss'}"];
+}
+
+- (void)pdfViewControllerDidDismiss:(PSPDFViewController *)pdfController
+{
+    [self sendEventWithJSON:@"{type:'didDismiss'}"];
+}
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldShowHUD:(BOOL)animated
+{
+    return [self sendEventWithJSON:@{@"type": @"shouldShowHUD", @"animated": @(animated)}];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController willShowHUD:(BOOL)animated
+{
+    [self sendEventWithJSON:@{@"type": @"willShowHUD", @"animated": @(animated)}];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didShowHUD:(BOOL)animated
+{
+    [self sendEventWithJSON:@{@"type": @"didShowHUD", @"animated": @(animated)}];
+}
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldHideHUD:(BOOL)animated
+{
+    return [self sendEventWithJSON:@{@"type": @"shouldHideHUD", @"animated": @(animated)}];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController willHideHUD:(BOOL)animated
+{
+    [self sendEventWithJSON:@{@"type": @"willHideHUD", @"animated": @(animated)}];
+}
+
+- (void)pdfViewController:(PSPDFViewController *)pdfController didHideHUD:(BOOL)animated
+{
+    [self sendEventWithJSON:@{@"type": @"didHideHUD", @"animated": @(animated)}];
 }
 
 @end

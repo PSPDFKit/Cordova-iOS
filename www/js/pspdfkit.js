@@ -27,6 +27,47 @@ window.PSPDFKit = new function() {
         }
     }
     
+    //events
+    
+    var listeners = {};
+    
+    this.dispatchEvent = function(event) {
+        var result = undefined;
+        var functions = listeners[event.type];
+        for (var i = 0; i < functions.length; i++) {
+            result = functions[i](event);
+            if (typeof result != 'undefined') {
+                if (!result) return result;
+            }
+        }
+        return result;
+    }
+
+    this.addEventListener = function(type, listener) {
+        var existing = listeners[type];
+        if (!existing) {
+            existing = [];
+            listeners[type] = existing;
+        }
+        existing.push(listener);
+    }
+    
+    this.addEventListeners = function(listeners) {
+        for (type in listeners) {
+            this.addEventListener(type, listeners[type]);
+        }
+    }
+    
+    this.removeEventListener = function(type, listener)
+    {
+        var existing = listeners[type];
+        if (existing) {
+            while (var index = existing.indexOf(listener)) {
+                existing.splice(index,1);
+            }
+        }
+    }
+    
     //document methods
     
     addMethods({
