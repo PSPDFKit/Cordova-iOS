@@ -53,13 +53,13 @@ This method triggers a search for the specified query text. The optional animate
     
 This method saves any changed annotations in the current or last opened document. On success the error callback parameter will be null, on failure it will be an object containing an error domain, code, and (possibly) a description and reason.
     
-    setOptions(options);
+    setOptions(options, [animated]);
     
-This method can be used to set multiple document and view controller settings at once. The options set will be applied to the current document (if there is one) as well as all subsequently displayed documents. All currently supported values are listed below under Options.
+This method can be used to set multiple document and view controller settings at once. The options set will be applied to the current document (if there is one) as well as all subsequently displayed documents. All currently supported values are listed below under Options. The optional animated argument determines if the property should be animated. Not all property changes can be animated, so if the property does not support animation the animated argument will be ignored.
     
-    setOption(name, value);
+    setOption(name, value, [animated]);
     
-This method can be used to set a single document or view controller option. All currently supported values are listed below under Options.
+This method can be used to set a single document or view controller option. All currently supported values are listed below under Options. The optional animated argument determines if the property should be animated. Not all property changes can be animated, so if the property does not support animation the animated argument will be ignored.
     
     setPage(page, [animated]);
     

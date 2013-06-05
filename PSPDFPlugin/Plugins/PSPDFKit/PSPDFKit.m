@@ -20,6 +20,7 @@
 
 @implementation PSPDFKit
 
+
 #pragma mark Private methods
 
 - (NSDictionary *)defaultOptions
@@ -33,7 +34,7 @@
     return _defaultOptions;
 }
 
-- (void)setOptionsWithDictionary:(NSDictionary *)options
+- (void)setOptionsWithDictionary:(NSDictionary *)options animated:(BOOL)animated
 {
     //merge with defaults
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
@@ -41,11 +42,11 @@
     self.defaultOptions = newOptions;
     
     //set document and controller values
-    [self setOptions:options forObject:_pdfController.document];
-    [self setOptions:options forObject:_pdfController];
+    [self setOptions:options forObject:_pdfController.document animated:animated];
+    [self setOptions:options forObject:_pdfController animated:animated];
 }
 
-- (void)setOptions:(NSDictionary *)options forObject:(id)object
+- (void)setOptions:(NSDictionary *)options forObject:(id)object animated:(BOOL)animated
 {
     //merge with defaults
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
@@ -53,10 +54,22 @@
     
     for (NSString *key in newOptions)
     {
-        SEL setter = NSSelectorFromString([NSString stringWithFormat:@"set%@%@:", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]]);
-        if ([object respondsToSelector:setter])
+        NSString *setterString = [NSString stringWithFormat:@"set%@%@:", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
+        
+        SEL setter = NSSelectorFromString([setterString stringByAppendingString:@"animated:"]);
+        if ([self respondsToSelector:setter])
         {
-            [object setValue:options[key] forKey:key];
+            //use custom setter
+            [self performSelector:setter withObject:options[key] withObject:@(animated)];
+        }
+        else
+        {
+            //use KVC
+            setter = NSSelectorFromString(setterString);
+            if ([object respondsToSelector:setter])
+            {
+                [object setValue:options[key] forKey:key];
+            }
         }
     }
 }
@@ -73,6 +86,18 @@
         return dict;
     }
     return nil;
+}
+
+#pragma mark Special-case setters
+
+- (void)setHUDVisible:(NSNumber *)visible animated:(NSNumber *)animated
+{
+    [_pdfController setHUDVisible:[visible boolValue] animated:[animated boolValue]];
+}
+
+- (void)setPage:(NSNumber *)page animated:(NSNumber *)animated
+{
+    [_pdfController setPage:[page integerValue] animated:[animated boolValue]];
 }
 
 #pragma mark Document methods
@@ -99,7 +124,7 @@
         //configure document
         NSURL *url = [NSURL fileURLWithPath:path];
         PSPDFDocument *document = [PSPDFDocument documentWithURL:url];
-        [self setOptions:newOptions forObject:document];
+        [self setOptions:newOptions forObject:document animated:NO];
         
         //configure controller
         if (!_pdfController)
@@ -107,7 +132,7 @@
             _pdfController = [[PSPDFViewController alloc] init];
             _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
         }
-        [self setOptions:newOptions forObject:_pdfController];
+        [self setOptions:newOptions forObject:_pdfController animated:NO];
         _pdfController.document = document;
         
         //present controller
@@ -175,7 +200,8 @@
 - (void)setOptions:(CDVInvokedUrlCommand *)command
 {
     NSDictionary *options = [command argumentAtIndex:0 withDefault:nil];
-    [self setOptionsWithDictionary:options];
+    BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
+    [self setOptionsWithDictionary:options animated:animated];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                 callbackId:command.callbackId];
 }
@@ -185,10 +211,11 @@
     CDVPluginResult *pluginResult = nil;
     NSString *key = [command argumentAtIndex:0 withDefault:nil];
     id value = [command argumentAtIndex:1 withDefault:nil];
+    BOOL animated = [[command argumentAtIndex:2 withDefault:@NO] boolValue];
     
     if (key && value)
     {
-        [self setOptionsWithDictionary:@{key: value}];
+        [self setOptionsWithDictionary:@{key: value} animated:animated];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     else

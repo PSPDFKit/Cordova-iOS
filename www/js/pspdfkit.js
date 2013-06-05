@@ -40,8 +40,8 @@ window.PSPDFKit = new function() {
     //configuration
     
     addMethods({
-        setOptions: ['options'],
-        setOption: ['name', 'value'],
+        setOptions: ['options', 'animated'],
+        setOption: ['name', 'value', 'animated'],
         //getOption: ['name', 'callback']
     });
     
