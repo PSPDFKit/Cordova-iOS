@@ -21,7 +21,7 @@ window.PSPDFKit = new function() {
                         if (callback) callback(result);
                     }, function (error) {
                         alert(error);
-                    }, "PSPDFKit", methodName, argArray);
+                    }, 'PSPDFKit', methodName, argArray);
                 }
             })();
         }
@@ -51,18 +51,19 @@ window.PSPDFKit = new function() {
         }
         existing.push(listener);
     }
-    
+
     this.addEventListeners = function(listeners) {
         for (type in listeners) {
             this.addEventListener(type, listeners[type]);
         }
     }
-    
+
     this.removeEventListener = function(type, listener)
     {
         var existing = listeners[type];
         if (existing) {
-            while (var index = existing.indexOf(listener)) {
+            var index;
+            while (index = existing.indexOf(listener)) {
                 existing.splice(index,1);
             }
         }
