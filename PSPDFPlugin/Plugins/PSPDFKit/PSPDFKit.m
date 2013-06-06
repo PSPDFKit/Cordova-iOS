@@ -260,19 +260,15 @@
     return nil;
 }
 
-- (NSArray *)barButtonItemsWithJSON:(NSArray *)JSONArray
-{
+- (NSArray *)barButtonItemsWithJSON:(NSArray *)JSONArray {
     NSMutableArray *items = [NSMutableArray array];
-    for (id JSON in JSONArray)
-    {
+    for (id JSON in JSONArray) {
         UIBarButtonItem *item = [self barButtonItemWithJSON:JSON];
-        if (item)
-        {
+        if (item) {
             [items addObject:item];
         }
-        else
-        {
-            NSLog(@"Unrecognised toolbar button name or format");
+        else {
+            NSLog(@"Unrecognised toolbar button name or format: %@", JSON);
         }
     }
     return items;
@@ -374,34 +370,36 @@
 
 #pragma mark Document methods
 
-- (void)present:(CDVInvokedUrlCommand *)command
-{
+- (void)present:(CDVInvokedUrlCommand *)command {
     NSString *path = [command argumentAtIndex:0];
     NSDictionary *options = [command argumentAtIndex:1] ?: [command argumentAtIndex:2];
     
-    //merge options with defaults
+    // merge options with defaults
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
     [newOptions addEntriesFromDictionary:options];
     
     PSPDFDocument *document = nil;
-    if (path)
-    {
-        //convert to absolute path
+    if (path) {
+        // convert to absolute path
         path = [path stringByExpandingTildeInPath];
-        if (![path isAbsolutePath])
-        {
+        if (![path isAbsolutePath]) {
             path = [[NSBundle mainBundle] pathForResource:path ofType:nil inDirectory:@"www"];
         }
+
+        if (!path) {
+            PSPDFLogError(@"Path not found: %@", [command argumentAtIndex:0]);
+            // TODO can we send an error back?
+            return;
+        }
              
-        //configure document
-        NSURL *url = [NSURL fileURLWithPath:path];
-        document = [PSPDFDocument documentWithURL:url];
+        // configure document
+        NSURL *URL = [NSURL fileURLWithPath:path];
+        document = [PSPDFDocument documentWithURL:URL];
         [self setOptions:newOptions forObject:document animated:NO];
     }
         
-    //configure controller
-    if (!_pdfController)
-    {
+    // configure controller
+    if (!_pdfController) {
         _pdfController = [[PSPDFViewController alloc] init];
         _pdfController.delegate = self;
         _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
@@ -410,16 +408,14 @@
     _pdfController.document = document;
     
     //present controller
-    if (!_navigationController.presentingViewController)
-    {
+    if (!_navigationController.presentingViewController) {
         [self.viewController presentViewController:_navigationController animated:YES completion:^{
             
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                         callbackId:command.callbackId];
         }];
     }
-    else
-    {
+    else {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                     callbackId:command.callbackId];
     }
@@ -647,14 +643,18 @@
     return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLongPressOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
 }
 
+static NSString *PSPDFStringFromCGRect(CGRect rect) {
+    return [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
+}
+
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
 {
-    return [self sendEventWithJSON:@{@"type": @"shouldSelectText", @"text": text, @"rect": [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height]}];
+    return [self sendEventWithJSON:@{@"type": @"shouldSelectText", @"text": text, @"rect": PSPDFStringFromCGRect(rect)}];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:@{@"type": @"didSelectText", @"text": text, @"rect": [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height]}];
+    [self sendEventWithJSON:@{@"type": @"didSelectText", @"text": text, @"rect": PSPDFStringFromCGRect(rect)}];
 }
 
 //- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forSelectedText:(NSString *)selectedText inRect:(CGRect)textRect onPageView:(PSPDFPageView *)pageView
