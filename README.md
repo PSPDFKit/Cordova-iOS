@@ -121,7 +121,20 @@ Custom toolbar buttons should be specified as an object in the following format:
         //do something
     });
     
-Right now the only supported properties of this object are title and action, but more may be supported in future.
+You can optionally include the following values:
+
+    style
+    
+A string with a value of 'bordered', 'plain', or 'done', indicating the button style. The default style is 'bordered'.
+
+    tintColor
+    
+A css color value. This will control the toolbar button tint color.
+
+    image
+    landscapeImage
+    
+A path to an image to display in the toolbar button. If `landscapeImage` is omitted it is assumed to be the same as `image` This path should be relative to the www folder (absolute paths, or paths outside of the application resources are not supported).
 
 
 Standard toolbar button names

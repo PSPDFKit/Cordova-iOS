@@ -209,7 +209,7 @@
     return nil;
 }
 
-- (PSPDFBarButtonItem *)barButtonItemWithJSON:(id)JSON
+- (UIBarButtonItem *)barButtonItemWithJSON:(id)JSON
 {
     if ([JSON isKindOfClass:[NSString class]])
     {
@@ -217,8 +217,41 @@
     }
     else if ([JSON isKindOfClass:[NSDictionary class]])
     {
-        PSPDFBarButtonItem *item = [[PSPDFBarButtonItem alloc] initWithTitle:JSON[@"title"] style:UIBarButtonItemStyleBordered target:self action:@selector(customBarButtonItemAction:)];
-        item.pdfController = _pdfController;
+        UIImage *image = nil;
+        NSString *imagePath = JSON[@"image"];
+        if (imagePath)
+        {
+            imagePath = [@"www" stringByAppendingPathComponent:imagePath];
+            image = [UIImage imageNamed:imagePath];
+        }
+        
+        UIImage *landscapeImage = image;
+        imagePath = JSON[@"landscapeImage"];
+        if (imagePath)
+        {
+            imagePath = [@"www" stringByAppendingPathComponent:imagePath];
+            landscapeImage = [UIImage imageNamed:imagePath] ?: landscapeImage;
+        }
+        
+        UIBarButtonItemStyle style = [self enumValueForKey:JSON[@"style"]
+                                              inDictionary:@{
+                                      @"bordered": @(UIBarButtonItemStyleBordered),
+                                      @"plain": @(UIBarButtonItemStylePlain),
+                                      @"done": @(UIBarButtonItemStyleDone)}
+                                               withDefault:UIBarButtonItemStyleBordered];
+        
+        UIBarButtonItem *item = nil;
+        if (image)
+        {
+            item = [[UIBarButtonItem alloc] initWithImage:image landscapeImagePhone:landscapeImage style:style target:self action:@selector(customBarButtonItemAction:)];
+        }
+        else
+        {
+            item = [[PSPDFBarButtonItem alloc] initWithTitle:JSON[@"title"] style:style target:self action:@selector(customBarButtonItemAction:)];
+            [(PSPDFBarButtonItem *)item setPdfController:_pdfController];
+        }
+
+        item.tintColor = JSON[@"tintColor"]? [self colorWithString:JSON[@"tintColor"]]: item.tintColor;
         return item;
     }
     return nil;
@@ -229,7 +262,7 @@
     NSMutableArray *items = [NSMutableArray array];
     for (id JSON in JSONArray)
     {
-        PSPDFBarButtonItem *item = [self barButtonItemWithJSON:JSON];
+        UIBarButtonItem *item = [self barButtonItemWithJSON:JSON];
         if (item)
         {
             [items addObject:item];
@@ -259,6 +292,13 @@
         NSString *script = [NSString stringWithFormat:@"PSPDFKit.dispatchLeftBarButtonAction(%i)", index];
         [self.webView stringByEvaluatingJavaScriptFromString:script];
     }
+}
+
+- (NSInteger)enumValueForKey:(NSString *)key inDictionary:(NSDictionary *)dict withDefault:(int)defaultValue
+{
+    NSNumber *number = dict[key];
+    if (number) return [number integerValue];
+    return defaultValue;
 }
 
 #pragma mark Special-case setters
