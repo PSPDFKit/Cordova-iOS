@@ -199,6 +199,68 @@
     return [result length]? [result boolValue]: YES;
 }
 
+- (PSPDFBarButtonItem *)standardBarButtonWithName:(NSString *)name
+{
+    NSString *selectorString = [name stringByAppendingString:@"ButtonItem"];
+    if ([_pdfController respondsToSelector:NSSelectorFromString(selectorString)])
+    {
+        return [_pdfController valueForKey:selectorString];
+    }
+    return nil;
+}
+
+- (PSPDFBarButtonItem *)barButtonItemWithJSON:(id)JSON
+{
+    if ([JSON isKindOfClass:[NSString class]])
+    {
+        return [self standardBarButtonWithName:JSON];
+    }
+    else if ([JSON isKindOfClass:[NSDictionary class]])
+    {
+        PSPDFBarButtonItem *item = [[PSPDFBarButtonItem alloc] initWithTitle:JSON[@"title"] style:UIBarButtonItemStyleBordered target:self action:@selector(customBarButtonItemAction:)];
+        item.pdfController = _pdfController;
+        return item;
+    }
+    return nil;
+}
+
+- (NSArray *)barButtonItemsWithJSON:(NSArray *)JSONArray
+{
+    NSMutableArray *items = [NSMutableArray array];
+    for (id JSON in JSONArray)
+    {
+        PSPDFBarButtonItem *item = [self barButtonItemWithJSON:JSON];
+        if (item)
+        {
+            [items addObject:item];
+        }
+        else
+        {
+            NSLog(@"Unrecognised toolbar button name or format");
+        }
+    }
+    return items;
+}
+
+- (void)customBarButtonItemAction:(PSPDFBarButtonItem *)sender
+{
+    NSInteger index = [_pdfController.leftBarButtonItems indexOfObject:sender];
+    if (index == NSNotFound)
+    {
+        index = [_pdfController.rightBarButtonItems indexOfObject:sender];
+        if (index != NSNotFound)
+        {
+            NSString *script = [NSString stringWithFormat:@"PSPDFKit.dispatchRightBarButtonAction(%i)", index];
+            [self.webView stringByEvaluatingJavaScriptFromString:script];
+        }
+    }
+    else
+    {
+        NSString *script = [NSString stringWithFormat:@"PSPDFKit.dispatchLeftBarButtonAction(%i)", index];
+        [self.webView stringByEvaluatingJavaScriptFromString:script];
+    }
+}
+
 #pragma mark Special-case setters
 
 //TODO: these would work much better as category methods on the respective objects
@@ -216,6 +278,22 @@
     if (object == _pdfController)
     {
         [_pdfController setPage:[page integerValue] animated:[animated boolValue]];
+    }
+}
+
+- (void)setLeftBarButtonItems:(NSArray *)items forObject:(id)object animated:(NSNumber *)animated
+{
+    if (object == _pdfController)
+    {
+        _pdfController.leftBarButtonItems = [self barButtonItemsWithJSON:items] ?: _pdfController.leftBarButtonItems;
+    }
+}
+
+- (void)setRightBarButtonItems:(NSArray *)items forObject:(id)object animated:(NSNumber *)animated
+{
+    if (object == _pdfController)
+    {
+        _pdfController.rightBarButtonItems = [self barButtonItemsWithJSON:items] ?: _pdfController.rightBarButtonItems;
     }
 }
 
@@ -385,23 +463,19 @@
 
 - (void)setPage:(CDVInvokedUrlCommand *)command
 {
-    CDVPluginResult *pluginResult = nil;
     NSInteger page = [[command argumentAtIndex:0 withDefault:@(NSNotFound)] integerValue];
     BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
     
     if (page != NSNotFound)
     {
         [_pdfController setPage:page animated:animated];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:command.callbackId];
     }
     else
     {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                         messageAsString:@"'page' argument was null"];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"'page' argument was null"] callbackId:command.callbackId];
     }
-    
-    [self.commandDelegate sendPluginResult:pluginResult
-                                callbackId:command.callbackId];
 }
 
 - (void)getPage:(CDVInvokedUrlCommand *)command
@@ -426,6 +500,24 @@
 {
     BOOL animated = [[command argumentAtIndex:0 withDefault:@NO] boolValue];
     [_pdfController scrollToPreviousPageAnimated:animated];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
+#pragma mark Toolbar Items
+
+- (void)setLeftBarButtonItems:(CDVInvokedUrlCommand *)command
+{
+    NSArray *items = [command argumentAtIndex:0 withDefault:@[]];
+    [self setOptionsWithDictionary:@{@"leftBarButtonItems": items} animated:NO];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
+- (void)setRightBarButtonItems:(CDVInvokedUrlCommand *)command
+{
+    NSArray *items = [command argumentAtIndex:0 withDefault:@[]];
+    [self setOptionsWithDictionary:@{@"rightBarButtonItems": items} animated:NO];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                 callbackId:command.callbackId];
 }
@@ -599,6 +691,11 @@
 
 - (void)pdfViewControllerDidDismiss:(PSPDFViewController *)pdfController
 {
+    //release the pdf document and controller
+    _pdfController = nil;
+    _navigationController = nil;
+    
+    //send event
     [self sendEventWithJSON:@"{type:'didDismiss'}"];
 }
 

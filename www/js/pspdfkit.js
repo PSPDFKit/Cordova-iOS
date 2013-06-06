@@ -84,7 +84,6 @@ window.PSPDFKit = new function() {
     addMethods({
         setOptions: ['options', 'animated'],
         setOption: ['name', 'value', 'animated'],
-        //getOption: ['name', 'callback'],
     });
     
     //page scrolling
@@ -96,5 +95,44 @@ window.PSPDFKit = new function() {
         scrollToNextPage: ['animated'],
         scrollToPreviousPage: ['animated'],
     });
+    
+    //toolbar
+    
+    var leftBarButtonItems = ['close'];
+    var rightBarButtonItems = ['search', 'outline', 'viewMode'];
+    
+    this.dispatchLeftBarButtonAction = function(index)
+    {
+        leftBarButtonItems[index].action();
+    }
+
+    this.dispatchRightBarButtonAction = function(index)
+    {
+        rightBarButtonItems[index].action();
+    }
+
+    this.setLeftBarButtonItems = function(items)
+    {
+        leftBarButtonItems = items;
+        cordova.exec(function (result) { }, function (error) { },
+                     'PSPDFKit', 'setLeftBarButtonItems', [items]);
+    }
+
+    this.setRightBarButtonItems = function(items)
+    {
+        rightBarButtonItems = items;
+        cordova.exec(function (result) { }, function (error) { },
+                     'PSPDFKit', 'setRightBarButtonItems', [items]);
+    }
+
+    this.getLeftBarButtonItems = function(callback)
+    {
+        callback(leftBarButtonItems);
+    }
+    
+    this.getRightBarButtonItems = function(callback)
+    {
+        callback(rightBarButtonItems);
+    }
     
 };

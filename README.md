@@ -99,6 +99,49 @@ Scrolls to the next page. The optional animated argument determines if the scrol
     
 Scrolls to the previous page. The optional animated argument determines if the scroll should be animated (if omitted, the scroll will not be animated).
 
+    setLeftToolbarItems(items);
+    setRightToolbarItems(items);
+
+These methods allw you to configure the toolbar items for the PDF viewer. The items should be supplied as an array. Each element in the array should be either a string representing a standard toolbar item (see Standard toolbar items below for a list of supported values) or an object with the forma specified below.
+
+You can optionally set these toolbar buttons using the setOption(s) functions, or the options parameter of the `present()` function by using the keys `leftToolbarItems` and `rightToolbarItems`.
+
+    getLeftToolbarItems(callback(items));
+    getRightToolbarItems(callback(items));
+
+These methods retrieve the current left and right toolbar items arrays.
+
+
+Custom toolbar button format
+----------------------------
+
+Custom toolbar buttons should be specified as an object in the following format:
+
+    {title: 'Hello', action: function() {
+        //do something
+    });
+    
+Right now the only supported properties of this object are title and action, but more may be supported in future.
+
+
+Standard toolbar button names
+-------------------------------
+
+The following standard toolbar buttons are available:
+
+    close
+    outline
+    search
+    viewMode
+    print
+    openIn
+    email
+    annotation
+    bookmark
+    brightness
+    activity
+    additionalActions
+
 
 Options
 ------------
