@@ -15,12 +15,13 @@
 
 @property (nonatomic, strong) UINavigationController *navigationController;
 @property (nonatomic, strong) PSPDFViewController *pdfController;
+@property (nonatomic, strong) PSPDFDocument *pdfDocument;
 @property (nonatomic, strong) NSDictionary *defaultOptions;
 
 @end
 
-@implementation PSPDFKit
 
+@implementation PSPDFKit
 
 #pragma mark Private methods
 
@@ -49,27 +50,39 @@
 
 - (void)setOptions:(NSDictionary *)options forObject:(id)object animated:(BOOL)animated
 {
-    //merge with defaults
-    NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
-    [newOptions addEntriesFromDictionary:options];
-    
-    for (NSString *key in newOptions)
+    if (object)
     {
-        NSString *setterString = [NSString stringWithFormat:@"set%@%@:", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
+        //merge with defaults
+        NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
+        [newOptions addEntriesFromDictionary:options];
         
-        SEL setter = NSSelectorFromString([setterString stringByAppendingString:@"forObject:animated:"]);
-        if ([self respondsToSelector:setter])
+        for (NSString *key in newOptions)
         {
-            //use custom setter
-            objc_msgSend(self, setter, options[key], object, @(animated));
-        }
-        else
-        {
-            //use KVC
-            setter = NSSelectorFromString(setterString);
-            if ([object respondsToSelector:setter])
+            NSString *setterString = [NSString stringWithFormat:@"set%@%@", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
+            
+            //try custom animated setter
+            SEL setter = NSSelectorFromString([setterString stringByAppendingFormat:@"AnimatedFor%@WithJSON:", [object class]]);
+            if ([self respondsToSelector:setter])
             {
-                [object setValue:options[key] forKey:key];
+                objc_msgSend(self, setter, options[key]);
+            }
+            else
+            {
+                //try custom setter
+                setter = NSSelectorFromString([setterString stringByAppendingFormat:@"For%@WithJSON:", [object class]]);
+                if ([self respondsToSelector:setter])
+                {
+                    objc_msgSend(self, setter, options[key]);
+                }
+                else
+                {
+                    //use KVC
+                    setter = NSSelectorFromString([setterString stringByAppendingString:@":"]);
+                    if ([object respondsToSelector:setter])
+                    {
+                        [object setValue:options[key] forKey:key];
+                    }
+                }
             }
         }
     }
@@ -199,6 +212,13 @@
     return [result length]? [result boolValue]: YES;
 }
 
+- (NSInteger)enumValueForKey:(NSString *)key inDictionary:(NSDictionary *)dict withDefault:(int)defaultValue
+{
+    NSNumber *number = dict[key];
+    if (number) return [number integerValue];
+    return defaultValue;
+}
+
 - (PSPDFBarButtonItem *)standardBarButtonWithName:(NSString *)name
 {
     NSString *selectorString = [name stringByAppendingString:@"ButtonItem"];
@@ -250,17 +270,17 @@
             item = [[PSPDFBarButtonItem alloc] initWithTitle:JSON[@"title"] style:style target:self action:@selector(customBarButtonItemAction:)];
             [(PSPDFBarButtonItem *)item setPdfController:_pdfController];
         }
-
+        
         item.tintColor = JSON[@"tintColor"]? [self colorWithString:JSON[@"tintColor"]]: item.tintColor;
         return item;
     }
     return nil;
 }
 
-- (NSArray *)barButtonItemsWithJSON:(NSArray *)JSONArray
+- (NSArray *)barButtonItemsWithArray:(NSArray *)array
 {
     NSMutableArray *items = [NSMutableArray array];
-    for (id JSON in JSONArray)
+    for (id JSON in array)
     {
         UIBarButtonItem *item = [self barButtonItemWithJSON:JSON];
         if (item)
@@ -294,79 +314,48 @@
     }
 }
 
-- (NSInteger)enumValueForKey:(NSString *)key inDictionary:(NSDictionary *)dict withDefault:(int)defaultValue
+#pragma mark PSPDFDocument setters
+
+- (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
-    NSNumber *number = dict[key];
-    if (number) return [number integerValue];
-    return defaultValue;
+    _pdfDocument.backgroundColor = [self colorWithString:color];
 }
 
-#pragma mark Special-case setters
-
-//TODO: these would work much better as category methods on the respective objects
-
-- (void)setHUDVisible:(NSNumber *)visible forObject:(id)object animated:(NSNumber *)animated
+- (void)setBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
-    if (object == _pdfController)
-    {
-        [_pdfController setHUDVisible:[visible boolValue] animated:[animated boolValue]];
-    }
+    //not supported, use pageBackgroundColor instead
 }
 
-- (void)setPage:(NSNumber *)page forObject:(id)object animated:(NSNumber *)animated
+#pragma mark PSPDFViewController setters
+
+- (void)setHUDVisibleAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)visible
 {
-    if (object == _pdfController)
-    {
-        [_pdfController setPage:[page integerValue] animated:[animated boolValue]];
-    }
+    [_pdfController setHUDVisible:[visible boolValue] animated:YES];
 }
 
-- (void)setLeftBarButtonItems:(NSArray *)items forObject:(id)object animated:(NSNumber *)animated
+- (void)setPageAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)page
 {
-    if (object == _pdfController)
-    {
-        _pdfController.leftBarButtonItems = [self barButtonItemsWithJSON:items] ?: _pdfController.leftBarButtonItems;
-    }
+    [_pdfController setPage:[page integerValue] animated:YES];
 }
 
-- (void)setRightBarButtonItems:(NSArray *)items forObject:(id)object animated:(NSNumber *)animated
+- (void)setLeftBarButtonItemsForPSPDFViewControllerWithJSON:(NSArray *)items
 {
-    if (object == _pdfController)
-    {
-        _pdfController.rightBarButtonItems = [self barButtonItemsWithJSON:items] ?: _pdfController.rightBarButtonItems;
-    }
+    _pdfController.leftBarButtonItems = [self barButtonItemsWithArray:items] ?: _pdfController.leftBarButtonItems;
 }
 
-//TODO: use introspection to automatically detect and set color properties
-
-- (void)setTintColor:(NSString *)color forObject:(id)object animated:(NSNumber *)animated
+- (void)setRightBarButtonItemsForPSPDFViewControllerWithJSON:(NSArray *)items
 {
-    if (object == _pdfController)
-    {
-        [_pdfController setTintColor:[self colorWithString:color]];
-    }
+    _pdfController.rightBarButtonItems = [self barButtonItemsWithArray:items] ?: _pdfController.rightBarButtonItems;
 }
 
-- (void)setBackgroundColor:(NSString *)color forObject:(id)object animated:(NSNumber *)animated
+- (void)setTintColorForPSPDFViewControllerWithJSON:(NSString *)color
 {
-    if (object == _pdfController)
-    {
-        [_pdfController setBackgroundColor:[self colorWithString:color]];
-    }
-    else
-    {
-        //do nothing - we don't support setting document color in this way because
-        //it would conflict with the view controller background color.
-        //use pageBackgroundColor instead
-    }
+    _pdfController.tintColor = [self colorWithString:color];
 }
 
-- (void)setPageBackgroundColor:(NSString *)color forObject:(id)object animated:(NSNumber *)animated
+- (void)setBackgroundColorForPSPDFViewControllerWithJSON:(NSString *)color
 {
-    if ([object isKindOfClass:[PSPDFDocument class]])
-    {
-        [(PSPDFDocument *)object setBackgroundColor:[self colorWithString:color]];
-    }
+    _pdfController.backgroundColor = [self colorWithString:color];
 }
 
 #pragma mark Document methods
@@ -380,7 +369,7 @@
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
     [newOptions addEntriesFromDictionary:options];
     
-    PSPDFDocument *document = nil;
+    _pdfDocument = nil;
     if (path)
     {
         //convert to absolute path
@@ -392,8 +381,8 @@
              
         //configure document
         NSURL *url = [NSURL fileURLWithPath:path];
-        document = [PSPDFDocument documentWithURL:url];
-        [self setOptions:newOptions forObject:document animated:NO];
+        _pdfDocument = [PSPDFDocument documentWithURL:url];
+        [self setOptions:newOptions forObject:_pdfDocument animated:NO];
     }
         
     //configure controller
@@ -404,7 +393,7 @@
         _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
     }
     [self setOptions:newOptions forObject:_pdfController animated:NO];
-    _pdfController.document = document;
+    _pdfController.document = _pdfDocument;
     
     //present controller
     if (!_navigationController.presentingViewController)
@@ -732,6 +721,7 @@
 - (void)pdfViewControllerDidDismiss:(PSPDFViewController *)pdfController
 {
     //release the pdf document and controller
+    _pdfDocument = nil;
     _pdfController = nil;
     _navigationController = nil;
     
