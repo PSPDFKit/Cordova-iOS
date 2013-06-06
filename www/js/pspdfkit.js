@@ -83,7 +83,9 @@ window.PSPDFKit = new function() {
     
     addMethods({
         setOptions: ['options', 'animated'],
+        getOptions: ['names', 'callback'],
         setOption: ['name', 'value', 'animated'],
+        getOption: ['name', 'callback'],
     });
     
     //page scrolling
@@ -92,6 +94,7 @@ window.PSPDFKit = new function() {
         setPage: ['page', 'animated'],
         getPage: ['callback'],
         getScreenPage: ['callback'],
+        getPageCount: ['callback'],
         scrollToNextPage: ['animated'],
         scrollToPreviousPage: ['animated'],
     });

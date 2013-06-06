@@ -64,6 +64,12 @@
                     backgroundColor: 'red'
                 });
                 
+                //get option values
+                PSPDFKit.getOptions(['pageCount', 'backgroundColor'], function(values) {
+                    console.log('pageCount: ' + values.pageCount);
+                    console.log('backgroundColor: ' + values.backgroundColor);
+                });
+                
                 //scroll to page 1 after a 500ms delay
                 setTimeout(function(){
                     PSPDFKit.setPage(1, true);

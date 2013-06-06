@@ -59,9 +59,17 @@ This method saves any changed annotations in the current or last opened document
     
 This method can be used to set multiple document and view controller settings at once. The options set will be applied to the current document (if there is one) as well as all subsequently displayed documents. All currently supported values are listed below under Options. The optional animated argument determines if the property should be animated. Not all property changes can be animated, so if the property does not support animation the animated argument will be ignored.
     
+    getOptionss(names, callback(values));
+
+This method can be used to get several document or view controller options in a single call. The first argument is an array of option names, the second is a callback that will receive an object containing all the specified values by name. All currently supported values are listed below under Options.
+    
     setOption(name, value, [animated]);
     
 This method can be used to set a single document or view controller option. All currently supported values are listed below under Options. The optional animated argument determines if the property should be animated. Not all property changes can be animated, so if the property does not support animation the animated argument will be ignored.
+
+    getOption(name, callback(value));
+    
+This method can be used to get a single document or view controller option. The first argument is the option name, the second is a callback that will receive the value. All currently supported values are listed below under Options.
 
     addEventListener(type, callback(event));
     
@@ -90,6 +98,10 @@ This method returns the current page (0-indexed). The page will be returned as t
     getScreenPage(callback(page));
     
 This method returns the current screen page (see online documentation for details). The page will be returned as the first argument to the callback function provided. The function itself returns no value.
+
+    getPageCount(callback(count));
+    
+This method returns the total page count. The page count will be returned as the first argument to the callback function provided. The function itself returns no value.
 
     scrollToNextPage([animated]);
     
@@ -164,8 +176,11 @@ The following document and controller options can be set using the setOption(s) 
 Document options
 
     title
+    titleLoaded
+    fileURL
     metadata
     UID
+    pageCount
 
 Document annotation options
   

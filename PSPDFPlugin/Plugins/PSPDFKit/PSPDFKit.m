@@ -8,7 +8,6 @@
 
 #import "PSPDFKit.h"
 #import <PSPDFKit/PSPDFKit.h>
-#import <objc/message.h>
 
 
 @interface PSPDFKit () <PSPDFViewControllerDelegate>
@@ -58,33 +57,68 @@
         
         for (NSString *key in newOptions)
         {
-            NSString *setterString = [NSString stringWithFormat:@"set%@%@", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
+            //generate setter prefix
+            NSString *prefix = [NSString stringWithFormat:@"set%@%@", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
             
             //try custom animated setter
-            SEL setter = NSSelectorFromString([setterString stringByAppendingFormat:@"AnimatedFor%@WithJSON:", [object class]]);
-            if ([self respondsToSelector:setter])
+            NSString *setter = [prefix stringByAppendingFormat:@"AnimatedFor%@WithJSON:", [object class]];
+            if (animated && [self respondsToSelector:NSSelectorFromString(setter)])
             {
-                objc_msgSend(self, setter, options[key]);
+                [self setValue:options[key] forKey:[key stringByAppendingFormat:@"AnimatedFor%@WithJSON", [object class]]];
             }
             else
             {
                 //try custom setter
-                setter = NSSelectorFromString([setterString stringByAppendingFormat:@"For%@WithJSON:", [object class]]);
-                if ([self respondsToSelector:setter])
+                setter = [prefix stringByAppendingFormat:@"For%@WithJSON:", [object class]];
+                if ([self respondsToSelector:NSSelectorFromString(setter)])
                 {
-                    objc_msgSend(self, setter, options[key]);
+                    [self setValue:options[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
                 }
                 else
                 {
                     //use KVC
-                    setter = NSSelectorFromString([setterString stringByAppendingString:@":"]);
-                    if ([object respondsToSelector:setter])
+                    setter = [prefix stringByAppendingString:@":"];
+                    if ([object respondsToSelector:NSSelectorFromString(setter)])
                     {
                         [object setValue:options[key] forKey:key];
                     }
                 }
             }
         }
+    }
+}
+
+- (id)optionAsJSON:(NSString *)key
+{
+    id value = nil;
+    NSString *getterString = [key stringByAppendingFormat:@"AsJSON"];
+    if ([self respondsToSelector:NSSelectorFromString(getterString)])
+    {
+        value = [self valueForKey:getterString];
+    }
+    else if ([_pdfDocument respondsToSelector:NSSelectorFromString(key)])
+    {
+        value = [_pdfDocument valueForKey:key];
+    }
+    else if ([_pdfController respondsToSelector:NSSelectorFromString(key)])
+    {
+        value = [_pdfController valueForKey:key];
+    }
+    
+    //determine type
+    if ([value isKindOfClass:[NSNumber class]] ||
+        [value isKindOfClass:[NSDictionary class]] ||
+        [value isKindOfClass:[NSArray class]])
+    {
+        return value;
+    }
+    else if ([value isKindOfClass:[NSSet class]])
+    {
+        return [value allObjects];
+    }
+    else
+    {
+        return [value description];
     }
 }
 
@@ -102,7 +136,7 @@
     return nil;
 }
 
-- (UIColor *)colorWithString:(NSString *)string
+- (NSDictionary *)standardColors
 {
     //TODO: should we support all the standard css color names here?
     static NSDictionary *colors = nil;
@@ -126,12 +160,16 @@
                   [UIColor clearColor], @"clear", // 0.0 white, 0.0 alpha
                   nil];
     }
+    return colors;
+}
 
+- (UIColor *)colorWithString:(NSString *)string
+{
     //convert to lowercase
     string = [string lowercaseString];
 
     //try standard colors first
-    UIColor *color = colors[string];
+    UIColor *color = [self standardColors][string];
     if (color) return color;
     
     //try rgb(a)
@@ -199,6 +237,69 @@
     CGFloat green = ((rgba & 0x00FF0000) >> 16) / 255.0f;
 	CGFloat blue = ((rgba & 0x0000FF00) >> 8) / 255.0f;
 	return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
+}
+
+- (void)getComponents:(CGFloat *)rgba ofColor:(UIColor *)color
+{
+    CGColorSpaceModel model = CGColorSpaceGetModel(CGColorGetColorSpace(color.CGColor));
+    const CGFloat *components = CGColorGetComponents(color.CGColor);
+    switch (model)
+    {
+        case kCGColorSpaceModelMonochrome:
+        {
+            rgba[0] = components[0];
+            rgba[1] = components[0];
+            rgba[2] = components[0];
+            rgba[3] = components[1];
+            break;
+        }
+        case kCGColorSpaceModelRGB:
+        {
+            rgba[0] = components[0];
+            rgba[1] = components[1];
+            rgba[2] = components[2];
+            rgba[3] = components[3];
+            break;
+        }
+        default:
+        {
+            rgba[0] = 0.0f;
+            rgba[1] = 0.0f;
+            rgba[2] = 0.0f;
+            rgba[3] = 1.0f;
+            break;
+        }
+    }
+}
+
+- (NSString *)colorAsString:(UIColor *)color
+{
+    //try standard colors
+    NSInteger index = [[[self standardColors] allValues] indexOfObject:color];
+    if (index != NSNotFound)
+    {
+        return [[[self standardColors] allKeys] objectAtIndex:index];
+    }
+    
+    //get components
+    CGFloat rgba[4];
+    [self getComponents:rgba ofColor:color];
+    
+    //convert to hex
+    if (CGColorGetAlpha(color.CGColor) < 1.0f)
+    {
+        //include alpha component
+        return [NSString stringWithFormat:@"rgba(%i,%i,%i,%g)",
+                (int)round(rgba[0]*255), (int)round(rgba[1]*255),
+                (int)round(rgba[2]*255), rgba[3]];
+    }
+    else
+    {
+        //don't include alpha component
+        return [NSString stringWithFormat:@"rgb(%i,%i,%i)",
+                (int)round(rgba[0]*255), (int)round(rgba[1]*255),
+                (int)round(rgba[2]*255)];
+    }
 }
 
 - (BOOL)sendEventWithJSON:(id)JSON
@@ -314,7 +415,48 @@
     }
 }
 
+- (NSURL *)pdfFileURLWithPath:(NSString *)path
+{
+    if (path)
+    {
+        path = [path stringByExpandingTildeInPath];
+        if (![path isAbsolutePath])
+        {
+            path = [[NSBundle mainBundle] pathForResource:path ofType:nil inDirectory:@"www"];
+        }
+        return [NSURL fileURLWithPath:path];
+    }
+    return nil;
+}
+
+#pragma mark getters
+
+- (NSString *)fileURLAsJSON
+{
+    return _pdfDocument.fileURL.path;
+}
+
+- (NSString *)pageBackgroundColorAsJSON
+{
+    return [self colorAsString:_pdfDocument.backgroundColor];
+}
+
+- (NSString *)tintColorAsJSON
+{
+    return [self colorAsString:_pdfController.tintColor];
+}
+
+- (NSString *)backgroundColorAsJSON
+{
+    return [self colorAsString:_pdfController.backgroundColor];
+}
+
 #pragma mark PSPDFDocument setters
+
+- (void)setFileURLForPSPDFDocumentWithJSON:(NSString *)path
+{
+    _pdfDocument.fileURL = [self pdfFileURLWithPath:path];
+}
 
 - (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
@@ -371,16 +513,9 @@
     
     _pdfDocument = nil;
     if (path)
-    {
-        //convert to absolute path
-        path = [path stringByExpandingTildeInPath];
-        if (![path isAbsolutePath])
-        {
-            path = [[NSBundle mainBundle] pathForResource:path ofType:nil inDirectory:@"www"];
-        }
-             
+    {   
         //configure document
-        NSURL *url = [NSURL fileURLWithPath:path];
+        NSURL *url = [self pdfFileURLWithPath:path];
         _pdfDocument = [PSPDFDocument documentWithURL:url];
         [self setOptions:newOptions forObject:_pdfDocument animated:NO];
     }
@@ -488,6 +623,50 @@
                                 callbackId:command.callbackId];
 }
 
+- (void)getOptions:(CDVInvokedUrlCommand *)command
+{
+    NSMutableDictionary *values = [NSMutableDictionary dictionary];
+    NSArray *names = [command argumentAtIndex:0];
+    for (NSString *name in names)
+    {
+        id value = [self optionAsJSON:name];
+        if (value) values[name] = value;
+    }
+    
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:values] callbackId:command.callbackId];
+}
+
+- (void)getOption:(CDVInvokedUrlCommand *)command
+{
+    NSString *key = [command argumentAtIndex:0];
+    if (key)
+    {
+        id value = [self optionAsJSON:key];
+
+        //determine type
+        if ([value isKindOfClass:[NSNumber class]])
+        {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:[value doubleValue]] callbackId:command.callbackId];
+        }
+        else if ([value isKindOfClass:[NSDictionary class]])
+        {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:value] callbackId:command.callbackId];
+        }
+        else if ([value isKindOfClass:[NSArray class]])
+        {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:value] callbackId:command.callbackId];
+        }
+        else if (value)
+        {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:value] callbackId:command.callbackId];
+        }
+        else
+        {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
+        }
+    }
+}
+
 #pragma mark Paging
 
 - (void)setPage:(CDVInvokedUrlCommand *)command
@@ -515,6 +694,11 @@
 - (void)getScreenPage:(CDVInvokedUrlCommand *)command
 {
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:_pdfController.screenPage] callbackId:command.callbackId];
+}
+
+- (void)getPageCount:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:_pdfDocument.pageCount] callbackId:command.callbackId];
 }
 
 - (void)scrollToNextPage:(CDVInvokedUrlCommand *)command
