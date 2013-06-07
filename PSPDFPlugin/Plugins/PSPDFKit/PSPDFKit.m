@@ -552,7 +552,7 @@
 
 - (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
 {
-    if ([types isKindOfClass:[NSArray class]])
+    if (![types isKindOfClass:[NSArray class]])
     {
         types = @[types];
     }
@@ -561,10 +561,10 @@
     for (NSString *type in types)
     {
         if ([type hasPrefix:@"PSPDFAnnotationType"]) {
-            [qualified addObject:type];
+            [qualified addObject:[type substringFromIndex:19]];
         }
         else if ([type length]) {
-            [qualified addObject:[@"PSPDFAnnotationType" stringByAppendingFormat:@"%@%@", [[type substringToIndex:1] uppercaseString], [type substringFromIndex:1]]];
+            [qualified addObject:[NSString stringWithFormat:@"%@%@", [[type substringToIndex:1] uppercaseString], [type substringFromIndex:1]]];
         }
     }
     

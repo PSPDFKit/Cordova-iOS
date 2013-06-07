@@ -58,6 +58,7 @@
                 // add toolbar buttons
                 PSPDFKit.setLeftBarButtonItems([
                     'close',
+                    'annotation',
                     {title: 'Hello', tintColor: 'blue', action: function() {
                         alert('Hello World');
                     }}
@@ -65,7 +66,8 @@
                 
                 // show pdf with shadows disabled and a red background
                 PSPDFKit.present('pdf/castles.pdf', {
-                    pageTransition : 'curl',
+                    pageTransition: 'curl',
+                    editableAnnotationTypes: ['FreeText', 'Signature']
                     //shadowEnabled: false,
                     //backgroundColor: 'red'
                 });
