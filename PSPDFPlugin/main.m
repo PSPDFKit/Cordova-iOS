@@ -20,8 +20,7 @@
 //  main.m
 //  PSPDFPlugin
 //
-//  Created by ___FULLUSERNAME___ on ___DATE___.
-//  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
+//  Copyright 2013 PSPDFKit GmbH. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

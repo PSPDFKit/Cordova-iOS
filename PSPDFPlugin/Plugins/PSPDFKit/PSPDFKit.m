@@ -1,14 +1,17 @@
 //
 //  PSPDFKit.m
-//  PSPDFPlugin
+//  PSPDFPlugin for Apache Cordova
 //
-//  Created by Nick Lockwood on 04/06/2013.
+//  Copyright 2013 PSPDFKit GmbH. All rights reserved.
 //
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
+//  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
+//  UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+//  This notice may not be removed from this file.
 //
 
 #import "PSPDFKit.h"
 #import <PSPDFKit/PSPDFKit.h>
-
 
 @interface PSPDFKit () <PSPDFViewControllerDelegate>
 
@@ -28,8 +31,7 @@
 {
     //this is an opportunity to provide
     //default options if we so choose
-    if (!_defaultOptions)
-    {
+    if (!_defaultOptions) {
         _defaultOptions = @{};
     }
     return _defaultOptions;
@@ -49,37 +51,31 @@
 
 - (void)setOptions:(NSDictionary *)options forObject:(id)object animated:(BOOL)animated
 {
-    if (object)
-    {
+    if (object) {
+        
         //merge with defaults
         NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
         [newOptions addEntriesFromDictionary:options];
         
-        for (NSString *key in newOptions)
-        {
+        for (NSString *key in newOptions) {
             //generate setter prefix
             NSString *prefix = [NSString stringWithFormat:@"set%@%@", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
             
             //try custom animated setter
             NSString *setter = [prefix stringByAppendingFormat:@"AnimatedFor%@WithJSON:", [object class]];
-            if (animated && [self respondsToSelector:NSSelectorFromString(setter)])
-            {
+            if (animated && [self respondsToSelector:NSSelectorFromString(setter)]) {
                 [self setValue:options[key] forKey:[key stringByAppendingFormat:@"AnimatedFor%@WithJSON", [object class]]];
             }
-            else
-            {
+            else {
                 //try custom setter
                 setter = [prefix stringByAppendingFormat:@"For%@WithJSON:", [object class]];
-                if ([self respondsToSelector:NSSelectorFromString(setter)])
-                {
+                if ([self respondsToSelector:NSSelectorFromString(setter)]) {
                     [self setValue:options[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
                 }
-                else
-                {
+                else {
                     //use KVC
                     setter = [prefix stringByAppendingString:@":"];
-                    if ([object respondsToSelector:NSSelectorFromString(setter)])
-                    {
+                    if ([object respondsToSelector:NSSelectorFromString(setter)]) {
                         [object setValue:options[key] forKey:key];
                     }
                 }
@@ -92,40 +88,33 @@
 {
     id value = nil;
     NSString *getterString = [key stringByAppendingFormat:@"AsJSON"];
-    if ([self respondsToSelector:NSSelectorFromString(getterString)])
-    {
+    if ([self respondsToSelector:NSSelectorFromString(getterString)]) {
         value = [self valueForKey:getterString];
     }
-    else if ([_pdfDocument respondsToSelector:NSSelectorFromString(key)])
-    {
+    else if ([_pdfDocument respondsToSelector:NSSelectorFromString(key)]) {
         value = [_pdfDocument valueForKey:key];
     }
-    else if ([_pdfController respondsToSelector:NSSelectorFromString(key)])
-    {
+    else if ([_pdfController respondsToSelector:NSSelectorFromString(key)]) {
         value = [_pdfController valueForKey:key];
     }
     
     //determine type
     if ([value isKindOfClass:[NSNumber class]] ||
         [value isKindOfClass:[NSDictionary class]] ||
-        [value isKindOfClass:[NSArray class]])
-    {
+        [value isKindOfClass:[NSArray class]]) {
         return value;
     }
-    else if ([value isKindOfClass:[NSSet class]])
-    {
+    else if ([value isKindOfClass:[NSSet class]]) {
         return [value allObjects];
     }
-    else
-    {
+    else {
         return [value description];
     }
 }
 
 - (NSDictionary *)dictionaryWithError:(NSError *)error
 {
-    if (error)
-    {
+    if (error) {
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         dict[@"code"] = @(error.code);
         if (error.domain) dict[@"domain"] = error.domain;
@@ -140,8 +129,7 @@
 {
     //TODO: should we support all the standard css color names here?
     static NSDictionary *colors = nil;
-    if (colors == nil)
-    {
+    if (colors == nil) {
         colors = [[NSDictionary alloc] initWithObjectsAndKeys:
                   [UIColor blackColor], @"black", // 0.0 white
                   [UIColor darkGrayColor], @"darkgray", // 0.333 white
@@ -173,25 +161,20 @@
     if (color) return color;
     
     //try rgb(a)
-    if ([string hasPrefix:@"rgb"])
-    {
+    if ([string hasPrefix:@"rgb"]) {
         string = [string substringToIndex:[string length] - 1];
-        if ([string hasPrefix:@"rgb("])
-        {
+        if ([string hasPrefix:@"rgb("]) {
             string = [string substringFromIndex:4];
         }
-        else if ([string hasPrefix:@"rgba("])
-        {
+        else if ([string hasPrefix:@"rgba("]) {
             string = [string substringFromIndex:5];
         }
         CGFloat alpha = 1.0f;
         NSArray *components = [string componentsSeparatedByString:@","];
-        if ([components count] > 3)
-        {
+        if ([components count] > 3) {
             alpha = [[components[3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] floatValue];
         }
-        if ([components count] > 2)
-        {
+        if ([components count] > 2) {
             NSString *red = [components[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
             NSString *green = [components[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
             NSString *blue = [components[2] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -276,8 +259,7 @@
 {
     //try standard colors
     NSInteger index = [[[self standardColors] allValues] indexOfObject:color];
-    if (index != NSNotFound)
-    {
+    if (index != NSNotFound) {
         return [[[self standardColors] allKeys] objectAtIndex:index];
     }
     
@@ -286,15 +268,13 @@
     [self getComponents:rgba ofColor:color];
     
     //convert to hex
-    if (CGColorGetAlpha(color.CGColor) < 1.0f)
-    {
+    if (CGColorGetAlpha(color.CGColor) < 1.0f) {
         //include alpha component
         return [NSString stringWithFormat:@"rgba(%i,%i,%i,%g)",
                 (int)round(rgba[0]*255), (int)round(rgba[1]*255),
                 (int)round(rgba[2]*255), rgba[3]];
     }
-    else
-    {
+    else {
         //don't include alpha component
         return [NSString stringWithFormat:@"rgb(%i,%i,%i)",
                 (int)round(rgba[0]*255), (int)round(rgba[1]*255),
@@ -304,8 +284,7 @@
 
 - (BOOL)sendEventWithJSON:(id)JSON
 {
-    if ([JSON isKindOfClass:[NSDictionary class]])
-    {
+    if ([JSON isKindOfClass:[NSDictionary class]]) {
         JSON = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:JSON options:0 error:NULL] encoding:NSUTF8StringEncoding];
     }
     NSString *script = [NSString stringWithFormat:@"PSPDFKit.dispatchEvent(%@)", JSON];
@@ -323,8 +302,7 @@
 - (PSPDFBarButtonItem *)standardBarButtonWithName:(NSString *)name
 {
     NSString *selectorString = [name stringByAppendingString:@"ButtonItem"];
-    if ([_pdfController respondsToSelector:NSSelectorFromString(selectorString)])
-    {
+    if ([_pdfController respondsToSelector:NSSelectorFromString(selectorString)]) {
         return [_pdfController valueForKey:selectorString];
     }
     return nil;
@@ -332,24 +310,21 @@
 
 - (UIBarButtonItem *)barButtonItemWithJSON:(id)JSON
 {
-    if ([JSON isKindOfClass:[NSString class]])
-    {
+    if ([JSON isKindOfClass:[NSString class]]) {
         return [self standardBarButtonWithName:JSON];
     }
-    else if ([JSON isKindOfClass:[NSDictionary class]])
-    {
+    else if ([JSON isKindOfClass:[NSDictionary class]]) {
+        
         UIImage *image = nil;
         NSString *imagePath = JSON[@"image"];
-        if (imagePath)
-        {
+        if (imagePath) {
             imagePath = [@"www" stringByAppendingPathComponent:imagePath];
             image = [UIImage imageNamed:imagePath];
         }
         
         UIImage *landscapeImage = image;
         imagePath = JSON[@"landscapeImage"];
-        if (imagePath)
-        {
+        if (imagePath) {
             imagePath = [@"www" stringByAppendingPathComponent:imagePath];
             landscapeImage = [UIImage imageNamed:imagePath] ?: landscapeImage;
         }
@@ -362,12 +337,10 @@
                                                withDefault:UIBarButtonItemStyleBordered];
         
         UIBarButtonItem *item = nil;
-        if (image)
-        {
+        if (image) {
             item = [[UIBarButtonItem alloc] initWithImage:image landscapeImagePhone:landscapeImage style:style target:self action:@selector(customBarButtonItemAction:)];
         }
-        else
-        {
+        else {
             item = [[PSPDFBarButtonItem alloc] initWithTitle:JSON[@"title"] style:style target:self action:@selector(customBarButtonItemAction:)];
             [(PSPDFBarButtonItem *)item setPdfController:_pdfController];
         }
@@ -381,16 +354,13 @@
 - (NSArray *)barButtonItemsWithArray:(NSArray *)array
 {
     NSMutableArray *items = [NSMutableArray array];
-    for (id JSON in array)
-    {
+    for (id JSON in array) {
         UIBarButtonItem *item = [self barButtonItemWithJSON:JSON];
-        if (item)
-        {
+        if (item) {
             [items addObject:item];
         }
-        else
-        {
-            NSLog(@"Unrecognised toolbar button name or format");
+        else {
+            NSLog(@"Unrecognised toolbar button name or format: %@", JSON);
         }
     }
     return items;
@@ -399,17 +369,14 @@
 - (void)customBarButtonItemAction:(PSPDFBarButtonItem *)sender
 {
     NSInteger index = [_pdfController.leftBarButtonItems indexOfObject:sender];
-    if (index == NSNotFound)
-    {
+    if (index == NSNotFound) {
         index = [_pdfController.rightBarButtonItems indexOfObject:sender];
-        if (index != NSNotFound)
-        {
+        if (index != NSNotFound) {
             NSString *script = [NSString stringWithFormat:@"PSPDFKit.dispatchRightBarButtonAction(%i)", index];
             [self.webView stringByEvaluatingJavaScriptFromString:script];
         }
     }
-    else
-    {
+    else {
         NSString *script = [NSString stringWithFormat:@"PSPDFKit.dispatchLeftBarButtonAction(%i)", index];
         [self.webView stringByEvaluatingJavaScriptFromString:script];
     }
@@ -417,11 +384,9 @@
 
 - (NSURL *)pdfFileURLWithPath:(NSString *)path
 {
-    if (path)
-    {
+    if (path) {
         path = [path stringByExpandingTildeInPath];
-        if (![path isAbsolutePath])
-        {
+        if (![path isAbsolutePath]) {
             path = [[NSBundle mainBundle] pathForResource:path ofType:nil inDirectory:@"www"];
         }
         return [NSURL fileURLWithPath:path];
@@ -502,27 +467,23 @@
 
 #pragma mark Document methods
 
-- (void)present:(CDVInvokedUrlCommand *)command
-{
+- (void)present:(CDVInvokedUrlCommand *)command {
     NSString *path = [command argumentAtIndex:0];
     NSDictionary *options = [command argumentAtIndex:1] ?: [command argumentAtIndex:2];
     
-    //merge options with defaults
+    // merge options with defaults
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
     [newOptions addEntriesFromDictionary:options];
     
-    _pdfDocument = nil;
-    if (path)
-    {   
+    if (path) {   
         //configure document
         NSURL *url = [self pdfFileURLWithPath:path];
         _pdfDocument = [PSPDFDocument documentWithURL:url];
         [self setOptions:newOptions forObject:_pdfDocument animated:NO];
     }
         
-    //configure controller
-    if (!_pdfController)
-    {
+    // configure controller
+    if (!_pdfController) {
         _pdfController = [[PSPDFViewController alloc] init];
         _pdfController.delegate = self;
         _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
@@ -531,16 +492,14 @@
     _pdfController.document = _pdfDocument;
     
     //present controller
-    if (!_navigationController.presentingViewController)
-    {
+    if (!_navigationController.presentingViewController) {
         [self.viewController presentViewController:_navigationController animated:YES completion:^{
             
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                         callbackId:command.callbackId];
         }];
     }
-    else
-    {
+    else {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                     callbackId:command.callbackId];
     }
@@ -568,13 +527,11 @@
     NSString *query = [command argumentAtIndex:0];
     BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
     
-    if (query)
-    {
+    if (query) {
         [_pdfController searchForString:query animated:animated];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
-    else
-    {
+    else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"'query' argument was null"];
     }
@@ -608,13 +565,11 @@
     id value = [command argumentAtIndex:1];
     BOOL animated = [[command argumentAtIndex:2 withDefault:@NO] boolValue];
     
-    if (key && value)
-    {
+    if (key && value) {
         [self setOptionsWithDictionary:@{key: value} animated:animated];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
-    else
-    {
+    else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                          messageAsString:@"'key' and/or 'value' argument was null"];
     }
@@ -627,8 +582,7 @@
 {
     NSMutableDictionary *values = [NSMutableDictionary dictionary];
     NSArray *names = [command argumentAtIndex:0];
-    for (NSString *name in names)
-    {
+    for (NSString *name in names) {
         id value = [self optionAsJSON:name];
         if (value) values[name] = value;
     }
@@ -644,24 +598,19 @@
         id value = [self optionAsJSON:key];
 
         //determine type
-        if ([value isKindOfClass:[NSNumber class]])
-        {
+        if ([value isKindOfClass:[NSNumber class]]) {
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:[value doubleValue]] callbackId:command.callbackId];
         }
-        else if ([value isKindOfClass:[NSDictionary class]])
-        {
+        else if ([value isKindOfClass:[NSDictionary class]]) {
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:value] callbackId:command.callbackId];
         }
-        else if ([value isKindOfClass:[NSArray class]])
-        {
+        else if ([value isKindOfClass:[NSArray class]]) {
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:value] callbackId:command.callbackId];
         }
-        else if (value)
-        {
+        else if (value) {
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:value] callbackId:command.callbackId];
         }
-        else
-        {
+        else {
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
         }
     }
@@ -674,14 +623,12 @@
     NSInteger page = [[command argumentAtIndex:0 withDefault:@(NSNotFound)] integerValue];
     BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
     
-    if (page != NSNotFound)
-    {
+    if (page != NSNotFound) {
         [_pdfController setPage:page animated:animated];
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                     callbackId:command.callbackId];
     }
-    else
-    {
+    else {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"'page' argument was null"] callbackId:command.callbackId];
     }
 }
@@ -817,14 +764,18 @@
     return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLongPressOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
 }
 
+static NSString *PSPDFStringFromCGRect(CGRect rect) {
+    return [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
+}
+
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
 {
-    return [self sendEventWithJSON:@{@"type": @"shouldSelectText", @"text": text, @"rect": [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height]}];
+    return [self sendEventWithJSON:@{@"type": @"shouldSelectText", @"text": text, @"rect": PSPDFStringFromCGRect(rect)}];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:@{@"type": @"didSelectText", @"text": text, @"rect": [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height]}];
+    [self sendEventWithJSON:@{@"type": @"didSelectText", @"text": text, @"rect": PSPDFStringFromCGRect(rect)}];
 }
 
 //- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forSelectedText:(NSString *)selectedText inRect:(CGRect)textRect onPageView:(PSPDFPageView *)pageView
