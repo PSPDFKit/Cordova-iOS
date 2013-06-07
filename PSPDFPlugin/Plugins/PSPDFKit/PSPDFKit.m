@@ -257,29 +257,12 @@
 
 - (NSString *)colorAsString:(UIColor *)color
 {
-    //try standard colors
-    NSInteger index = [[[self standardColors] allValues] indexOfObject:color];
-    if (index != NSNotFound) {
-        return [[[self standardColors] allKeys] objectAtIndex:index];
-    }
-    
     //get components
     CGFloat rgba[4];
     [self getComponents:rgba ofColor:color];
-    
-    //convert to hex
-    if (CGColorGetAlpha(color.CGColor) < 1.0f) {
-        //include alpha component
-        return [NSString stringWithFormat:@"rgba(%i,%i,%i,%g)",
-                (int)round(rgba[0]*255), (int)round(rgba[1]*255),
-                (int)round(rgba[2]*255), rgba[3]];
-    }
-    else {
-        //don't include alpha component
-        return [NSString stringWithFormat:@"rgb(%i,%i,%i)",
-                (int)round(rgba[0]*255), (int)round(rgba[1]*255),
-                (int)round(rgba[2]*255)];
-    }
+    return [NSString stringWithFormat:@"rgba(%i,%i,%i,%g)",
+            (int)round(rgba[0]*255), (int)round(rgba[1]*255),
+            (int)round(rgba[2]*255), rgba[3]];
 }
 
 - (BOOL)sendEventWithJSON:(id)JSON
@@ -292,11 +275,16 @@
     return [result length]? [result boolValue]: YES;
 }
 
-- (NSInteger)enumValueForKey:(NSString *)key inDictionary:(NSDictionary *)dict withDefault:(int)defaultValue
+- (BOOL)isNumeric:(id)value
 {
-    NSNumber *number = dict[key];
-    if (number) return [number integerValue];
-    return defaultValue;
+    if ([value isKindOfClass:[NSNumber class]]) return YES;
+    static NSNumberFormatter *formatter = nil;
+    if (formatter == nil)
+    {
+        formatter = [[NSNumberFormatter alloc] init];
+        formatter.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+    }
+    return [formatter numberFromString:value] != nil;
 }
 
 - (PSPDFBarButtonItem *)standardBarButtonWithName:(NSString *)name
@@ -330,10 +318,7 @@
         }
         
         UIBarButtonItemStyle style = [self enumValueForKey:JSON[@"style"]
-                                              inDictionary:@{
-                                      @"bordered": @(UIBarButtonItemStyleBordered),
-                                      @"plain": @(UIBarButtonItemStylePlain),
-                                      @"done": @(UIBarButtonItemStyleDone)}
+                                                    ofType:@"UIBarButtonItemStyle"
                                                withDefault:UIBarButtonItemStyleBordered];
         
         UIBarButtonItem *item = nil;
@@ -394,33 +379,221 @@
     return nil;
 }
 
-#pragma mark getters
+- (NSInteger)enumValueForKey:(NSString *)key ofType:(NSString *)type withDefault:(int)defaultValue
+{
+    NSNumber *number = [self enumValuesOfType:type][key];
+    if (number) return [number integerValue];
+    if ([self isNumeric:key]) return [key integerValue];
+    return defaultValue;
+}
+
+- (NSString *)enumKeyForValue:(int)value ofType:(NSString *)type
+{
+    NSDictionary *dict = [self enumValuesOfType:type];
+    NSInteger index = [[dict allValues] indexOfObject:@(value)];
+    if (index != NSNotFound) {
+        return [[dict allKeys] objectAtIndex:index];
+    }
+    return nil;
+}
+
+- (NSInteger)optionsValueForKeys:(NSArray *)keys ofType:(NSString *)type withDefault:(int)defaultValue
+{
+    if (![keys isKindOfClass:[NSArray class]])
+    {
+        keys = @[keys];
+    }
+    if ([keys count] == 0)
+    {
+        return defaultValue;
+    }
+    NSInteger value = 0;
+    for (id key in keys)
+    {
+        NSNumber *number = [self enumValuesOfType:type][key];
+        if (number) value += [number integerValue];
+        else if ([self isNumeric:key]) value += [key integerValue];
+    }
+    return value;
+}
+
+- (NSArray *)optionKeysForValue:(int)value ofType:(NSString *)type
+{
+    NSDictionary *dict = [self enumValuesOfType:type];
+    NSMutableArray *keys = [NSMutableArray array];
+    for (NSString *key in dict)
+    {
+        NSNumber *number = dict[key];
+        if (number  && (value & [number integerValue]))
+        {
+            [keys addObject:key];
+        }
+    }
+    return keys;
+}
+
+#pragma mark Enums and options
+
+- (NSDictionary *)enumValuesOfType:(NSString *)type
+{
+    static NSDictionary *enumsByType = nil;
+    if (!enumsByType) {
+        enumsByType = @{
+                        
+        @"UIBarButtonItemStyle":
+            
+  @{@"bordered": @(UIBarButtonItemStyleBordered),
+    @"plain": @(UIBarButtonItemStylePlain),
+    @"done": @(UIBarButtonItemStyleDone)},
+        
+        @"PSPDFAnnotationSaveMode":
+  
+  @{@"disabled": @(PSPDFAnnotationSaveModeDisabled),
+    @"externalFile": @(PSPDFAnnotationSaveModeExternalFile),
+    @"embedded": @(PSPDFAnnotationSaveModeEmbedded),
+    @"embeddedWithExternalFileAsFallback": @(PSPDFAnnotationSaveModeEmbeddedWithExternalFileAsFallback)},
+        
+        @"PSPDFTextCheckingType":
+        
+  @{@"link": @(PSPDFTextCheckingTypeLink),
+    @"phoneNumber": @(PSPDFTextCheckingTypePhoneNumber),
+    @"all": @(PSPDFTextCheckingTypeAll)},
+        
+        @"PSPDFDocumentMenuAction":
+  
+  @{@"search": @(PSPDFDocumentMenuActionSearch),
+    @"define": @(PSPDFDocumentMenuActionDefine),
+    @"wikipediaAsFallback": @(PSPDFDocumentMenuActionWikipediaAsFallback),
+    @"all": @(PSPDFDocumentMenuActionAll)},
+    
+        @"PSPDFPageTransition":
+
+  @{@"scrollPerPage": @(PSPDFPageScrollPerPageTransition),
+    @"scrollContinuous": @(PSPDFPageScrollContinuousTransition),
+    @"curl": @(PSPDFPageCurlTransition)},
+        
+        @"PSPDFViewMode":
+
+  @{@"document": @(PSPDFViewModeDocument),
+    @"thumbnails": @(PSPDFViewModeThumbnails)},
+        
+        @"PSPDFPageMode":
+            
+  @{@"single": @(PSPDFPageModeSingle),
+    @"double": @(PSPDFPageModeDouble),
+    @"automatic": @(PSPDFPageModeAutomatic)},
+        
+        @"PSPDFScrollDirection":
+            
+  @{@"single": @(PSPDFScrollDirectionHorizontal),
+    @"double": @(PSPDFScrollDirectionVertical)},
+        
+        @"PSPDFLinkAction":
+    
+  @{@"none": @(PSPDFLinkActionNone),
+    @"alertView": @(PSPDFLinkActionAlertView),
+    @"openSafari": @(PSPDFLinkActionOpenSafari),
+    @"inlineBrowser": @(PSPDFLinkActionInlineBrowser)},
+        
+        @"PSPDFHUDViewMode":
+            
+  @{@"always": @(PSPDFHUDViewAlways),
+    @"automatic": @(PSPDFHUDViewAutomatic),
+    @"automaticNoFirstLastPage": @(PSPDFHUDViewAutomaticNoFirstLastPage),
+    @"never": @(PSPDFHUDViewNever)},
+        
+        @"PSPDFHUDViewAnimation":
+            
+  @{@"none": @(PSPDFHUDViewAnimationNone),
+    @"fade": @(PSPDFHUDViewAnimationFade),
+    @"slide": @(PSPDFHUDViewAnimationSlide)},
+        
+        @"PSPDFThumbnailBarMode":
+            
+  @{@"none": @(PSPDFThumbnailBarModeNone),
+    @"scrobbleBar": @(PSPDFThumbnailBarModeScrobbleBar),
+    @"scrollable": @(PSPDFThumbnailBarModeScrollable)}
+        
+        };
+    }
+    return enumsByType[type];
+}
+
+///// Status bar style. (old status will be restored regardless of the style chosen)
+//typedef NS_ENUM(NSInteger, PSPDFStatusBarStyleSetting) {
+//    PSPDFStatusBarInherit,             // Don't change status bar style, but show/hide statusbar on HUD events.
+//    PSPDFStatusBarSmartBlack,          // UIStatusBarStyleBlackOpaque on iPad, UIStatusBarStyleBlackTranslucent on iPhone.
+//    PSPDFStatusBarSmartBlackHideOnIpad,// Similar to PSPDFStatusBarSmartBlack, but also hides statusBar on iPad.
+//    PSPDFStatusBarBlackOpaque,         // Opaque Black everywhere.
+//    PSPDFStatusBarDefault,             // Default statusbar (white on iPhone/black on iPad).
+//    PSPDFStatusBarDisable,             // Never show status bar.
+//};
+
+//// Customize how a single page should be displayed.
+//typedef NS_ENUM(NSInteger, PSPDFPageRenderingMode) {
+//    PSPDFPageRenderingModeThumbnailThenFullPage, // Load cached page async.
+//    PSPDFPageRenderingModeFullPage,              // Load cached page async, no upscaled thumb.
+//    PSPDFPageRenderingModeFullPageBlocking,      // Load cached page directly.
+//    PSPDFPageRenderingModeThumbnailThenRender,   // Don't use cached page but thumb.
+//    PSPDFPageRenderingModeRender                 // Don't use cached page nor thumb.
+//};
+
+#pragma mark PSPDFDocument setters and getters
+
+- (void)setFileURLForPSPDFDocumentWithJSON:(NSString *)path
+{
+    _pdfDocument.fileURL = [self pdfFileURLWithPath:path];
+}
 
 - (NSString *)fileURLAsJSON
 {
     return _pdfDocument.fileURL.path;
 }
 
-- (NSString *)pageBackgroundColorAsJSON
+- (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
 {
-    return [self colorAsString:_pdfDocument.backgroundColor];
+    if ([types isKindOfClass:[NSArray class]])
+    {
+        types = @[types];
+    }
+    
+    NSMutableOrderedSet *qualified = [[NSMutableOrderedSet alloc] init];
+    for (NSString *type in types)
+    {
+        if ([type hasPrefix:@"PSPDFAnnotationType"]) {
+            [qualified addObject:type];
+        }
+        else if ([type length]) {
+            [qualified addObject:[@"PSPDFAnnotationType" stringByAppendingFormat:@"%@%@", [[type substringToIndex:1] uppercaseString], [type substringFromIndex:1]]];
+        }
+    }
+    
+    _pdfDocument.editableAnnotationTypes = qualified;
 }
 
-- (NSString *)tintColorAsJSON
+- (NSArray *)editableAnnotationTypesAsJSON
 {
-    return [self colorAsString:_pdfController.tintColor];
+    return [_pdfDocument.editableAnnotationTypes array];
 }
 
-- (NSString *)backgroundColorAsJSON
+- (void)setAnnotationSaveModeForPSPDFDocumentWithJSON:(NSString *)option
 {
-    return [self colorAsString:_pdfController.backgroundColor];
+    _pdfDocument.annotationSaveMode = [self enumValueForKey:option ofType:@"PSPDFAnnotationSaveMode" withDefault:PSPDFAnnotationSaveModeEmbeddedWithExternalFileAsFallback];
 }
 
-#pragma mark PSPDFDocument setters
-
-- (void)setFileURLForPSPDFDocumentWithJSON:(NSString *)path
+- (NSString *)annotationSaveModeAsJSON
 {
-    _pdfDocument.fileURL = [self pdfFileURLWithPath:path];
+    return [self enumKeyForValue:_pdfDocument.annotationSaveMode ofType:@"PSPDFAnnotationSaveMode"];
+}
+
+- (void)setAllowedMenuActionsForPSPDFDocumentWithJSON:(NSArray *)options
+{
+    _pdfDocument.allowedMenuActions = [self optionsValueForKeys:options ofType:@"PSPDFDocumentMenuAction" withDefault:PSPDFDocumentMenuActionAll];
+}
+
+- (NSArray *)allowedMenuActionsAsJSON
+{
+    return [self optionKeysForValue:_pdfDocument.allowedMenuActions ofType:@"PSPDFDocumentMenuAction"];
 }
 
 - (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
@@ -428,12 +601,102 @@
     _pdfDocument.backgroundColor = [self colorWithString:color];
 }
 
+- (NSString *)pageBackgroundColorAsJSON
+{
+    return [self colorAsString:_pdfDocument.backgroundColor];
+}
+
 - (void)setBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
     //not supported, use pageBackgroundColor instead
 }
 
-#pragma mark PSPDFViewController setters
+#pragma mark PSPDFViewController setters and getters
+
+- (void)setPageTransitionForPSPDFViewControllerWithJSON:(NSString *)transition
+{
+    _pdfController.pageTransition = [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageScrollPerPageTransition];
+}
+
+- (NSString *)pageTransitionAsJSON
+{
+    return [self enumKeyForValue:_pdfController.pageTransition ofType:@"PSPDFPageTransition"];
+}
+
+- (void)setViewModeAnimatedForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    [_pdfController setViewMode:[self enumValueForKey:mode ofType:@"PSPDFViewMode" withDefault:PSPDFViewModeDocument] animated:YES];
+}
+
+- (void)setViewModeForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    _pdfController.viewMode = [self enumValueForKey:mode ofType:@"PSPDFViewMode" withDefault:PSPDFViewModeDocument];
+}
+
+- (NSString *)viewModeAsJSON
+{
+    return [self enumKeyForValue:_pdfController.viewMode ofType:@"PSPDFViewMode"];
+}
+
+- (void)setThumbnailBarModeForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    _pdfController.thumbnailBarMode = [self enumValueForKey:mode ofType:@"PSPDFThumbnailBarMode" withDefault:PSPDFThumbnailBarModeScrobbleBar];
+}
+
+- (NSString *)thumbnailBarMode
+{
+    return [self enumKeyForValue:_pdfController.thumbnailBarMode ofType:@"PSPDFThumbnailBarMode"];
+}
+
+- (void)setPageModeForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    _pdfController.pageMode = [self enumValueForKey:mode ofType:@"PSPDFPageMode" withDefault:PSPDFPageModeAutomatic];
+}
+
+- (NSString *)pageModeAsJSON
+{
+    return [self enumKeyForValue:_pdfController.pageMode ofType:@"PSPDFPageMode"];
+}
+
+- (void)setScrollDirectionForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    _pdfController.scrollDirection = [self enumValueForKey:mode ofType:@"PSPDFScrollDirection" withDefault:PSPDFScrollDirectionHorizontal];
+}
+
+- (NSString *)scrollDirectionAsJSON
+{
+    return [self enumKeyForValue:_pdfController.scrollDirection ofType:@"PSPDFScrollDirection"];
+}
+
+- (void)setLinkActionForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    _pdfController.linkAction = [self enumValueForKey:mode ofType:@"PSPDFLinkAction" withDefault:PSPDFLinkActionInlineBrowser];
+}
+
+- (NSString *)linkActionAsJSON
+{
+    return [self enumKeyForValue:_pdfController.linkAction ofType:@"PSPDFLinkAction"];
+}
+
+- (void)setHUDViewModeForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    _pdfController.HUDViewMode = [self enumValueForKey:mode ofType:@"PSPDFHUDViewMode" withDefault:PSPDFHUDViewAutomatic];
+}
+
+- (NSString *)HUDViewModeAsJSON
+{
+    return [self enumKeyForValue:_pdfController.HUDViewMode ofType:@"PSPDFHUDViewMode"];
+}
+
+- (void)setHUDViewAnimationForPSPDFViewControllerWithJSON:(NSString *)mode
+{
+    _pdfController.HUDViewAnimation = [self enumValueForKey:mode ofType:@"HUDViewAnimation" withDefault:PSPDFHUDViewAnimationFade];
+}
+
+- (NSString *)HUDViewAnimationAsJSON
+{
+    return [self enumKeyForValue:_pdfController.HUDViewAnimation ofType:@"PSPDFHUDViewAnimation"];
+}
 
 - (void)setHUDVisibleAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)visible
 {
@@ -460,9 +723,19 @@
     _pdfController.tintColor = [self colorWithString:color];
 }
 
+- (NSString *)tintColorAsJSON
+{
+    return [self colorAsString:_pdfController.tintColor];
+}
+
 - (void)setBackgroundColorForPSPDFViewControllerWithJSON:(NSString *)color
 {
     _pdfController.backgroundColor = [self colorWithString:color];
+}
+
+- (NSString *)backgroundColorAsJSON
+{
+    return [self colorAsString:_pdfController.backgroundColor];
 }
 
 #pragma mark Document methods

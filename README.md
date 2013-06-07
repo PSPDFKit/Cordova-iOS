@@ -6,9 +6,10 @@ Usage
 
 The plugin is accessed via the PSPDFKit singleton. Here are some example calls:
 
-    //show pdf with shadows disabled and a red background
+    //show pdf with in double page mode, with curl transition red background
     PSPDFKit.present('pdf/castles.pdf', {
-        shadowEnabled: false,
+        pageTransition : 'curl',
+        pageMode: 'double',
         backgroundColor: 'red'
     });
     
@@ -181,9 +182,12 @@ Document options
     metadata
     UID
     pageCount
+    allowedMenuActions (search, define, wikipediaAsFallback, all)
 
 Document annotation options
   
+    editableAnnotationTypes (see online documentation)
+    annotationSaveMode (disabled, externalFile, embedded, embeddedWithExternalFileAsFallback)
     annotationsEnabled
     canEmbedAnnotations
     defaultAnnotationUsername
@@ -208,6 +212,12 @@ Page appearance
 
 PDF Controller options
     
+    pageTransition (scrollPerPage, scrollContinuous, curl)
+    viewMode (document, thumbnails)
+    pageMode (single, double, automatic)
+    scrollDirection (horizontal, vertical)
+    linkAction (none, alertView, openSafari, inlineBrowser)
+    thumbnailBarMode (none, scrobbleBar, scrollable)
     smartZoomEnabled
     scrollingEnabled
     viewLockEnabled
@@ -225,6 +235,8 @@ PDF Controller options
 HUD options
     
     HUDVisible
+    HUDViewMode (always, automatic, automaticNoFirstLastPage, never)
+    HUDViewAnimation (none, fade, slide)
     toolbarEnabled
     allowToolbarTitleChange
     pageLabelEnabled
