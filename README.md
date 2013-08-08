@@ -267,6 +267,7 @@ Appearance options
     createAnnotationMenuEnabled
     showAnnotationMenuAfterCreation
     
+    
 Events
 -------------
 
@@ -299,7 +300,7 @@ The following events are supported by the PSPDFKit class
     didHideHUD
 
 
-    License
+License
 ------------
 
 Copyright 2011-2013 PSPDFKit GmbH. All rights reserved.

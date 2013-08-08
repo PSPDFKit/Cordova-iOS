@@ -23,10 +23,10 @@ window.PSPDFKit = new function() {
                 self[methodName] = function() {
                     var callback = null;
                     var argArray = [];
-                    for (var index in arguments) {
-                        argArray.push(arguments[index]);
-                        if (methodArgs[index] == 'callback') {
-                            callback = arguments[index];
+                    for (var i = 0; i < arguments.length; i++) {
+                        argArray.push(arguments[i]);
+                        if (methodArgs[i] == 'callback') {
+                            callback = arguments[i];
                         }
                     }
                     cordova.exec(function (result) {
