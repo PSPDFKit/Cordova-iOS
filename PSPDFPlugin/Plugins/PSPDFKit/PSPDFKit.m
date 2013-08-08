@@ -372,7 +372,7 @@
     if (path) {
         path = [path stringByExpandingTildeInPath];
         if (![path isAbsolutePath]) {
-            path = [[NSBundle mainBundle] pathForResource:path ofType:nil inDirectory:@"www"];
+            path = [[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"www"] stringByAppendingPathComponent:path];
         }
         return [NSURL fileURLWithPath:path];
     }
@@ -381,7 +381,7 @@
 
 - (NSInteger)enumValueForKey:(NSString *)key ofType:(NSString *)type withDefault:(int)defaultValue
 {
-    NSNumber *number = [self enumValuesOfType:type][key];
+    NSNumber *number = key? [self enumValuesOfType:type][key]: nil;
     if (number) return [number integerValue];
     if ([self isNumeric:key]) return [key integerValue];
     return defaultValue;
