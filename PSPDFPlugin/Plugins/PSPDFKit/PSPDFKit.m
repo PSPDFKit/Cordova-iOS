@@ -436,13 +436,7 @@
 
 - (NSDictionary *)enumValuesOfType:(NSString *)type
 {
-    //FIXME: this method crashes the second time a
-    //PDF is opened if the dictionary below is static
-    //Somehow the enumsByType dictionary is released
-    //and becomes a dangling pointer, which really
-    //shouldn't be possible if we are using ARC
-    NSDictionary *enumsByType = nil;
-//    static NSDictionary *enumsByType = nil;
+    static NSDictionary *enumsByType = nil;
     if (!enumsByType) {
         enumsByType = @{
                         
@@ -521,6 +515,13 @@
     @"scrollable": @(PSPDFThumbnailBarModeScrollable)}
         
         };
+        
+        //Note: this method crashes the second time a
+        //PDF is opened if the dictionary is not copied.
+        //Somehow the enumsByType dictionary is released
+        //and becomes a dangling pointer, which really
+        //shouldn't be possible since we are using ARC
+        enumsByType = [enumsByType copy];
     }
     return enumsByType[type];
 }
