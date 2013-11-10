@@ -87,8 +87,8 @@ window.PSPDFKit = new function() {
         present: ['path', 'callback', 'options'],
         dismiss: ['callback'],
         reload: [],
-        search: ['query', 'animated'],
-        saveChangedAnnotations: ['callback'],
+        search: ['query', 'animated', 'headless'],
+        saveAnnotations: ['callback'],
     });
     
     //configuration

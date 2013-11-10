@@ -12,6 +12,13 @@
 
 #import "PSPDFKitGlobal.h"
 
+@class PSPDFCMap, PSPDFFontFileDescriptor;
+
+typedef NS_ENUM(NSUInteger, PSPDFFontInfoType) {
+    PSPDFFontInfoTypeSimple    = 1 << (1-1),
+    PSPDFFontInfoTypeComposite = 1 << (2-1)
+};
+
 /// Encapsulates formatting and encoding data of a  PDF font.
 /// This is a class cluster and part of the text parser engine.
 @interface PSPDFFontInfo : NSObject <NSCopying, NSCoding> {
@@ -20,10 +27,14 @@
     CGFloat _descent;
     NSArray *_encodingArray;
     NSUInteger _encodingArrayCount;
-    NSDictionary *_toUnicodeMap;
+    PSPDFCMap *_toUnicodeMap;
+    PSPDFCMap *_fontCMap;
+    PSPDFCMap *_ucsCMap;
+    PSPDFFontFileDescriptor *_fontFileDescriptor;
     CGFloat *_widths;
+    CGFloat _defaultWidth;
     size_t _widthSize;
-    BOOL _isMultiByteFont;
+    PSPDFFontInfoType _type;
 }
 
 /// The font name as defined in the PDF dictionary.
@@ -41,13 +52,20 @@
 @property (nonatomic, assign, readonly) CGFloat descent;
 
 /// A font can have either an encodingArray or a unicode map.
-@property (nonatomic, copy, readonly) NSArray *encodingArray;
+@property (nonatomic, strong, readonly) NSArray *encodingArray;
 
-/// Specialized dictionary that uses raw values as key pointers (use CFDictionaryGetValue)
-@property (nonatomic, copy, readonly) NSDictionary *toUnicodeMap;
+/// CMap that is optionally provided for converting text strings to unicode
+@property (nonatomic, strong, readonly) PSPDFCMap *toUnicodeMap;
 
-/// Version that boxes the keys at runtime. Slower, will be recreated on every access.
-@property (nonatomic, copy, readonly) NSDictionary *boxedToUnicodeMap;
+/// Characters encoded in the Font File Descriptor.
+@property (nonatomic, strong, readonly) PSPDFFontFileDescriptor *fontFileDescriptor;
+
+/// CMap for the given encoding name
+@property (nonatomic, strong, readonly) PSPDFCMap *fontCMap;
+
+/// CMap formed from the registery and ordering information of the font,
+/// used for unicode conversion when toUnicodeMap is not present
+@property (nonatomic, strong, readonly) PSPDFCMap *ucsCMap;
 
 /// Designated initializer. fontKey is optional.
 - (id)initWithFontDictionary:(CGPDFDictionaryRef)font fontKey:(NSString *)fontKey;
@@ -59,14 +77,15 @@
 /// Returns YES if font is a composite/multibyte font.
 @property (nonatomic, assign, readonly) BOOL isMultiByteFont;
 
-- (void)parseToUnicodeMapWithString:(NSString *)cmapString;
-
 /// Default glyph dictionaries. Loaded lazily.
 + (NSDictionary *)glyphNames;
 + (NSDictionary *)standardFontWidths;
 
 /// Compare two fonts.
 - (BOOL)isEqualToFontInfo:(PSPDFFontInfo *)otherFontInfo;
+
+/// Convert a character into unicode
+- (NSString *)unicodeStringForCharacter:(uint16_t)character;
 
 @end
 

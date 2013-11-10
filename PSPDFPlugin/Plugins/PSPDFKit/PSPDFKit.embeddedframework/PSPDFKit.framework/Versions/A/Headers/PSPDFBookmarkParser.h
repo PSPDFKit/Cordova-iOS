@@ -15,7 +15,8 @@
 @class PSPDFBookmark, PSPDFDocument;
 
 /// Register to get notified by bookmark changes. Object is the PSPDFBookmarkParser object.
-extern NSString *const kPSPDFBookmarksChangedNotification;
+/// @warning Post only from the main thread!
+extern NSString *const PSPDFBookmarksChangedNotification;
 
 /**
  Manages bookmarks for a PSPDFDocument.
@@ -41,10 +42,12 @@ extern NSString *const kPSPDFBookmarksChangedNotification;
 /// Associated document.
 @property (nonatomic, weak) PSPDFDocument *document;
 
-/// Convenience methods. Will return NO if page is invalid or bookmark doesn't exist.
+/// Adds a bookmark for `page`.
+/// @note Convenience method. Will return NO if page is invalid or bookmark doesn't exist.
 /// If you manually add bookmarks, you might need to call createToolbarAnimated to update.
 - (BOOL)addBookmarkForPage:(NSUInteger)page;
 
+/// Removes a bookmark for `page`.
 - (BOOL)removeBookmarkForPage:(NSUInteger)page;
 
 /// Clears all bookmarks. Also deletes file.
@@ -68,13 +71,8 @@ extern NSString *const kPSPDFBookmarksChangedNotification;
 /// Read bookmarks out of the plist in bookmarkPath.
 - (NSArray *)loadBookmarksWithError:(NSError **)error;
 
-/**
- Saves the bookmark into a plist file at bookmarkPath.
- Most likely isn't called on the main thread, but do not block.
-
- We go the tricky way to make a plist so it's human-readable.
- Note that PSPDFDocument confirms to NSCopying, so streaming into a keyed archiver would work too.
-*/
+/// Saves the bookmark into a plist file at bookmarkPath.
+/// @note Saving is done async.
 - (BOOL)saveBookmarksWithError:(NSError **)error;
 
 @end

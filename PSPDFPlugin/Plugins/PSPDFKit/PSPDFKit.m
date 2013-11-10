@@ -436,7 +436,13 @@
 
 - (NSDictionary *)enumValuesOfType:(NSString *)type
 {
-    static NSDictionary *enumsByType = nil;
+    //FIXME: this method crashes the second time a
+    //PDF is opened if the dictionary below is static
+    //Somehow the enumsByType dictionary is released
+    //and becomes a dangling pointer, which really
+    //shouldn't be possible if we are using ARC
+    NSDictionary *enumsByType = nil;
+//    static NSDictionary *enumsByType = nil;
     if (!enumsByType) {
         enumsByType = @{
                         
@@ -459,18 +465,18 @@
     @"phoneNumber": @(PSPDFTextCheckingTypePhoneNumber),
     @"all": @(PSPDFTextCheckingTypeAll)},
         
-        @"PSPDFDocumentMenuAction":
+        @"PSPDFTextSelectionMenuAction":
   
-  @{@"search": @(PSPDFDocumentMenuActionSearch),
-    @"define": @(PSPDFDocumentMenuActionDefine),
-    @"wikipediaAsFallback": @(PSPDFDocumentMenuActionWikipediaAsFallback),
-    @"all": @(PSPDFDocumentMenuActionAll)},
+  @{@"search": @(PSPDFTextSelectionMenuActionSearch),
+    @"define": @(PSPDFTextSelectionMenuActionDefine),
+    @"wikipediaAsFallback": @(PSPDFTextSelectionMenuActionWikipediaAsFallback),
+    @"all": @(PSPDFTextSelectionMenuActionAll)},
     
         @"PSPDFPageTransition":
 
-  @{@"scrollPerPage": @(PSPDFPageScrollPerPageTransition),
-    @"scrollContinuous": @(PSPDFPageScrollContinuousTransition),
-    @"curl": @(PSPDFPageCurlTransition)},
+  @{@"scrollPerPage": @(PSPDFPageTransitionScrollPerPage),
+    @"scrollContinuous": @(PSPDFPageTransitionScrollContinuous),
+    @"curl": @(PSPDFPageTransitionCurl)},
         
         @"PSPDFViewMode":
 
@@ -497,10 +503,10 @@
         
         @"PSPDFHUDViewMode":
             
-  @{@"always": @(PSPDFHUDViewAlways),
-    @"automatic": @(PSPDFHUDViewAutomatic),
-    @"automaticNoFirstLastPage": @(PSPDFHUDViewAutomaticNoFirstLastPage),
-    @"never": @(PSPDFHUDViewNever)},
+  @{@"always": @(PSPDFHUDViewModeAlways),
+    @"automatic": @(PSPDFHUDViewModeAutomatic),
+    @"automaticNoFirstLastPage": @(PSPDFHUDViewModeAutomaticNoFirstLastPage),
+    @"never": @(PSPDFHUDViewModeNever)},
         
         @"PSPDFHUDViewAnimation":
             
@@ -588,12 +594,12 @@
 
 - (void)setAllowedMenuActionsForPSPDFDocumentWithJSON:(NSArray *)options
 {
-    _pdfDocument.allowedMenuActions = [self optionsValueForKeys:options ofType:@"PSPDFDocumentMenuAction" withDefault:PSPDFDocumentMenuActionAll];
+    _pdfController.allowedMenuActions = [self optionsValueForKeys:options ofType:@"PSPDFTextSelectionMenuAction" withDefault:PSPDFTextSelectionMenuActionAll];
 }
 
 - (NSArray *)allowedMenuActionsAsJSON
 {
-    return [self optionKeysForValue:_pdfDocument.allowedMenuActions ofType:@"PSPDFDocumentMenuAction"];
+    return [self optionKeysForValue:_pdfController.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
 }
 
 - (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
@@ -615,7 +621,7 @@
 
 - (void)setPageTransitionForPSPDFViewControllerWithJSON:(NSString *)transition
 {
-    _pdfController.pageTransition = [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageScrollPerPageTransition];
+    _pdfController.pageTransition = [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageTransitionScrollPerPage];
 }
 
 - (NSString *)pageTransitionAsJSON
@@ -680,7 +686,7 @@
 
 - (void)setHUDViewModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    _pdfController.HUDViewMode = [self enumValueForKey:mode ofType:@"PSPDFHUDViewMode" withDefault:PSPDFHUDViewAutomatic];
+    _pdfController.HUDViewMode = [self enumValueForKey:mode ofType:@"PSPDFHUDViewMode" withDefault:PSPDFHUDViewModeAutomatic];
 }
 
 - (NSString *)HUDViewModeAsJSON
@@ -799,9 +805,10 @@
     CDVPluginResult *pluginResult = nil;
     NSString *query = [command argumentAtIndex:0];
     BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
+    BOOL headless = [[command argumentAtIndex:2 withDefault:@NO] boolValue];
     
     if (query) {
-        [_pdfController searchForString:query animated:animated];
+        [_pdfController searchForString:query options:@{PSPDFViewControllerSearchHeadlessKey: @(headless)} animated:animated];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     else {
@@ -813,10 +820,10 @@
                                 callbackId:command.callbackId];
 }
 
-- (void)saveChangedAnnotations:(CDVInvokedUrlCommand *)command
+- (void)saveAnnotations:(CDVInvokedUrlCommand *)command
 {
     NSError *error = nil;
-    [_pdfController.document saveChangedAnnotationsWithError:&error];
+    [_pdfController.document saveAnnotationsWithError:&error];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryWithError:error]] callbackId:command.callbackId];
 }
 

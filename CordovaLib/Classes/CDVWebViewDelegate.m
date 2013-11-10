@@ -87,7 +87,8 @@ typedef enum {
     STATE_WAITING_FOR_LOAD_START,
     STATE_WAITING_FOR_LOAD_FINISH,
     STATE_IOS5_POLLING_FOR_LOAD_START,
-    STATE_IOS5_POLLING_FOR_LOAD_FINISH
+    STATE_IOS5_POLLING_FOR_LOAD_FINISH,
+    STATE_CANCELLED
 } State;
 
 @implementation CDVWebViewDelegate
@@ -101,6 +102,45 @@ typedef enum {
         _state = STATE_IDLE;
     }
     return self;
+}
+
+- (BOOL)request:(NSURLRequest*)newRequest isFragmentIdentifierToRequest:(NSURLRequest*)originalRequest
+{
+    if (originalRequest.URL && newRequest.URL) {
+        NSString* originalRequestUrl = [originalRequest.URL absoluteString];
+        NSString* newRequestUrl = [newRequest.URL absoluteString];
+
+        // no fragment, easy
+        if (newRequest.URL.fragment == nil) {
+            return NO;
+        }
+
+        // if the urls have fragments and they are equal
+        if ((originalRequest.URL.fragment && newRequest.URL.fragment) && [originalRequestUrl isEqualToString:newRequestUrl]) {
+            return YES;
+        }
+
+        NSString* urlFormat = @"%@://%@:%d/%@#%@";
+        // reconstruct the URLs (ignoring basic auth credentials, query string)
+        NSString* baseOriginalRequestUrl = [NSString stringWithFormat:urlFormat,
+            [originalRequest.URL scheme],
+            [originalRequest.URL host],
+            [[originalRequest.URL port] intValue],
+            [originalRequest.URL path],
+            [newRequest.URL fragment]                                 // add the new request's fragment
+            ];
+        NSString* baseNewRequestUrl = [NSString stringWithFormat:urlFormat,
+            [newRequest.URL scheme],
+            [newRequest.URL host],
+            [[newRequest.URL port] intValue],
+            [newRequest.URL path],
+            [newRequest.URL fragment]
+            ];
+
+        return [baseOriginalRequestUrl isEqualToString:baseNewRequestUrl];
+    }
+
+    return NO;
 }
 
 - (BOOL)isPageLoaded:(UIWebView*)webView
@@ -193,11 +233,18 @@ typedef enum {
                     break;
 
                 default:
-                    NSLog(@"CDVWebViewDelegate: Navigation started when state=%d", _state);
-                    _loadCount = 0;
-                    _state = STATE_WAITING_FOR_LOAD_START;
-                    if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
-                        [_delegate webView:webView didFailLoadWithError:nil];
+                    {
+                        _loadCount = 0;
+                        _state = STATE_WAITING_FOR_LOAD_START;
+                        if (![self request:request isFragmentIdentifierToRequest:webView.request]) {
+                            NSString* description = [NSString stringWithFormat:@"CDVWebViewDelegate: Navigation started when state=%d", _state];
+                            NSLog(@"%@", description);
+                            if ([_delegate respondsToSelector:@selector(webView:didFailLoadWithError:)]) {
+                                NSDictionary* errorDictionary = @{NSLocalizedDescriptionKey : description};
+                                NSError* error = [[NSError alloc] initWithDomain:@"CDVWebViewDelegate" code:1 userInfo:errorDictionary];
+                                [_delegate webView:webView didFailLoadWithError:error];
+                            }
+                        }
                     }
             }
         } else {
@@ -229,6 +276,12 @@ typedef enum {
             _loadStartPollCount = 0;
             [self setLoadToken:webView];
             [self pollForPageLoadStart:webView];
+            break;
+
+        case STATE_CANCELLED:
+            fireCallback = YES;
+            _state = STATE_WAITING_FOR_LOAD_FINISH;
+            _loadCount += 1;
             break;
 
         case STATE_WAITING_FOR_LOAD_START:
@@ -310,11 +363,17 @@ typedef enum {
             break;
 
         case STATE_WAITING_FOR_LOAD_FINISH:
-            if (_loadCount == 1) {
-                _state = STATE_IDLE;
+            if ([error code] != NSURLErrorCancelled) {
+                if (_loadCount == 1) {
+                    _state = STATE_IDLE;
+                    fireCallback = YES;
+                }
+                _loadCount = -1;
+            } else {
                 fireCallback = YES;
+                _state = STATE_CANCELLED;
+                _loadCount -= 1;
             }
-            _loadCount = -1;
             break;
 
         case STATE_IOS5_POLLING_FOR_LOAD_START:

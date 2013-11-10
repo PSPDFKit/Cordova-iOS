@@ -48,11 +48,11 @@ This method dismisses the modally presented PDF view. The optional callback will
     
 This method reloads the current PDF.
     
-    search(query, [animated]);
+    search(query, [animated], [headless]);
     
-This method triggers a search for the specified query text. The optional animated argument determines if the search should be animated (if omitted, the search will not be animated).
+This method triggers a search for the specified query text. The optional animated argument determines if the search should be animated (if omitted, the search will not be animated). The optional headless argument determines whether the search UI should be disaplyed (if omitted, the search UI *will* be displayed).
 
-    saveChangedAnnotations(callback(error));
+    saveAnnotations(callback(error));
     
 This method saves any changed annotations in the current or last opened document. On success the error callback parameter will be null, on failure it will be an object containing an error domain, code, and (possibly) a description and reason.
     
@@ -182,7 +182,6 @@ Document options
     metadata
     UID
     pageCount
-    allowedMenuActions (search, define, wikipediaAsFallback, all)
 
 Document annotation options
   
@@ -231,6 +230,7 @@ PDF Controller options
     passwordDialogEnabled
     useParentNavigationBar
     shouldRestoreNavigationBarStyle
+    allowedMenuActions (search, define, wikipediaAsFallback, all)
  
 HUD options
     

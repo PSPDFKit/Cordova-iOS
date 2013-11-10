@@ -11,6 +11,7 @@
 //
 
 #import "PSPDFStatefulTableViewController.h"
+#import "PSPDFStyleable.h"
 
 @class PSPDFDocument, PSPDFOutlineViewController, PSPDFOutlineElement, PSPDFOutlineCell;
 
@@ -24,7 +25,7 @@
 @end
 
 /// Outline (Table of Contents) view controller.
-@interface PSPDFOutlineViewController : PSPDFStatefulTableViewController <UISearchDisplayDelegate>
+@interface PSPDFOutlineViewController : PSPDFStatefulTableViewController <UISearchDisplayDelegate, PSPDFStyleable>
 
 /// Designated initializer.
 - (id)initWithDocument:(PSPDFDocument *)document delegate:(id<PSPDFOutlineViewControllerDelegate>)delegate;
@@ -33,6 +34,7 @@
 @property (nonatomic, assign) BOOL allowCopy;
 
 /// Allows search. Defaults to YES.
+/// @warning This is currently broken and disabled on iOS 7.
 @property (nonatomic, assign) BOOL searchEnabled;
 
 /// Enables displaying page labels.
@@ -62,9 +64,6 @@
 
 
 @interface PSPDFOutlineViewController (SubclassingHooks)
-
-// subclass if you change the default cell height of 44 pixels.
-- (void)updatePopoverSize;
 
 // Cell delegate - expand/shrink content.
 - (void)outlineCellDidTapDisclosureButton:(PSPDFOutlineCell *)cell;

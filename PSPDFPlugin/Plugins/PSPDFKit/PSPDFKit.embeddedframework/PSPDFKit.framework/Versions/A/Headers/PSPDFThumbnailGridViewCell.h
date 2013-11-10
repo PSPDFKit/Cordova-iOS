@@ -14,7 +14,7 @@
 #import "PSPDFRoundedLabel.h"
 #import "PSTCollectionViewCell.h"
 
-/// Simple thumbnail cell.
+/// The thumbnail cell classed used for the thumbnail grid and thumbnail scroll bar.
 @interface PSPDFThumbnailGridViewCell : PSUICollectionViewCell <PSPDFCacheDelegate>
 
 /// Referenced document.
@@ -30,25 +30,28 @@
 @property (nonatomic, assign, getter=isShadowEnabled) BOOL shadowEnabled;
 
 /// Enable page label.
-@property (nonatomic, assign, getter=isShowingPageLabel) BOOL showingPageLabel;
+@property (nonatomic, assign, getter=isPageLabelEnabled) BOOL pageLabelEnabled;
 
 /// This is simply a redeclaration of the property in UICollectionViewCell.
 /// Modify this to change the look of the selection/highlight state.
 @property (nonatomic, strong) UIView *selectedBackgroundView;
 
-/// Call before re-showing (will update bookmark status)
+/// Call before re-showing the cell. (will update bookmark status)
 - (void)updateCell;
 
 @end
 
 
-@interface PSPDFThumbnailGridViewCell (Subclassing)
+@interface PSPDFThumbnailGridViewCell (SubclassingHooks)
 
 /// Internal image view.
 @property (nonatomic, strong) UIImageView *imageView;
 
-/// Page label. (By default a PSPDFRoundedLabel, but can be set to any UILabel subclass, simply do a cast)
+/// Page label. (By default a PSPDFRoundedLabel, but can be set to any UILabel subclass, simply do a cast.)
 @property (nonatomic, strong) PSPDFRoundedLabel *pageLabel;
+
+/// Allows to update the bookmark image.
+@property (nonatomic, strong, readonly) UIImageView *bookmarkImageView;
 
 /// Creates the shadow. Subclass to change. Returns a CGPathRef.
 - (id)pathShadowForView:(UIView *)imgView;

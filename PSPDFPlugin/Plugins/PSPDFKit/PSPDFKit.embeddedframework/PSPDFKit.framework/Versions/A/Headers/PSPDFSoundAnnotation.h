@@ -13,12 +13,27 @@
 #import "PSPDFLinkAnnotation.h"
 
 /// A sound annotation (PDF 1.2) shall analogous to a text annotation except that instead of a text note, it contains sound recorded from the computer’s microphone or imported from a file.
-@interface PSPDFSoundAnnotation : PSPDFLinkAnnotation
+@interface PSPDFSoundAnnotation : PSPDFAnnotation
+
+/// Designated initializer.
+- (id)initWithRate:(NSUInteger)rate channels:(UInt32)channels bits:(UInt32)bits encoding:(NSString *)encoding;
 
 /// The sound icon name.
 @property (nonatomic, copy) NSString *iconName;
 
-/// URL to the file content.
-@property (nonatomic, strong) NSURL *URL;
+/// URL to the sound content.
+@property (nonatomic, strong) NSURL *soundURL;
+
+/// Bits of the sound stream.
+@property (nonatomic, assign, readonly) NSUInteger bits;
+
+/// Sampling rate of the sound stream.
+@property (nonatomic, assign, readonly) NSUInteger rate;
+
+/// Channel count of the sound stream.
+@property (nonatomic, assign, readonly) NSUInteger channels;
+
+/// Encoding of the sound stream.
+@property (nonatomic, copy, readonly) NSString *encoding;
 
 @end

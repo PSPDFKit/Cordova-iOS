@@ -15,10 +15,12 @@
 
 @class PSPDFTextParser, PSPDFWord, PSPDFImageInfo, PSPDFPageView, PSPDFHighlightAnnotation, PSPDFLinkAnnotation, PSPDFAnnotation, PSPDFNoteAnnotation, PSPDFLoupeView, PSPDFLongPressGestureRecognizer;
 
-/// Handles text selection. PSPDFKit Annotate feature.
+/// Handles text selection. PSPDFKit Basic/Complete feature.
 @interface PSPDFTextSelectionView : UIView
 
 /// Currently selected glyphs.
+/// @warning This method expects glyphs to be sorted from top->bottom and left->right for performance reasons.
+/// Use `sortedGlyphs:` to pre-sort your glyphs if you manually set this.
 @property (nonatomic, copy) NSArray *selectedGlyphs;
 
 /// Currently selected text.
@@ -27,11 +29,23 @@
 /// Currently selected image.
 @property (nonatomic, strong) PSPDFImageInfo *selectedImage;
 
+/// The selection color. Defaults to [UIColor pspdf_selectionColor].
+@property (nonatomic, strong) UIColor *selectionColor;
+
+/// The selection alpha value. Defaults to [UIColor pspdf_selectionAlpha].
+@property (nonatomic, assign) CGFloat selectionAlpha;
+
+/// In simple selection mode, the initial selection switches to moving the drag handles directly, much like iBooks handles selection. Defaults to NO.
+@property (nonatomic, assign) BOOL simpleSelectionModeEnabled;
+
+/// To make it easier to select text, we slightly increase the frame margins. Defaults to 4 pixels.
+@property (nonatomic, assign) CGFloat selectionHitTestExtension;
+
 /// Currently selected text, optimized for searching
 @property (nonatomic, copy, readonly) NSString *trimmedSelectedText;
 
 /// Associated PSPDFPageView.
-@property (nonatomic, unsafe_unretained) PSPDFPageView *pageView;
+@property (nonatomic, weak) PSPDFPageView *pageView;
 
 /// rects for the current selection, in view coordinate space.
 @property (nonatomic, assign, readonly) CGRect firstLineRect;
@@ -51,8 +65,24 @@
 /// Currently has a text/image selection?
 - (BOOL)hasSelection;
 
-/// Text selection is only available in PSPDFKit Annotate
+/// Text selection is only available in PSPDFKit Basic/Complete.
 + (BOOL)isTextSelectionFeatureAvailable;
+
+@end
+
+@interface PSPDFTextSelectionView (Advanced)
+
+// Will return a new array with sorted glyphs.
+// Use when you manually call `selectedGlyphs`.
+- (NSArray *)sortedGlyphs:(NSArray *)glyphs;
+
+// Will present a Wikipedia browser anchored at the selected text.
+// Used in iOS 5/6 when there's no dictionary entry. Not used in iOS 7 as Define has it's own Wikipedia link there.
+- (UIViewController *)presentWikipediaBrowserForSelectedText;
+
+// Forwards to [UIReferenceLibraryViewController dictionaryHasDefinitionForTerm:term]
+// If you don't like the small delay this sometimes requires (due to XPC), return NO or YES here.
+- (BOOL)dictionaryHasDefinitionForTerm:(NSString *)term;
 
 @end
 
@@ -65,7 +95,7 @@
 - (NSArray *)menuItemsForImageSelection:(PSPDFImageInfo *)imageSelection;
 
 // Called when we're adding a new highlight annotation via selected text.
-- (void)addHighlightAnnotationWithType:(PSPDFHighlightAnnotationType)highlightType;
+- (void)addHighlightAnnotationWithType:(PSPDFAnnotationType)highlightType;
 
 // Debugging feature, visualizes the text blocks.
 - (void)showTextFlowData:(BOOL)show animated:(BOOL)animated;

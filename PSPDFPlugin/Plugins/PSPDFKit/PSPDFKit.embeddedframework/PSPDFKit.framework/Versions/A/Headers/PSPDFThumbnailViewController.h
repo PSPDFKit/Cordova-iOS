@@ -14,12 +14,12 @@
 #import "PSTCollectionView.h"
 #import "PSPDFDocument.h"
 
-@class PSPDFThumbnailViewController, PSPDFThumbnailGridViewCell;
+@class PSPDFThumbnailViewController, PSPDFThumbnailGridViewCell, PSPDFCenteredLabelView;
 
 typedef NS_ENUM(NSUInteger, PSPDFThumbnailViewFilter) {
     PSPDFThumbnailViewFilterShowAll,     // Show all thumbnails.
     PSPDFThumbnailViewFilterBookmarks,   // Show bookmarked thumbnails.
-    PSPDFThumbnailViewFilterAnnotations, // All annotation types except links. PSPDFKit Annotate only.
+    PSPDFThumbnailViewFilterAnnotations, // All annotation types except links. PSPDFKit Basic/Complete only.
 };
 
 /// Delegate for thumbnail actions.
@@ -63,6 +63,9 @@ typedef NS_ENUM(NSUInteger, PSPDFThumbnailViewFilter) {
 /// Defaults to YES. Most documents will look better when this is set to NO.
 @property (nonatomic, assign) BOOL fixedItemSizeEnabled;
 
+/// Makes the filter bar sticky. Defaults to NO.
+@property (nonatomic, assign) BOOL stickyHeaderEnabled;
+
 /// Defines the filter options. Set to nil or empty to hide the filter bar.
 /// Defaults to PSPDFThumbnailViewFilterShowAll, PSPDFThumbnailViewFilterBookmarks, PSPDFThumbnailViewFilterAnnotations.
 @property (nonatomic, copy) NSOrderedSet *filterOptions;
@@ -100,5 +103,14 @@ typedef NS_ENUM(NSUInteger, PSPDFThumbnailViewFilter) {
 
 // The filter segment to filter bookmarked/annotated documents.
 @property (nonatomic, strong, readonly) UISegmentedControl *filterSegment;
+
+// The filter segment is recreated on changes; to customize subclass this class and override updateFilterSegment.
+- (void)updateFilterSegment;
+
+// Updates the empty view.
+- (void)updateEmptyView;
+
+// The empty view
+@property (nonatomic, strong) PSPDFCenteredLabelView *emptyView;
 
 @end

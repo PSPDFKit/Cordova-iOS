@@ -44,10 +44,12 @@
 - (void)didHidePage:(NSUInteger)page;
 
 /// Called initially and when the parent page size is changed. (e.g. rotation)
-- (void)didChangePageFrame:(CGRect)frame;
+- (void)didChangePageBounds:(CGRect)bounds;
 
-@end
+/// Called when the user taps on an annotation and the tap wasn't processed otherwise.
+- (void)didTapAtPoint:(CGPoint)point;
 
-// Deprecated.
-__attribute__ ((deprecated("This protocol has been renamed to PSPDFAnnotationViewProtocol"))) @protocol PSPDFAnnotationView <PSPDFAnnotationViewProtocol>
+/// A weak reference to the view controller responsible for this view.
+@property (nonatomic, weak) UIViewController *viewController;
+
 @end

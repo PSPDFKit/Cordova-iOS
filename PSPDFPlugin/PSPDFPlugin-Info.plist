@@ -54,6 +54,8 @@
 	<true/>
 	<key>NSMainNibFile</key>
 	<string></string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 	<key>NSMainNibFile~ipad</key>
 	<string></string>
 </dict>
