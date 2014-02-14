@@ -463,7 +463,8 @@
   
   @{@"search": @(PSPDFTextSelectionMenuActionSearch),
     @"define": @(PSPDFTextSelectionMenuActionDefine),
-    @"wikipedia": @(PSPDFTextSelectionMenuActionWikipedia),
+    @"wikipedia": @(PSPDFTextSelectionMenuActionWikipediaAsFallback),
+    @"wikipediaAsFallback": @(PSPDFTextSelectionMenuActionWikipediaAsFallback),
     @"all": @(PSPDFTextSelectionMenuActionAll)},
     
         @"PSPDFPageTransition":
