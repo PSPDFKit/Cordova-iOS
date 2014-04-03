@@ -550,7 +550,8 @@
 
 - (void)setFileURLForPSPDFDocumentWithJSON:(NSString *)path
 {
-    _pdfDocument.fileURL = [self pdfFileURLWithPath:path];
+    // Brute-Force-Set.
+    [_pdfDocument setValue:[self pdfFileURLWithPath:path] forKey:PROPERTY(fileURL)];
 }
 
 - (NSString *)fileURLAsJSON
