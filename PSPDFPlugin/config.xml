@@ -44,8 +44,8 @@
     <preference name="PaginationBreakingMode" value="page" />
     <preference name="PaginationMode" value="unpaginated" />
     
-    <feature name="PSPDFKit">
-        <param name="ios-package" value="PSPDFKit"/>
+    <feature name="PSPDFKitPlugin">
+        <param name="ios-package" value="PSPDFKitPlugin"/>
     </feature>
 
 </widget>

@@ -10,7 +10,7 @@
 //  This notice may not be removed from this file.
 //
 
-window.PSPDFKit = new function() {
+window.PSPDFKitPlugin = new function() {
     
     //utilities
     
@@ -33,7 +33,7 @@ window.PSPDFKit = new function() {
                         if (callback) callback(result);
                     }, function (error) {
                         alert(error);
-                    }, 'PSPDFKit', methodName, argArray);
+                    }, 'PSPDFKitPlugin', methodName, argArray);
                 }
             })();
         }
@@ -130,14 +130,14 @@ window.PSPDFKit = new function() {
     {
         leftBarButtonItems = items;
         cordova.exec(function (result) { }, function (error) { },
-                     'PSPDFKit', 'setLeftBarButtonItems', [items]);
+                     'PSPDFKitPlugin', 'setLeftBarButtonItems', [items]);
     }
 
     this.setRightBarButtonItems = function(items)
     {
         rightBarButtonItems = items;
         cordova.exec(function (result) { }, function (error) { },
-                     'PSPDFKit', 'setRightBarButtonItems', [items]);
+                     'PSPDFKitPlugin', 'setRightBarButtonItems', [items]);
     }
 
     this.getLeftBarButtonItems = function(callback)

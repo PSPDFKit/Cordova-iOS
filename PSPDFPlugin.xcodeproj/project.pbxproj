@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		016C37F7175DFB9400794820 /* PSPDFKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 016C37F6175DFB9400794820 /* PSPDFKit.m */; };
 		0185C479182FECB300909695 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0185C478182FECB300909695 /* CoreTelephony.framework */; };
 		0185C47B182FECD100909695 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0185C47A182FECD100909695 /* libsqlite3.dylib */; };
 		0185C47D182FECF100909695 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0185C47C182FECF100909695 /* libxml2.dylib */; };
@@ -52,6 +51,7 @@
 		782275E718ED78B400BE80EC /* PSPDFKit.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 782275DF18ED78B400BE80EC /* PSPDFKit.bundle */; };
 		782275E818ED78B400BE80EC /* PSPDFKit.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 782275E018ED78B400BE80EC /* PSPDFKit.xcconfig */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
+		E6C52D53191B934200E69670 /* PSPDFKitPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = E6C52D52191B934200E69670 /* PSPDFKitPlugin.m */; };
 		F840E1F1165FE0F500CFE078 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = F840E1F0165FE0F500CFE078 /* config.xml */; };
 /* End PBXBuildFile section */
 
@@ -73,8 +73,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		016C37F5175DFB9400794820 /* PSPDFKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSPDFKit.h; sourceTree = "<group>"; };
-		016C37F6175DFB9400794820 /* PSPDFKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSPDFKit.m; sourceTree = "<group>"; };
 		0185C478182FECB300909695 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		0185C47A182FECD100909695 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		0185C47C182FECF100909695 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
@@ -128,6 +126,8 @@
 		782275E018ED78B400BE80EC /* PSPDFKit.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = PSPDFKit.xcconfig; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* PSPDFPlugin-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "PSPDFPlugin-Info.plist"; path = "../PSPDFPlugin-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x~iphone.png"; sourceTree = "<group>"; };
+		E6C52D51191B934200E69670 /* PSPDFKitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSPDFKitPlugin.h; sourceTree = "<group>"; };
+		E6C52D52191B934200E69670 /* PSPDFKitPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSPDFKitPlugin.m; sourceTree = "<group>"; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = PSPDFPlugin/config.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -165,9 +165,9 @@
 		016C37F4175DF50800794820 /* PSPDFKit */ = {
 			isa = PBXGroup;
 			children = (
+				E6C52D51191B934200E69670 /* PSPDFKitPlugin.h */,
+				E6C52D52191B934200E69670 /* PSPDFKitPlugin.m */,
 				782275D718ED78B400BE80EC /* PSPDFKit.embeddedframework */,
-				016C37F5175DFB9400794820 /* PSPDFKit.h */,
-				016C37F6175DFB9400794820 /* PSPDFKit.m */,
 			);
 			path = PSPDFKit;
 			sourceTree = "<group>";
@@ -484,7 +484,7 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
-				016C37F7175DFB9400794820 /* PSPDFKit.m in Sources */,
+				E6C52D53191B934200E69670 /* PSPDFKitPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

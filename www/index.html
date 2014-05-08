@@ -51,12 +51,12 @@
             
             function buttonAction() {
                 // listen for event
-                PSPDFKit.addEventListener('didDismiss', function(event) {
+                PSPDFKitPlugin.addEventListener('didDismiss', function(event) {
                     console.log('dismissed');
                 });
                 
                 // add toolbar buttons
-                PSPDFKit.setLeftBarButtonItems([
+                PSPDFKitPlugin.setLeftBarButtonItems([
                     'close',
                     'annotation',
                     {title: 'Hello', tintColor: 'blue', action: function() {
@@ -65,7 +65,7 @@
                 ]);
                 
                 // show pdf with shadows disabled and a red background
-                PSPDFKit.present('pdf/castles.pdf', {
+                PSPDFKitPlugin.present('pdf/castles.pdf', {
                     pageTransition: 'curl',
                     editableAnnotationTypes: ['FreeText', 'Signature']
                     //shadowEnabled: false,
@@ -73,19 +73,19 @@
                 });
                 
                 //get option values
-                PSPDFKit.getOptions(['pageCount', 'backgroundColor'], function(values) {
+                PSPDFKitPlugin.getOptions(['pageCount', 'backgroundColor'], function(values) {
                     console.log('pageCount: ' + values.pageCount);
                     console.log('backgroundColor: ' + values.backgroundColor);
                 });
                 
                 //scroll to page 1 after a 500ms delay
                 setTimeout(function(){
-                    PSPDFKit.setPage(1, true);
+                    PSPDFKitPlugin.setPage(1, true);
                 }, 500);
                 
                 // get the page number after a 1s delay
                 setTimeout(function() {
-                    PSPDFKit.getPage(function(page) {
+                    PSPDFKitPlugin.getPage(function(page) {
                         console.log('Current page: ' + page);
                     });
                 }, 1000);
