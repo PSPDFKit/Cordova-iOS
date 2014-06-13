@@ -10,13 +10,13 @@ http://pspdfkit.com/license.html</license>
 	<js-module src="www/js/pspdfkit.js" name="PSPDFKitPlugin">
 	</js-module>	
 	<platform name="ios">
+		<config-file parent="/*" target="config.xml">
+			<feature name="PSPDFKitPlugin">
+				<param name="ios-package" value="PSPDFKitPlugin"/>
+			</feature>
+		</config-file>
+		<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m"/>
+		<header-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.h"/>
+		<source-file src="PSPDFKit.embeddedframework" framework="true"/>
 	</platform>
-	<config-file parent="/*" target="config.xml">
-		<feature name="PSPDFKitPlugin">
-			<param name="ios-package" value="PSPDFKitPlugin"/>
-		</feature>
-	</config-file>
-	<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m" />
-	<header-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.h" />
-	<source-file src="PSPDFKit-Demo/PSPDFKit.embeddedframework" framework="true"/>
 </plugin>
