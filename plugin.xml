@@ -17,6 +17,26 @@ http://pspdfkit.com/license.html</license>
 		</config-file>
 		<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m"/>
 		<header-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.h"/>
-		<resource-file src="PSPDFKit.embeddedframework" />
+		<framework src="libsqlite3.dylib" />
+		<framework src="libxml2.dylib" />
+
+		<framework src="CoreText.framework" />
+		<framework src="QuartzCore.framework" />
+		<framework src="MessageUI.framework" />
+		<framework src="libz.dylib" />
+		<framework src="ImageIO.framework" />
+		<framework src="CoreMedia.framework" />
+		<framework src="MediaPlayer.framework" />
+		<framework src="CFNetwork.framework" />
+		<framework src="AVFoundation.framework" />
+		<framework src="AssetsLibrary.framework" />
+		<framework src="Security.framework" />
+		<framework src="QuickLook.framework" />
+		<framework src="AudioToolbox.framework" />
+		<framework src="CoreData.framework" />
+		<framework src="CoreTelephony.framework" />
+		<framework src="SystemConfiguration.framework" />
+		<framework src="Accelerate.framework" />
+
 	</platform>
 </plugin>
