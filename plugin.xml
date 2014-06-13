@@ -12,6 +12,11 @@ http://pspdfkit.com/license.html</license>
 	<dependency id="com.pspdfkit" url="https://github.com/PSPDFKit/PSPDFKit-Demo.git" commit="95111d6166624c57cfbb82a3c64f7ac3b2939418"/>
 	<platform name="ios">
 	</platform>
+	<config-file parent="/*" target="config.xml">
+		<feature name="PSPDFKitPlugin">
+			<param name="ios-package" value="PSPDFKitPlugin"/>
+		</feature>
+	</config-file>
 	<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m" />
 	<header-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.h" />
 	<source-file src="PSPDFKit-Demo/PSPDFKit.embeddedframework" framework="true"/>
