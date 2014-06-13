@@ -9,6 +9,7 @@ THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN CO
 http://pspdfkit.com/license.html</license>
 	<js-module src="www/js/pspdfkit.js" name="PSPDFKitPlugin">
 	</js-module>	
+	<dependency id="com.pspdfkit" url="https://github.com/PSPDFKit/PSPDFKit-Demo.git" commit="95111d6166624c57cfbb82a3c64f7ac3b2939418"/>
 	<platform name="ios">
 	</platform>
 	<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m" />
