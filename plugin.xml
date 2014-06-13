@@ -17,6 +17,14 @@ http://pspdfkit.com/license.html</license>
 		</config-file>
 		<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m"/>
 		<header-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.h"/>
-		<source-file src="PSPDFKit.embeddedframework/PSPDFKit.framework" framework="true"/>
+		<source-file src="PSPDFKit.embeddedframework/PSPDFKit.framework/Versions/Current/PSPDFKit" framework="true"/>
+		<header-file src="PSPDFKit.embeddedframework/PSPDFKit.framework/Headers/*"/>
+		<resource-file src="PSPDFKit.embeddedframework/PSPDFKit/Resources/PSPDFKit.bundle" />
+		<resource-file src="PSPDFKit.embeddedframework/PSPDFKit/Resources/PSPDFKit-Acknowledgements" />
+		<resource-file src="PSPDFKit.embeddedframework/PSPDFKit/Resources/PSPDFKit-License" />
+		<resource-file src="PSPDFKit.embeddedframework/PSPDFKit/Resources/PSPDFKit-License.pdf" />
+		<resource-file src="PSPDFKit.embeddedframework/PSPDFKit/Resources/PSPDFKit-nosqlite.xcconfig" />
+		<resource-file src="PSPDFKit.embeddedframework/PSPDFKit/Resources/PSPDFKit-Version" />
+		<resource-file src="PSPDFKit.embeddedframework/PSPDFKit/Resources/PSPDFKit.xcconfig" />
 	</platform>
 </plugin>
