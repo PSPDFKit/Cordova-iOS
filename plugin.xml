@@ -17,6 +17,6 @@ http://pspdfkit.com/license.html</license>
 		</config-file>
 		<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m"/>
 		<header-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.h"/>
-		<source-file src="PSPDFKit.embeddedframework" framework="true"/>
+		<source-file src="PSPDFKit.embeddedframework/PSPDFKit.framework" framework="true"/>
 	</platform>
 </plugin>
