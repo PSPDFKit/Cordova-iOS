@@ -95,3 +95,14 @@ typedef UIImage *(^PSPDFAnnotationGroupItemConfigurationBlock)(PSPDFAnnotationGr
 + (instancetype)itemWithType:(NSString *)type variant:(NSString *)variant configurationBlock:(PSPDFAnnotationGroupItemConfigurationBlock)block;
 
 @end
+
+@interface PSPDFFlexibleAnnotationToolbar (SubclassingHooks)
+
+- (UIButton *)doneButton;
+- (UIButton *)undoButton;
+- (UIButton *)redoButton;
+
+// The done action.
+- (void)done:(id)sender;
+
+@end

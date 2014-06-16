@@ -303,8 +303,8 @@
 "Move Link" = "Mover link";
 "Remove Link" = "Remover link";
 "Open Link" = "Abrir link";
-"Go to Page %tu" = "Ir para página %tu";
-"Go to Page" = "Ir para página"; // title of a Popup
+"Go to page %tu" = "Ir para página %tu";
+"Go to page" = "Ir para página"; // title of a Popup
 "Save" = "Guardar";
 "Link Destination" = "Destino do link";
 "Enter page index or a http:// address to link to an URL." = "Introduza um índice de página ou um endereço http:// para ligar a um URL.";
@@ -339,14 +339,14 @@
 "Finish Recording" = "Terminar gravação";
 "Audio Problem" = "Problema de áudio";
 // text on a label; Error message, when the before recorded audio file can not be played to the user
-"Could not start playback" = "Não foi possível iniciar a reprodução";
-"Mic Permission Not Granted" = "Autorização para microfone não concedida";
-"Sorry, but audio cannot be recorded at the moment. Please grant this app permission to access your microphone." = "Lamentamos, de momento não é possível gravar áudio. Autorize esta aplicação a aceder ao microfone.";
-"Sorry, but there was a problem trying to record audio." = "Lamentamos, ocorreu um problema ao tentar gravar áudio.";
-"Sorry, but there was a problem trying to play this audio." = "Lamentamos, ocorreu um problema ao tentar reproduzir este áudio.";
+"Could not start playback." = "Não foi possível iniciar a reprodução.";
+"Could not resume playback." = "Não foi possível retomar a reprodução.";
+"Microphone permission not granted." = "Permissão do microfone não garantida.";
+"Audio cannot be recorded at the moment. Please grant this app permission to access your microphone." = "Lamentamos, de momento não é possível gravar áudio. Autorize esta aplicação a aceder ao microfone.";
+"There was a problem trying to record audio." = "Lamentamos, ocorreu um problema ao tentar gravar áudio.";
 "Already Recording" = "Já a gravar";
 "You are already recording on page %@." = "Já está a gravar na página %@.";
-"Go to Page %@" = "Ir para página %@";
+"Go to page %@" = "Ir para página %@";
 
 // Forms
 "Form Element" = "Elemento de formulário";
@@ -363,7 +363,15 @@
 "Invalid value: must be greater than or equal to %s." = "Valor inválido: tem de ser maior ou igual a %s.";
 "Invalid value: must be greater than or equal to %s and less than or equal to %s." = "Valor inválido: tem de ser maior ou igual a %s e menor ou igual a %s.";
 "Invalid value: must be less than or equal to %s." = "Valor inválido: tem de ser menor ou igual a %s.";
-"Invalid value. Must be a number." = "Valor inválido. Tem de ser um número.";
+"Invalid value: must be a number." = "Valor inválido: tem de ser um número.";
+
+//  Validation of dates
+
+"Invalid value: must be a date." = "Valor inválido: tem de ser uma data.";
+
+// General validation
+
+"Invalid value." = "Valor inválido.";
 
 // Gallery
 "Connection Error" = "Erro de ligação";

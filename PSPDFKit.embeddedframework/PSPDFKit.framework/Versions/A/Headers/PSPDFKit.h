@@ -50,6 +50,7 @@ extern "C" {
 #import "PSPDFViewController.h"
 #import "PSPDFViewControllerDelegate.h"
 #import "PSPDFDocument.h"
+#import "PSPDFDocument+DataDetection.h"
 #import "PSPDFDocumentDelegate.h"
 #import "PSPDFPageView.h"
 #import "PSPDFPageView+AnnotationMenu.h"
@@ -120,6 +121,7 @@ extern "C" {
 #import "PSPDFOutlineParser.h"
 #import "PSPDFOutlineElement.h"
 #import "PSPDFOutlineViewController.h"
+#import "PSPDFOutlineCell.h"
 
 // labels
 #import "PSPDFLabelParser.h"
@@ -206,6 +208,7 @@ extern "C" {
 #import "PSPDFHSVColorPickerController.h"
 #import "PSPDFNavigationController.h"
 #import "PSPDFSpeechSynthesizer.h"
+#import "PSPDFImagePickerController.h"
 
 // model
 #import "PSPDFModel.h"

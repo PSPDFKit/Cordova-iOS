@@ -74,6 +74,9 @@ typedef NS_OPTIONS(NSUInteger, PSPDFDocumentSharingOptions) {
 /// Will return YES if the controller has options availble, NO if the delegate has been called.
 - (BOOL)checkIfControllerHasOptionsAvailableAndCallDelegateIfNot;
 
+/// Will take the current settings and start the file crunching. Will call back on the `PSPDFDocumentSharingViewControllerDelegate` unless this returns NO.
+- (BOOL)commitWithCurrentSettings;
+
 /// The current document.
 @property (nonatomic, strong, readonly) PSPDFDocument *document;
 
@@ -85,6 +88,10 @@ typedef NS_OPTIONS(NSUInteger, PSPDFDocumentSharingOptions) {
 /// @warning Modify before the view is loaded.
 @property (nonatomic, assign) PSPDFDocumentSharingOptions sharingOptions;
 
+/// Allows to set the default selection. This property will change as the user changes the selection.
+/// @note Make sure that `selectedOptions` does not contain any values that are missing from `sharingOptions` or multiple ones per set.
+@property (nonatomic, assign) PSPDFDocumentSharingOptions selectedOptions;
+
 /// Button title for "commit".
 @property (nonatomic, copy) NSString *commitButtonTitle;
 
@@ -92,6 +99,7 @@ typedef NS_OPTIONS(NSUInteger, PSPDFDocumentSharingOptions) {
 @property (nonatomic, weak) id <PSPDFDocumentSharingViewControllerDelegate> delegate;
 
 // Controller is in a popover. `PSPDFStyleable` attribute.
+// @warning Needs to be set before the view is initialized. (Thus, before you even set this to an UIPopoverController)
 @property (nonatomic, assign) BOOL isInPopover;
 
 @end

@@ -35,11 +35,22 @@
 - (void)flexibleToolbarContainerDidHide:(PSPDFFlexibleToolbarContainer *)container;
 
 /// Use this method to prove a more appropriate display aria for the toolbar.
-// The provided `CGRect` should be in the containers coordinate system.
+/// @note The provided `CGRect` should be in the containers coordinate system.
 /// Used during toolbar and anchor placeholder positioning. Defaults to self.bounds` if not implemented.
 - (CGRect)flexibleToolbarContainerContentRect:(PSPDFFlexibleToolbarContainer *)container;
 
+/// The toolbar is dragged and might change position.
+- (void)flexibleToolbarContainerWillStartDragging:(PSPDFFlexibleToolbarContainer *)container;
+
+/// The toolbar has been dragged and might has updated the position.
+- (void)flexibleToolbarContainerDidEndDragging:(PSPDFFlexibleToolbarContainer *)container withPosition:(PSPDFFlexibleToolbarPosition)position;
+
 @end
+
+/// Designates common UIToolbar or UINavigationBar functionality 
+@protocol PSPDFSystemBar <NSObject> @end
+@interface UIToolbar (PSPDFSystemBar) <PSPDFSystemBar> @end
+@interface UINavigationBar (PSPDFSystemBar) <PSPDFSystemBar> @end
 
 /**
  The flexible toolbar container holds and manages a `PSPDFFlexibleToolbar` instance.
@@ -54,7 +65,7 @@
 
 /// A UINavigationBar or UIToolbar instance, that should be automatically hidden
 /// when the `flexibleToolbar` is in the `PSPDFFlexibleToolbarPositionInTopBar` position.
-@property (nonatomic, weak) UIView *overlaidBar;
+@property (nonatomic, weak) UIView<PSPDFSystemBar> *overlaidBar;
 
 /// `YES` when a toolbar drag is in progress, `NO` otherwise.
 /// Only relevant if  dragging is enabled on the flexibleToolbar`.

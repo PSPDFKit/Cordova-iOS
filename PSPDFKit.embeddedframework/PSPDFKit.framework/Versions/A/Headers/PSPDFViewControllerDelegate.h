@@ -16,6 +16,18 @@
 @protocol PSPDFAnnotationViewProtocol;
 @class PSPDFDocument, PSPDFPageInfo, PSPDFImageInfo, PSPDFAnnotation, PSPDFPageView, PSPDFScrollView;
 
+// Classifies all objects that can be returned from pdfViewController:shouldShowController:embeddedInController:options:
+@protocol PSPDFPresentableViewController <NSObject> @end
+@interface UIViewController                (PSPDFPresentableViewController) <PSPDFPresentableViewController> @end
+@interface UIPrintInteractionController    (PSPDFPresentableViewController) <PSPDFPresentableViewController> @end
+@interface UIDocumentInteractionController (PSPDFPresentableViewController) <PSPDFPresentableViewController> @end
+@interface UIActionSheet                   (PSPDFPresentableViewController) <PSPDFPresentableViewController> @end
+
+@protocol PSPDFHostableViewController <NSObject> @end
+@interface UINavigationController (PSPDFHostableViewController) <PSPDFHostableViewController> @end
+@interface UIPopoverController    (PSPDFHostableViewController) <PSPDFHostableViewController> @end
+
+
 // NSNotification equivalent to `didShowPageView:` delegate.
 extern NSString *const PSPDFViewControllerDidShowPageViewNotification;
 
@@ -144,6 +156,9 @@ extern NSString *const PSPDFViewControllerDidLoadPageViewNotification;
  Default returns menuItems if not implemented. Return nil or an empty array to not show the menu.
 
  Use `PSPDFMenuItem's` `identifier` property to check and modify the menu items. This string will not be translated. (vs the title property)
+ 
+ `rect` is in the coordinate space of the `pageView`.
+ `annotationRect` or `textRect` is in the PDF coordinate space of the current page.
 */
 - (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forSelectedText:(NSString *)selectedText inRect:(CGRect)textRect onPageView:(PSPDFPageView *)pageView;
 
@@ -208,10 +223,10 @@ extern NSString *const PSPDFViewControllerDidLoadPageViewNotification;
 
  Return NO to process the displaying manually.
  */
-- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldShowController:(id)controller embeddedInController:(id)hostController options:(NSDictionary *)options animated:(BOOL)animated;
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldShowController:(id<PSPDFPresentableViewController>)controller embeddedInController:(id<PSPDFHostableViewController>)hostController options:(NSDictionary *)options animated:(BOOL)animated;
 
 /// Called after the controller has been fully displayed. Isn't called for `UIPopoverController's`.
-- (void)pdfViewController:(PSPDFViewController *)pdfController didShowController:(id)controller embeddedInController:(id)hostController options:(NSDictionary *)options animated:(BOOL)animated;
+- (void)pdfViewController:(PSPDFViewController *)pdfController didShowController:(id<PSPDFPresentableViewController>)controller embeddedInController:(id<PSPDFHostableViewController>)hostController options:(NSDictionary *)options animated:(BOOL)animated;
 
 ///--------------------------------------------
 /// @name General View State
