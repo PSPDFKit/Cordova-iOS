@@ -7,20 +7,22 @@
 	<license>Copyright 2011-2014 PSPDFKit GmbH. All rights reserved.
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT. UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
 http://pspdfkit.com/license.html</license>
-	<js-module src="www/js/pspdfkit.js" name="PSPDFKitPlugin">
-		<clobbers target="PSPDFKitPlugin" />
-	</js-module>	
 	<platform name="ios">
 		<config-file parent="/*" target="config.xml">
 			<feature name="PSPDFKitPlugin">
 				<param name="ios-package" value="PSPDFKitPlugin"/>
 			</feature>
 		</config-file>
+
+		<js-module src="www/js/pspdfkit.js" name="PSPDFKitPlugin">
+			<clobbers target="PSPDFKitPlugin" />
+		</js-module>	
+
 		<source-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.m"/>
 		<header-file src="PSPDFPlugin/Plugins/PSPDFKit/PSPDFKitPlugin.h"/>
+
 		<framework src="libsqlite3.dylib" />
 		<framework src="libxml2.dylib" />
-
 		<framework src="CoreText.framework" />
 		<framework src="QuartzCore.framework" />
 		<framework src="MessageUI.framework" />
@@ -38,9 +40,17 @@ http://pspdfkit.com/license.html</license>
 		<framework src="CoreTelephony.framework" />
 		<framework src="SystemConfiguration.framework" />
 		<framework src="Accelerate.framework" />
-
 	</platform>
 	<info>
-		Add PSPDFKit framework to the Xcode project file mannualy.
+		
+		Please add plugins/com.pspdfkit.cordovaplugin/PSPDFKit.embeddedframework to your Xcode project file in platforms/ios.
+		
+		Plugin usage example:
+        
+        PSPDFKitPlugin.present('file.pdf', {
+            pageTransition: 'curl',
+            editableAnnotationTypes: ['FreeText', 'Signature']
+        });
+
 	</info>
 </plugin>
