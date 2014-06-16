@@ -1,6 +1,14 @@
 PSPDFKit-Cordova
 ================
 
+Install
+-----------
+
+    cordova plugin add https://github.com/PSPDFKit/PSPDFKit-Cordova.git
+
+Read the message at the end and complete installation (add PSPDFKit framework to your Xcode project manually).
+
+
 Usage
 -----------
 

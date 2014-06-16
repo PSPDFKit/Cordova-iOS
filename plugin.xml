@@ -43,14 +43,14 @@ http://pspdfkit.com/license.html</license>
 	</platform>
 	<info>
 		
-		Please add plugins/com.pspdfkit.cordovaplugin/PSPDFKit.embeddedframework to your Xcode project file in platforms/ios.
-		
-		Plugin usage example:
+	Please add plugins/com.pspdfkit.cordovaplugin/PSPDFKit.embeddedframework to your Xcode project file in platforms/ios.
+	
+	Plugin usage example:
 
-		PSPDFKitPlugin.present('file.pdf', {
-			pageTransition: 'curl',
-			editableAnnotationTypes: ['FreeText', 'Signature']
-		});
+	PSPDFKitPlugin.present('file.pdf', {
+		pageTransition: 'curl',
+		editableAnnotationTypes: ['FreeText', 'Signature']
+	});
 
 	</info>
 </plugin>
