@@ -10,7 +10,7 @@
 //  This notice may not be removed from this file.
 //
 
-window.PSPDFKitPlugin = new function() {
+var PSPDFKitPlugin = new function() {
     
     //utilities
     
@@ -151,3 +151,4 @@ window.PSPDFKitPlugin = new function() {
     }
     
 };
+module.exports = PSPDFKitPlugin;
