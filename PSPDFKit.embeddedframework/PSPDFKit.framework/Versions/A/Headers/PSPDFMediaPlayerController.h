@@ -91,6 +91,9 @@ typedef NS_ENUM(NSUInteger, PSPDFMediaPlayerCoverMode) {
 /// Seek to `time`.
 - (void)seekToTime:(CMTime)time;
 
+/// Indicates if the player did finish playing the entire video.
+@property (nonatomic, assign, readonly) BOOL didFinishPlaying;
+
 /// If the media is currently playing, this returns YES.
 @property (nonatomic, assign, readonly, getter=isPlaying) BOOL playing;
 

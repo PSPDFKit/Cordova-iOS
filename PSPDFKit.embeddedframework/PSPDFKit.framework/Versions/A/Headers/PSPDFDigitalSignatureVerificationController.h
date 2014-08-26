@@ -15,7 +15,7 @@
 #import "PSPDFDigitalSignatureVerificationHandler.h"
 
 /// Verifies a signature.
-/// Only available for PSPDFKit Complete with OpenSSL.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @interface PSPDFDigitalSignatureVerificationController : NSObject <PSPDFDigitalSignatureVerificationHandler>
 
 @end

@@ -11,7 +11,7 @@
 
 #import "PSPDFKitGlobal.h"
 
-// Only available for PSPDFKit Complete with OpenSSL integrated.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @interface PSPDFDigitalSigningIdentity : NSObject
 
 @property (nonatomic, copy) NSString *name;

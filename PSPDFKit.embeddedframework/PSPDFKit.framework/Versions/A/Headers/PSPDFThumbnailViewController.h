@@ -22,7 +22,7 @@
 typedef NS_ENUM(NSUInteger, PSPDFThumbnailViewFilter) {
     PSPDFThumbnailViewFilterShowAll,     // Show all thumbnails.
     PSPDFThumbnailViewFilterBookmarks,   // Show bookmarked thumbnails.
-    PSPDFThumbnailViewFilterAnnotations, // All annotation types except links. PSPDFKit Basic/Complete only.
+    PSPDFThumbnailViewFilterAnnotations, // All annotation types except links. Requires the `PSPDFFeatureMaskAnnotationEditing` feature flag.
 };
 
 /// Delegate for thumbnail actions.

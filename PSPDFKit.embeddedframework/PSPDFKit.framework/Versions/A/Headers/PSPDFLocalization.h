@@ -15,6 +15,9 @@
 // Returns the (localized) name of the current app.
 extern NSString *PSPDFAppName(void);
 
+// Guesses the user name for annotation creation.
+extern NSString *PSPDFGuessUserName(void);
+
 /// Localizes strings.
 /// Will first look up the string in the PSPDFKit.bundle
 extern NSString *PSPDFLocalize(NSString *stringToken) NS_FORMAT_ARGUMENT(1);

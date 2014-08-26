@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, PSPDFDigitalCertificateErrorCode) {
 
 extern NSString *const PSPDFDigitalCertificateErrorDomain;
 
-// Only available for PSPDFKit Complete with OpenSSL integrated.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @interface PSPDFDigitalCertificate : NSObject
 
 + (instancetype)certificateFromData:(NSData *)certificateData;

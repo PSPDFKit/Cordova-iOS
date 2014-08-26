@@ -16,7 +16,8 @@
 
 @class PSPDFTextParser, PSPDFWord, PSPDFImageInfo, PSPDFPageView, PSPDFHighlightAnnotation, PSPDFLinkAnnotation, PSPDFAnnotation, PSPDFNoteAnnotation, PSPDFLoupeView, PSPDFLongPressGestureRecognizer;
 
-/// Handles text and image selection. PSPDFKit Basic/Complete feature.
+/// Handles text and image selection.
+/// @note Requires the `PSPDFFeatureMaskTextSelection` feature flag.
 @interface PSPDFTextSelectionView : UIView <AVSpeechSynthesizerDelegate>
 
 /// Currently selected glyphs.
@@ -66,7 +67,7 @@
 /// Currently has a text/image selection?
 - (BOOL)hasSelection;
 
-/// Text selection is only available in PSPDFKit Basic/Complete.
+/// Text selection requires the `PSPDFFeatureMaskTextSelection` feature flag.
 + (BOOL)isTextSelectionFeatureAvailable;
 
 @end

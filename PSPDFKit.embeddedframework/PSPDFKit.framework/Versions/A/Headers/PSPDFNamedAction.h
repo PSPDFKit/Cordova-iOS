@@ -31,6 +31,7 @@ typedef NS_ENUM(NSUInteger, PSPDFNamedActionType) {
     PSPDFNamedActionTypeZoomIn,   // not implemented
     PSPDFNamedActionTypeZoomOut,  // not implemented
     PSPDFNamedActionTypeSaveAs,   // Triggers `[document saveChangedAnnotationsWithError:]`
+    PSPDFNamedActionTypeInfo,
     PSPDFNamedActionTypeUnknown = NSUIntegerMax
 };
 

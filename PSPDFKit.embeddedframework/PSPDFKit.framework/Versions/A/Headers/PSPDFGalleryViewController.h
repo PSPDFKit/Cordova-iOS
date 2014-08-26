@@ -124,12 +124,6 @@ typedef NS_ENUM(NSUInteger, PSPDFGalleryViewControllerState) {
 
 @end
 
-@interface PSPDFGalleryViewController (Private)
-
-@property (nonatomic, weak) UIViewController <PSPDFOverridable> *overridableParentViewController;
-
-@end
-
 @interface PSPDFGalleryViewController (Deprecated)
 
 @property (nonatomic, strong) UIColor *backgroundColor PSPDF_DEPRECATED(3.7.0, "Use backgroundColor on PSPDFGalleryEmbeddedBackgroundView instead.");

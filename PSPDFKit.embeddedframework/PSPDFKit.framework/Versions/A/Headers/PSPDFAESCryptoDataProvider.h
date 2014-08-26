@@ -26,9 +26,9 @@ extern uint const PSPDFDefaultPBKDFNumberOfRounds;
  Use the provided encryption tool to prepare your documents.
 
  Ensure your passphrase/salt are also protected within the binary, or at least obfuscated.
-
  Encryption marginally slows down rendering, since everything is decrypted on the fly.
- Only available in PSPDFKit Basic/Complete.
+
+ @note Requires the `PSPDFFeatureMaskStrongEncryption` feature flag.
  */
 @interface PSPDFAESCryptoDataProvider : NSObject
 
@@ -69,7 +69,7 @@ extern uint const PSPDFDefaultPBKDFNumberOfRounds;
 /// Helper to detect if this `CGDataProviderRef` is handled by `PSPDFAESCryptoDataProvider`.
 + (BOOL)isAESCryptoDataProvider:(CGDataProviderRef)dataProviderRef;
 
-/// Feature only available in PSPDFKit Basic/Complete.
+/// This class requires the `PSPDFFeatureMaskStrongEncryption` feature flag.
 + (BOOL)isAESCryptoFeatureAvailable;
 
 @end

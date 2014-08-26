@@ -16,7 +16,7 @@
 #import "PSPDFDigitalSignatureSigningHandler.h"
 #import "PSPDFDigitalSignatureSigningDelegate.h"
 
-/// Only available for PSPDFKit Complete with OpenSSL.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @protocol PSPDFDigitalSignatureManagerDelegate <NSObject>
 
 /// @name Certificates and Signing Identities

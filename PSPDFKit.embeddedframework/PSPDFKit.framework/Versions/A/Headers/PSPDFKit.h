@@ -12,9 +12,15 @@
 
 // PSPDFKit 3.2.3 is the last version supporting iOS 5.0.
 // You need Xcode 5.1.1 or compile or link with PSPDFKit.
-// We're planning to drop iOS 6 once iOS 8 is announced at WWDC.
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_6_0
 #error PSPDFKit supports iOS 6.0 upwards.
+#endif
+
+// iOS changes behavior of many frameworks, especially UIKit, depending on what iOS SDK your application has been linked to.
+// We designed PSPDFKit v3 to be linked with SDK 7. For SDK 8, many changes were necessary and we are working hard to ship v4
+// at the time Apple will release iOS 8 GM. Email us at support@pspdfkit.com to request a beta.
+#ifdef __IPHONE_8_0
+#warning PSPDFKit v3 has been designed for iOS SDK 7 & Xcode 5.1.1 - upgrade to PSPDFKit v4 for iOS SDK 8 & Xcode 6.x.
 #endif
 
 #import <Foundation/Foundation.h>

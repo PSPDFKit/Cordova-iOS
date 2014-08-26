@@ -97,7 +97,8 @@ extern NSUInteger PSPDFMinimumSearchLength;
 @property (nonatomic, assign) BOOL useOutlineForPageNames;
 
 /// Will include annotations that have a matching type into the search results. (contents will be searched).
-/// Defaults to PSPDFAnnotationTypeAll&~PSPDFAnnotationTypeLink. PSPDFKit Basic/Complete feature.
+/// Defaults to PSPDFAnnotationTypeAll&~PSPDFAnnotationTypeLink.
+/// @note Requires the `PSPDFFeatureMaskAnnotationEditing` feature flag.
 @property (nonatomic, assign) PSPDFAnnotationType searchableAnnotationTypes;
 
 /// Pins the search bar to the top. Defaults to YES on iPhone.
@@ -126,7 +127,9 @@ extern NSUInteger PSPDFMinimumSearchLength;
 // Returns the searchResult for a cell.
 - (PSPDFSearchResult *)searchResultForIndexPath:(NSIndexPath *)indexPath;
 
-// Will return a searchbar. Called during viewDidLoad. Use to customize the toolbar.
+// Will return a searchbar. Called during `viewDidLoad`. Use to customize the toolbar.
+// This method does basic properties like `tintColor`, `showsCancelButton` and `placeholder`.
+// After calling this, the delegate will be set to this class.
 - (UISearchBar *)createSearchBar;
 
 // Currently loaded search results

@@ -62,7 +62,8 @@
 /// If `NSRegularExpressionSearch` is enabled, hyphenations and newlines between the body text will be ignored (which is good, better results)
 @property (nonatomic, assign) NSStringCompareOptions compareOptions;
 
-/// Will include annotations that have a matching type into the search results. (contents will be searched). PSPDFKit Basic/Complete feature.
+/// Will include annotations that have a matching type into the search results. (contents will be searched).
+/// @note Requires the `PSPDFFeatureMaskAnnotationEditing` feature flag.
 @property (nonatomic, assign) PSPDFAnnotationType searchableAnnotationTypes;
 
 /// We have to limit the number of search results to something reasonable. Defaults to 600.

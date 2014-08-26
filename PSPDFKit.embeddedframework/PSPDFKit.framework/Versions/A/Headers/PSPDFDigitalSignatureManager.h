@@ -27,7 +27,7 @@ typedef NS_ENUM(NSUInteger, PSPDFDigitalSignatureManagerErrorCode) {
 };
 
 /// Manages signatures.
-/// Only available for PSPDFKit Complete with OpenSSL.
+/// Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @interface PSPDFDigitalSignatureManager : NSObject
 
 /// Returns the shared instance of the signature manager.

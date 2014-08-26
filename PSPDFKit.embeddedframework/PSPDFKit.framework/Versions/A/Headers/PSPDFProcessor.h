@@ -93,7 +93,7 @@ typedef void (^PSPDFProgressBlock)(NSUInteger currentPage, NSUInteger numberOfPr
  - `kCGPDFContextKeywords`
  - `kCGPDFContextAuthor`
 
- PSPDFKit Basic/Complete feature. Not available for PSPDFKit Viewer.
+ @note Requires the `PSPDFFeatureMaskPDFCreation` feature flag.
 
  @warning
  Don't manually override NSOperation's `completionBlock`.
@@ -111,7 +111,7 @@ typedef void (^PSPDFProgressBlock)(NSUInteger currentPage, NSUInteger numberOfPr
 @end
 
 /// Operation that converts many file formats to PDF.
-/// Needs to be executed from a thread. PSPDFKit Basic/Complete feature.
+/// Needs to be executed from a thread. Requires the `PSPDFFeatureMaskPDFCreation` feature flag.
 @interface PSPDFConversionOperation : NSOperation
 
 /// Designated initializer.

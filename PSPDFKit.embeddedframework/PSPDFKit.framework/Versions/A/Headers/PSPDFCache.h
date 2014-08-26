@@ -151,7 +151,8 @@ typedef NS_OPTIONS(NSUInteger, PSPDFCacheOptions) {
 
 /// The size of the thumbnail images used in the grid view and those shown before the full-size versions are rendered.
 /// Defaults to (170, 220) on iPad and (85, 110) on iPhone.
-@property (nonatomic, assign) CGSize thumbnailSize;
+/// @note Updating the property on the `PSPDFViewController` will also update this.
+//@property (nonatomic, assign) CGSize thumbnailSize;
 
 /// @name Starting/Stopping
 
@@ -192,11 +193,11 @@ typedef NS_OPTIONS(NSUInteger, PSPDFCacheOptions) {
 
 /// @name Encryption/Decryption Handlers
 
-/// Decrypt data from the path. PSPDFKit Basic/Complete feature.
+/// Decrypt data from the path. Requires the `PSPDFFeatureMaskStrongEncryption` feature flag.
 /// If set to nil, the default implementation will be used.
 @property (atomic, copy) NSData *(^decryptFromPathBlock)(PSPDFDocument *document, NSString *path);
 
-/// Encrypt mutable data. PSPDFKit Basic/Complete feature.
+/// Encrypt mutable data. Requires the `PSPDFFeatureMaskStrongEncryption` feature flag.
 /// If set to nil, the default implementation will be used.
 @property (atomic, copy) void (^encryptDataBlock)(PSPDFDocument *document, NSMutableData *data);
 

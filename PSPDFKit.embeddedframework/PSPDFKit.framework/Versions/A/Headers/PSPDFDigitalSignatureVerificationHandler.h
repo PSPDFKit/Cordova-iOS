@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, PSPDFDigitalSignatureVerificationStatusSeverity) {
     PSPDFDigitalSignatureVerificationStatusSeverityError   = 3,
 };
 
-/// Only available for PSPDFKit Complete with OpenSSL.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @protocol PSPDFDigitalSignatureVerificationHandler <NSObject>
 
 /** Filter and subfilter are used in the signature meta data in the pdf to represent which signature handler can be used to deal with
@@ -68,7 +68,7 @@ typedef NS_ENUM(NSUInteger, PSPDFDigitalSignatureVerificationStatusSeverity) {
 @end
 
 /// Return objects conforming to this protocol during a custom signature verification.
-/// Only available for PSPDFKit Complete with OpenSSL.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @protocol PSPDFSignatureVerificationStatus <NSObject>
 
 /** The severity of the status.

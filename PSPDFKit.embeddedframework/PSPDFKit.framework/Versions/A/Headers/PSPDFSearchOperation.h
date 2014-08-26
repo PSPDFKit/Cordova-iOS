@@ -50,7 +50,8 @@
 /// Set compareOptions for the search.
 @property (nonatomic, assign) NSStringCompareOptions compareOptions;
 
-/// Will include annotations that have a matching type into the search results. (contents will be searched). PSPDFKit Basic/Complete feature.
+/// Will include annotations that have a matching type into the search results. (contents will be searched).
+/// @note Requires the `PSPDFFeatureMaskAnnotationEditing` feature flag.
 @property (nonatomic, assign) PSPDFAnnotationType searchableAnnotationTypes;
 
 /// Search delegate.

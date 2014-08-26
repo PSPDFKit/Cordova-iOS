@@ -13,10 +13,17 @@
 #import "PSPDFBaseViewController.h"
 #import "PSPDFDigitalSignatureVerificationController.h"
 
-/// Only available for PSPDFKit Complete with OpenSSL.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @interface PSPDFSignedFieldViewController : PSPDFBaseViewController
 
 /// Designated initializer with the signature verification handler.
 - (id)initWithVerificationController:(id<PSPDFDigitalSignatureVerificationHandler>)verificationHandler;
+
+@end
+
+@interface PSPDFSignedFieldViewController (SubclassingHooks)
+
+// The image view that shows the status icon.
+@property (nonatomic, strong, readonly) UIImageView *imageView;
 
 @end

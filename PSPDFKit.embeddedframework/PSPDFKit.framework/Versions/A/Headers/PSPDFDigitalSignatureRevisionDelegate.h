@@ -1,6 +1,6 @@
 //
 //  PSPDFDigitalSignatureRevisionDelegate.h
-//  PSPDFKit-lib
+//  PSPDFKit
 //
 //  Copyright (c) 2011-2014 PSPDFKit GmbH. All rights reserved.
 //
@@ -13,7 +13,7 @@
 #import "PSPDFKitGlobal.h"
 #import "PSPDFSignatureFormElement.h"
 
-/// Only available for PSPDFKit Complete with OpenSSL.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @protocol PSPDFDigitalSignatureRevisionDelegate <NSObject>
 
 - (void)pdfRevisionRequested:(PSPDFDocument *)pdf verificationHandler:(id<PSPDFDigitalSignatureVerificationHandler>)handler;

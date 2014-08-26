@@ -16,7 +16,7 @@
 #import "PSPDFByteRange.h"
 #import "PSPDFDigitalSignatureBuildProperties.h"
 
-// Only available for PSPDFKit Complete with OpenSSL.
+/// @note Requires the `PSPDFFeatureMaskDigitalSignatures` feature flag and OpenSSL.
 @interface PSPDFDigitalSignatureDictionary : PSPDFModel
 
 /// (Required; inheritable) The name of the preferred signature handler to use when validating this signature. If the Prop_Build entry is not present, it is also the name of the signature handler that was used to create the signature. If Prop_Build is present, it can be used to determine the name of the handler that created the signature (which is typically the same as Filter but is not re- quired to be). An application may substitute a different handler when verify- ing the signature, as long as it supports the specified SubFilter format. Example signature handlers are Adobe.PPKLite, Entrust.PPKEF, CICI.SignIt, and VeriSign.PPKVS.

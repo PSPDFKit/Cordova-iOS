@@ -12,6 +12,11 @@
 
 #import "PSPDFKitGlobal.h"
 
+// Checks that the `requested` interface orientation is supported by controller and application.
+// Pass in the controller's supportedInterfaceOrientations as `supported`.
+// Returns the current interface orientation if the check fails.
+UIInterfaceOrientation PSPDFSafePreferredInterfaceOrientation(UIInterfaceOrientation requested, NSUInteger supported);
+
 @interface PSPDFBaseViewController : UIViewController
 
 @end

@@ -234,11 +234,13 @@ extern NSString *const PSPDFViewControllerSearchHeadlessKey;
 /// Margin at which the scroll to next/previous tap should be invoked. Defaults to 60.
 @property (nonatomic, assign) CGFloat scrollOnTapPageEndMargin;
 
-/// Allows text selection. Defaults to YES. Only available in PSPDFKit Basic/Complete.
+/// Allows text selection. Defaults to YES.
+/// @note Requires the `PSPDFFeatureMaskTextSelection` feature flag.
 /// @warning This implies that the PDF file actually contains text glyphs. Sometimes text is represented via embedded images or vectors, in that case PSPDFKit can't select it.
 @property (nonatomic, assign, getter=isTextSelectionEnabled) BOOL textSelectionEnabled;
 
-/// Allows image selection. Defaults to NO. Only available in PSPDFKit Basic/Complete.
+/// Allows image selection. Defaults to NO.
+/// @note Requires the `PSPDFFeatureMaskTextSelection` feature flag.
 /// @warning Will only work if `textSelectionEnabled` is also set to YES. This implies that the image is not in vector format. Only supports a subset of all possible image types in PDF.
 @property (nonatomic, assign, getter=isImageSelectionEnabled) BOOL imageSelectionEnabled;
 
@@ -463,7 +465,8 @@ extern NSString *const PSPDFViewControllerSearchHeadlessKey;
 /// Thumbnail controller. Contains the (grid) collectionView. Lazily created.
 @property (nonatomic, strong) PSPDFThumbnailViewController *thumbnailController;
 
-/// Thumbnail size. For defaults see `PSPDFCache.sharedCache.thumbnailSize`.
+/// Thumbnail size.
+/// This will be different depending on the device idiom: (170.f, 220.f) for iPad and (85.f, 110.f) on iPhone.
 @property (nonatomic, assign) CGSize thumbnailSize;
 
 /// Set margin for thumbnail view mode. Defaults to `UIEdgeInsetsMake(15.f, 15.f, 15.f, 15.f)`.
@@ -525,8 +528,9 @@ extern NSString *const PSPDFPresentOptionPersistentCloseButtonMode; // Set to en
 @property (nonatomic, assign) BOOL annotationGroupingEnabled;
 
 /// If set to YES, a long-tap that ends on a page area that is not a text/image will show a new menu to create annotations. Defaults to YES.
-/// If set to NO, there's no menu displayed and the loupe is simply hidden. Only available in PSPDFKit Basic/Complete.
+/// If set to NO, there's no menu displayed and the loupe is simply hidden.
 /// Menu can be intercepted and customized with the `shouldShowMenuItems:atSuggestedTargetRect:forAnnotation:inRect:onPageView:` delegate. (when annotation is nil)
+/// @note Requires the `PSPDFFeatureMaskAnnotationEditing` feature flag.
 @property (nonatomic, assign, getter=isCreateAnnotationMenuEnabled) BOOL createAnnotationMenuEnabled;
 
 /// Types allowed in the create annotations menu. Defaults to the most common annotation types. (strings)
@@ -535,10 +539,6 @@ extern NSString *const PSPDFPresentOptionPersistentCloseButtonMode; // Set to en
 
 /// If YES, the annotation menu will be displayed after an annotation has been created. Defaults to NO.
 @property (nonatomic, assign) BOOL showAnnotationMenuAfterCreation;
-
-/// If YES, this will directly show the note inspector. Only evaluated on iPad. Defaults to YES.
-/// Set this to NO to get the same behavior on iPad and iPhone.
-@property (nonatomic, assign) BOOL skipMenuForNoteAnnotationsOnIPad;
 
 /// Controls if a second tap to an annotation that allows inline editing enters edit mode. Defaults to YES.
 /// (The most probable candidate for this is `PSPDFFreeTextAnnotation`)
@@ -585,7 +585,8 @@ extern NSString *const PSPDFPresentOptionPersistentCloseButtonMode; // Set to en
 /// Send current pdf via email. Only works with single-file/data pdf's.
 @property (nonatomic, strong, readonly) PSPDFEmailBarButtonItem *emailButtonItem;
 
-/// Show the annotation menu. Only available in PSPDFKit Basic/Complete.
+/// Show the annotation menu.
+/// @note Requires the `PSPDFFeatureMaskAnnotationEditing` feature flag.
 @property (nonatomic, strong, readonly) PSPDFAnnotationBarButtonItem *annotationButtonItem;
 
 /// Show the bookmarks menu.
@@ -649,6 +650,7 @@ extern NSString *const PSPDFPresentOptionPersistentCloseButtonMode; // Set to en
 @interface PSPDFViewController (SubclassingHooks)
 
 /// Override this initializer to allow all use cases (storyboard loading, etc)
+/// @warning Do not call this method directly, except for calling super when overriding it.
 - (void)commonInitWithDocument:(PSPDFDocument *)document NS_REQUIRES_SUPER;
 
 // Executes a PDF action. (open link, email, page, document, etc)
