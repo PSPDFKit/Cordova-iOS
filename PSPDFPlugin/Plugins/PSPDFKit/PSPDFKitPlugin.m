@@ -546,6 +546,15 @@
 //    PSPDFPageRenderingModeRender                 // Don't use cached page nor thumb.
 //};
 
+#pragma mark License Key
+
+- (void)setLicenseKey:(CDVInvokedUrlCommand *)command {
+    NSString *key = [command argumentAtIndex:0];
+    if (key.length > 0) {
+        PSPDFSetLicenseKey(key.UTF8String);
+    }
+}
+
 #pragma mark PSPDFDocument setters and getters
 
 - (void)setFileURLForPSPDFDocumentWithJSON:(NSString *)path

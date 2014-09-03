@@ -12,25 +12,28 @@ Read the message at the end and complete installation (add PSPDFKit framework to
 Usage
 -----------
 
-The plugin is accessed via the PSPDFKit singleton. Here are some example calls:
+The plugin is accessed via the PSPDFKitPlugin singleton. Here are some example calls:
+    
+    // set your license key here
+    PSPDFKitPlugin.setLicenseKey("YOUR KEY");
 
     //show pdf with in double page mode, with curl transition red background
-    PSPDFKit.present('pdf/castles.pdf', {
+    PSPDFKitPlugin.present('pdf/castles.pdf', {
         pageTransition : 'curl',
         pageMode: 'double',
         backgroundColor: 'red'
     });
     
     //show pdf with callback
-    PSPDFKit.present('pdf/castles.pdf', function() {
+    PSPDFKitPlugin.present('pdf/castles.pdf', function() {
         alert('pdf has appeared');
     });
     
     //scroll to page 1
-    PSPDFKit.setPage(1, true);
+    PSPDFKitPlugin.setPage(1, true);
     
     //get the page number
-    PSPDFKit.getPage(function(page) {
+    PSPDFKitPlugin.getPage(function(page) {
         alert('Current page: ' + page);
     });
 
@@ -279,7 +282,7 @@ Appearance options
 Events
 -------------
 
-The following events are supported by the PSPDFKit class
+The following events are supported by the PSPDFKitPlugin class
 
     shouldSetDocument
     willDisplayDocument

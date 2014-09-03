@@ -50,6 +50,7 @@
         <script>
             
             function buttonAction() {
+                PSPDFKitPlugin.setLicenseKey("YOUR KEY HERE");
                 // listen for event
                 PSPDFKitPlugin.addEventListener('didDismiss', function(event) {
                     console.log('dismissed');

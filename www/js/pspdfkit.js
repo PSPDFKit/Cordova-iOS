@@ -80,7 +80,13 @@ var PSPDFKitPlugin = new function() {
             }
         }
     }
+
+    //license key
     
+    addMethods({
+               setLicenseKey: ['key'],
+               });
+
     //document methods
     
     addMethods({
