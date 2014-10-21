@@ -1,0 +1,46 @@
+//
+//  PSPDFSimplePageViewController.h
+//  PSPDFKit
+//
+//  Copyright (c) 2012-2014 PSPDFKit GmbH. All rights reserved.
+//
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY INTERNATIONAL COPYRIGHT LAW
+//  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
+//  UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
+//  This notice may not be removed from this file.
+//
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "PSPDFBaseViewController.h"
+
+@protocol PSPDFSimplePageViewControllerDelegate <NSObject>
+
+@optional
+// sets scrollview property. Defaults to YES.
+- (BOOL)shouldDelayContentTouches;
+
+@end
+
+/// Simple view controller that paginates a set of `viewControllers`.
+@interface PSPDFSimplePageViewController : PSPDFBaseViewController <UIScrollViewDelegate>
+
+/// Designated initializer.
+- (instancetype)initWithViewControllers:(NSArray *)viewControllers NS_DESIGNATED_INITIALIZER;
+
+/// Get/set current page, optionally animated. Page starts at 0.
+@property (nonatomic, assign) NSUInteger page;
+- (void)setPage:(NSUInteger)page animated:(BOOL)animated;
+
+@end
+
+
+@interface PSPDFSimplePageViewController (SubclassingHooks)
+
+// Internally used scroll view.
+@property (nonatomic, strong, readonly) UIScrollView *scrollView;
+
+// Internally used page control.
+@property (nonatomic, strong, readonly) UIPageControl *pageControl;
+
+@end

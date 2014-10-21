@@ -34,8 +34,58 @@
                 <p class="event listening">Connecting to Device</p>
                 <p class="event received">Device is Ready</p>
             </div>
+                        <br>
+            <button onclick="buttonAction()">Show PDF</button>
+
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+                <script type="text/javascript">
+            app.initialize();
+        </script>
+        <script>
+            function buttonAction() {
+                PSPDFKitPlugin.setLicenseKey("YOUR KEY HERE");
+                // listen for event
+                PSPDFKitPlugin.addEventListener('didDismiss', function(event) {
+                    console.log('dismissed');
+                });
+                
+                // add toolbar buttons
+                PSPDFKitPlugin.setLeftBarButtonItems([
+                    'close',
+                    'annotation',
+                    {title: 'Hello', tintColor: 'blue', action: function() {
+                        alert('Hello World');
+                    }}
+                ]);
+                
+                // show pdf with shadows disabled and a red background
+                PSPDFKitPlugin.present('pdf/castles.pdf', {
+                    pageTransition: 'curl',
+                    editableAnnotationTypes: ['FreeText', 'Signature']
+                    //shadowEnabled: false,
+                    //backgroundColor: 'red'
+                });
+                
+                //get option values
+                PSPDFKitPlugin.getOptions(['pageCount', 'backgroundColor'], function(values) {
+                    console.log('pageCount: ' + values.pageCount);
+                    console.log('backgroundColor: ' + values.backgroundColor);
+                });
+                
+                //scroll to page 1 after a 500ms delay
+                setTimeout(function(){
+                    PSPDFKitPlugin.setPage(1, true);
+                }, 500);
+                
+                // get the page number after a 1s delay
+                setTimeout(function() {
+                    PSPDFKitPlugin.getPage(function(page) {
+                        console.log('Current page: ' + page);
+                    });
+                }, 1000);
+            }
+        </script>
     </body>
 </html>
