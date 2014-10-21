@@ -10,7 +10,8 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class PSPDFViewController;
 
@@ -29,13 +30,13 @@
 
 /// Global helper to dismiss any open popover handled by `PSPDFViewController`.
 /// This will even dismiss popovers that don't expose their popover, such as `UIActionSheet` or `UIPrintInteractionController`.
-+ (BOOL)dismissPopoverAnimated:(BOOL)animated completion:(dispatch_block_t)completion;
++ (BOOL)dismissPopoverAnimated:(BOOL)animated completion:(void (^)(void))completion;
 
 /// Returns if any of the bar button items is active. Takes UIKit-managed popovers into account.
 + (BOOL)isPopoverVisible;
 
 /// Designated initializer.
-- (id)initWithPDFViewController:(PSPDFViewController *)pdfViewController;
+- (instancetype)initWithPDFViewController:(PSPDFViewController *)pdfViewController NS_DESIGNATED_INITIALIZER;
 
 /// Attached PDF controller. (weak, do not use KVO on it!)
 @property (nonatomic, weak) PSPDFViewController *pdfController;
@@ -68,7 +69,7 @@
 /// Return an `UIPopoverController` if you presented a popover or a "parent" object if you indirectly presented a popover controller.
 /// Sender can be either an `UIBarButtonItem` or a generic view.
 - (id)presentAnimated:(BOOL)animated sender:(id)sender;
-- (BOOL)dismissAnimated:(BOOL)animated completion:(dispatch_block_t)completion;
+- (BOOL)dismissAnimated:(BOOL)animated completion:(void (^)(void))completion;
 - (void)didDismiss;
 
 /// Use if presentModal needs to return nil because of a long-running process.
@@ -76,8 +77,8 @@
 - (void)setPresentedObject:(id)presentedObject sender:(id)sender;
 
 /// Helper method to present and dismiss a view controller inside a popover controller on iPad or modally on iPhone.
-- (id)presentModalOrInPopover:(UIViewController *)viewController sender:(id)sender;
-- (BOOL)dismissModalOrPopoverAnimated:(BOOL)animated completion:(dispatch_block_t)completion;
+- (id)presentViewController:(UIViewController *)viewController sender:(id)sender;
+- (BOOL)dismissModalOrPopoverAnimated:(BOOL)animated completion:(void (^)(void))completion;
 
 /**
  Peeks into certain Apple classes to get the internal `UIPopoverController`. (e.g. `UIPrintInteractionController`. I've written rdars to allow access to the internal `popoverController` - but this is the best way in the mean time)
@@ -105,7 +106,7 @@
 // This is different to what Apple does (graying out ALL buttons), but looks a lot better.
 // Set `activeTintColor` to UIColor.clearColor to prevent this, as setting to nil will auto-fetch the tintColor-state.
 @property (nonatomic, strong) UIColor *activeTintColor;
-// Helper that will tint the image if the bar button is active (releavant for buttons that show popovers)
+// Helper that will tint the image if the bar button is active (relevant for buttons that show popovers)
 - (UIImage *)imageWithActiveState:(UIImage *)image;
 
 @end

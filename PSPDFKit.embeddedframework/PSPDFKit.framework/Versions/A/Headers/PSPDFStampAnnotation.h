@@ -18,21 +18,18 @@
 /// Returns predefined colors for special subjects, like red for "void" or green for "completed".
 + (UIColor *)stampColorForSubject:(NSString *)subject;
 
-/// Designated initializer.
-- (id)init;
-
 /// Init with a default subject and uses a matching color.
-- (id)initWithSubject:(NSString *)subject;
+- (instancetype)initWithSubject:(NSString *)subject;
 
 /// Init with image.
-- (id)initWithImage:(UIImage *)image;
+- (instancetype)initWithImage:(UIImage *)image;
 
 /// Stamp subtext.
 /// Used for custom stamps, will render beneath the subject or as the subject if subject is not set.
 @property (nonatomic, copy) NSString *subtext;
 
 /// If set, will be used instead of the subject for the rendered text.
-/// @note To translate the "default" stamps like "Approved" or "Accepted", you should use `localizedSubject` instead of changing subtext. Various strings are hardcoded to render differently accordin to the non-localized default stamps defined in the PDF spec. PSPDFKit renders appearance streams for stamps, so we can now localize the subtext but will still save the original, unlocalized title for compatibility reasons with readers that can't render AP streams.
+/// @note To translate the "default" stamps like "Approved" or "Accepted", you should use `localizedSubject` instead of changing subtext. Various strings are hardcoded to render differently according to the non-localized default stamps defined in the PDF spec. PSPDFKit renders appearance streams for stamps, so we can now localize the subtext but will still save the original, unlocalized title for compatibility reasons with readers that can't render AP streams.
 @property (nonatomic, copy) NSString *localizedSubject;
 
 /// Stamp image. Defaults to nil. Set to render an image.
@@ -41,7 +38,7 @@
 
 /// Parses the AP stream, searches for an image and loads it.
 /// Will also update `imageTransform`.
-- (UIImage *)loadImageWithError:(NSError **)error;
+- (UIImage *)loadImageWithError:(NSError *__autoreleasing*)error;
 
 /// Stamp image transform. Defaults to `CGAffineTransformIdentity`.
 @property (nonatomic, assign) CGAffineTransform imageTransform;

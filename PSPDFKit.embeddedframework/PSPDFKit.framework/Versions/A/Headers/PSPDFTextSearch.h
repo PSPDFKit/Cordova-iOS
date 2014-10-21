@@ -10,7 +10,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <Foundation/Foundation.h>
 #import "PSPDFAnnotation.h"
 #import "PSPDFSearchOperation.h"
 
@@ -42,17 +42,21 @@
 
 /// Initialize with the document.
 /// @note The document must not be nil.
-- (id)initWithDocument:(PSPDFDocument *)document;
+- (instancetype)initWithDocument:(PSPDFDocument *)document NS_DESIGNATED_INITIALIZER;
 
 /// Searches for text occurrence. If document was not yet parsed, it will be now. Searches entire document.
 - (void)searchForString:(NSString *)searchTerm;
 
 /// Searches for text on the specified page ranges. If ranges is nil, will search entire document.
 /// If rangesOnly is set to NO, ranges will be searched first, then the rest of the document.
-/// @note Use `PSPDFIndexSetFromArray()` to convert `NSNumber-NSArrays` to an `NSIndexSet`.
+/// @note See `psc_indexSet` to convert `NSNumber-NSArrays` to an `NSIndexSet`.
 - (void)searchForString:(NSString *)searchTerm inRanges:(NSIndexSet *)ranges rangesOnly:(BOOL)rangesOnly;
 
-/// Stops all operations. Blocks until all operations are finished.
+/// Cancels all operations. Returns immediately.
+- (void)cancelAllOperations;
+
+/// Cancels all operations. Blocks current thread until all operations are processed.
+/// @note Use `cancelAllOperations` if you don't with to wait untill all opearetions are processed.
 - (void)cancelAllOperationsAndWait;
 
 /// Defaults to `NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch|NSWidthInsensitiveSearch|NSRegularExpressionSearch`.
@@ -61,6 +65,9 @@
 /// @note PSPDF has extensions that will allow a combination of `NSRegularExpressionSearch` and `NSDiacriticInsensitiveSearch`.
 /// If `NSRegularExpressionSearch` is enabled, hyphenations and newlines between the body text will be ignored (which is good, better results)
 @property (nonatomic, assign) NSStringCompareOptions compareOptions;
+
+/// Customizes the range of the preview string. Defaults to 20/160.
+@property (nonatomic, assign) NSRange previewRange;
 
 /// Will include annotations that have a matching type into the search results. (contents will be searched).
 /// @note Requires the `PSPDFFeatureMaskAnnotationEditing` feature flag.

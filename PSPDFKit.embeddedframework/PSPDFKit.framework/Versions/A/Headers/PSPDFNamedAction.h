@@ -42,7 +42,7 @@ extern NSString *const PSPDFNamedActionTypeTransformerName;
 @interface PSPDFNamedAction : PSPDFAction
 
 /// Initialize with string. Will parse action, set to `PSPDFNamedActionTypeUnknown` if not recognized.
-- (id)initWithActionNamedString:(NSString *)actionNameString;
+- (instancetype)initWithActionNamedString:(NSString *)actionNameString;
 
 /// The type of the named action.
 /// @note Will update `namedAction` if set.

@@ -10,14 +10,15 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "PSPDFExtendedPopoverController.h"
 #import "PSPDFBaseTableViewController.h"
-#import "PSPDFStatusBarStyleHint.h"
 #import "PSPDFTextSearch.h"
 #import "PSPDFAnnotation.h"
 #import "PSPDFStyleable.h"
 #import "PSPDFCache.h"
+#import "PSPDFOverridable.h"
 
 @class PSPDFDocument, PSPDFViewController, PSPDFSearchResult, PSPDFSearchResultCell;
 
@@ -57,11 +58,11 @@ extern NSUInteger PSPDFMinimumSearchLength;
 
 @end
 
-/// The PDF search view controller.
-@interface PSPDFSearchViewController : PSPDFBaseTableViewController <UISearchDisplayDelegate, UISearchBarDelegate, PSPDFTextSearchDelegate, PSPDFStatusBarStyleHint, PSPDFStyleable, PSPDFPopoverControllerDismissable>
+/// Allows to search within the current `document`.
+@interface PSPDFSearchViewController : PSPDFBaseTableViewController <UISearchDisplayDelegate, UISearchBarDelegate, PSPDFTextSearchDelegate, PSPDFStyleable, PSPDFPopoverControllerDismissable>
 
 /// Designated initializer.
-- (id)initWithDocument:(PSPDFDocument *)document delegate:(id<PSPDFSearchViewControllerDelegate>)delegate;
+- (instancetype)initWithDocument:(PSPDFDocument *)document delegate:(id<PSPDFSearchViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
 
 /// The current document.
 @property (nonatomic, strong) PSPDFDocument *document;

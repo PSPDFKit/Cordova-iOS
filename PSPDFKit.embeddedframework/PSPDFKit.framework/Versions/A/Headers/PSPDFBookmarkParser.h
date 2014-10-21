@@ -10,7 +10,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <Foundation/Foundation.h>
 
 @class PSPDFBookmark, PSPDFDocument;
 
@@ -31,7 +31,7 @@ extern NSString *const PSPDFBookmarksChangedNotification;
 @interface PSPDFBookmarkParser : NSObject
 
 /// Designated initializer.
-- (id)initWithDocument:(PSPDFDocument *)document;
+- (instancetype)initWithDocument:(PSPDFDocument *)document NS_DESIGNATED_INITIALIZER;
 
 /// Contains bookmarks (`PSPDFBookmark`) for the document. Access is thread safe.
 @property (nonatomic, copy) NSArray *bookmarks;
@@ -48,7 +48,7 @@ extern NSString *const PSPDFBookmarksChangedNotification;
 - (BOOL)removeBookmarkForPage:(NSUInteger)page;
 
 /// Clears all bookmarks. Also deletes file.
-- (BOOL)clearAllBookmarksWithError:(NSError **)error;
+- (BOOL)clearAllBookmarksWithError:(NSError *__autoreleasing*)error;
 
 /// Returns the bookmark if page has a bookmark.
 - (PSPDFBookmark *)bookmarkForPage:(NSUInteger)page;
@@ -58,19 +58,19 @@ extern NSString *const PSPDFBookmarksChangedNotification;
 
 @interface PSPDFBookmarkParser (SubclassingHooks)
 
-/// Internal queue to synchronize acccess to the mutable bookmark array.
+/// Internal queue to synchronize access to the mutable bookmark array.
 /// The internal type of `bookmarks` is NSMutableArray and can be modified if synchronizing with this queue.
 /// @note This is still accessible for legacy reasons, but might be replaced with more fine-grained hooks.
-@property (nonatomic, strong, readonly) dispatch_queue_t bookmarkQueue;
+@property (nonatomic, readonly) dispatch_queue_t bookmarkQueue;
 
 /// Defaults to cachePath/bookmarks.plist
 - (NSString *)bookmarkPath;
 
 /// Read bookmarks out of the plist in bookmarkPath.
-- (NSArray *)loadBookmarksWithError:(NSError **)error;
+- (NSArray *)loadBookmarksWithError:(NSError *__autoreleasing*)error;
 
 /// Saves the bookmark into a plist file at bookmarkPath.
 /// @note Saving is done async.
-- (BOOL)saveBookmarksWithError:(NSError **)error;
+- (BOOL)saveBookmarksWithError:(NSError *__autoreleasing*)error;
 
 @end

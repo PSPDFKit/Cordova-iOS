@@ -10,7 +10,6 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
 #import "PSPDFMemoryCache.h"
 #import "PSPDFDiskCache.h"
 #import "PSPDFRenderQueue.h"
@@ -31,11 +30,14 @@ extern BOOL PSPDFCacheDebug;
 @optional
 
 /// Requested image has been rendered or loaded from disk.
-/// `size` is the requested image size, not the final image size. (due to document aspect ratio)
+/// This method gets called before the image is written to disk, but right after the image is rendered or fetched from disk.
+/// `size` is the requested image size, not the final image size (due to document aspect ratio).
 /// @warning Do not register/deregister the delegate inside this method.
-- (void)didCacheImage:(UIImage *)image document:(PSPDFDocument *)document page:(NSUInteger)page size:(CGSize)size;
+- (void)didRenderImage:(UIImage *)image document:(PSPDFDocument *)document page:(NSUInteger)page size:(CGSize)size;
 
 @end
+
+typedef void(^PSPDFCacheDocumentImageRenderingCompletionBlock)(UIImage *image, PSPDFDocument *document, NSUInteger page, CGSize size);
 
 typedef NS_ENUM(NSUInteger, PSPDFCacheStatus) {
     PSPDFCacheStatusNotCached,
@@ -99,6 +101,9 @@ typedef NS_OPTIONS(NSUInteger, PSPDFCacheOptions) {
 /// @note The cache will always return an aspect ratio corrected size of the image, so resulting size might be different.
 - (UIImage *)imageFromDocument:(PSPDFDocument *)document page:(NSUInteger)page size:(CGSize)size options:(PSPDFCacheOptions)options;
 
+/// Like above but takes a completion block as the last parameter. This method still calls the delegate in addition to the block!
+- (UIImage *)imageFromDocument:(PSPDFDocument *)document page:(NSUInteger)page size:(CGSize)size options:(PSPDFCacheOptions)options completionBlock:(void(^)(UIImage *image, PSPDFDocument *document, NSUInteger page, CGSize size))completionBlock;
+
 /// @name Store into cache
 
 /// Caches the image in memory and disk for later re-use.
@@ -107,9 +112,22 @@ typedef NS_OPTIONS(NSUInteger, PSPDFCacheOptions) {
 
 /// @name Document pre-processing
 
-/// Starts caching the document. setting `diskCacheStrategy` to `PSPDFDiskCacheStrategyEverything` will pre-cache the whole document, and `PSPDFDiskCacheStrategyNearPages` will render a few pages around `page`.
-/// For `sizes` usually you want the full screen, so use `@[[NSValue valueWithCGSize:UIScreen.mainScreen.bounds.size]]` unless you have an always-visible toolbar that makes the effective size for the page smaller. You don't need to worry about aspect ration correctness, PSPDFKit will do that for you. If you use `fitToWidthEnabled`, you should set a fake size with a very large height (e.g. 5000) so that the page is effectively bound by width only.
-- (void)cacheDocument:(PSPDFDocument *)document startAtPage:(NSUInteger)page sizes:(NSArray *)sizes diskCacheStrategy:(PSPDFDiskCacheStrategy)diskCacheStrategy;
+///  Asyncronously pre-renders and caches the document. The delegate method `didRenderImage:document:page:size:` gets called after each image is rendered (number of pages x number of sizes).
+///
+///  @param document The document to render and cache.
+///  @param sizes    An array of NSValue objects constructed with CGSize. Each page will be rendered for each size specified in this array.
+///  @param strategy The caching strategy to use.
+///  @param page     If using PSPDFDiskCacheStrategyNearPages a few pages before and after the provided page will be cached only. The parameter is otherwise ignored.
+- (void)cacheDocument:(PSPDFDocument *)document pageSizes:(NSArray *)sizes withDiskCacheStrategy:(PSPDFDiskCacheStrategy)strategy aroundPage:(NSUInteger)page;
+
+///  Asyncronously pre-renders and caches the document. The delegate method `didRenderImage:document:page:size:` gets called after each image is rendered (number of pages x number of sizes).
+///
+///  @param document            The document to render and cache.
+///  @param sizes               An array of NSValue objects constructed with CGSize. Each page will be rendered for each size specified in this array.
+///  @param strategy            The caching strategy to use.
+///  @param page                If using PSPDFDiskCacheStrategyNearPages a few pages before and after the provided page will be cached only. The parameter is otherwise ignored.
+///  @param pageCompletionBlock This block will be executed each time a page is rendered for each size (the delegates, if any, will still be called!).
+- (void)cacheDocument:(PSPDFDocument *)document pageSizes:(NSArray *)sizes withDiskCacheStrategy:(PSPDFDiskCacheStrategy)strategy aroundPage:(NSUInteger)page imageRenderingCompletionBlock:(PSPDFCacheDocumentImageRenderingCompletionBlock)pageCompletionBlock;
 
 /// Stops all cache requests (render requests, queued disk writes) for the document.
 - (void)stopCachingDocument:(PSPDFDocument *)document;
@@ -125,7 +143,7 @@ typedef NS_OPTIONS(NSUInteger, PSPDFCacheOptions) {
 
 /// Removes the whole cache (memory/disk) for `document`. Will cancel any open writes as well.
 /// Enable `deleteDocument` to remove the document and the associated metadata.
-- (BOOL)removeCacheForDocument:(PSPDFDocument *)document deleteDocument:(BOOL)deleteDocument error:(NSError **)error;
+- (BOOL)removeCacheForDocument:(PSPDFDocument *)document deleteDocument:(BOOL)deleteDocument error:(NSError *__autoreleasing*)error;
 
 /// Clears the disk and memory cache.
 - (void)clearCache;

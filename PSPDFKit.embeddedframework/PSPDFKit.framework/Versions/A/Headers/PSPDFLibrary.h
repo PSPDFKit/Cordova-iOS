@@ -40,6 +40,7 @@ typedef NS_ENUM(NSUInteger, PSPDFLibraryIndexStatus) {
 /// @name Initialization
 
 /// There can be many libraries, but usually one is enough.
+/// Will silently return nil if `PSPDFFeatureMaskIndexedFTS` is not set.
 + (instancetype)defaultLibrary;
 
 /// Returns an library for this given path.
@@ -80,11 +81,21 @@ extern NSString *const PSPDFLibraryMatchExactWordsOnlyKey;
 // only matches that phrase and not something like "Lorem sit ipsum dolor".
 extern NSString *const PSPDFLibraryMatchExactPhrasesOnlyKey;
 
+// Customizes the range of the preview string. Defaults to 20/160.
+extern NSString *const PSPDFLibraryPreviewRangeKey;
+
+/// See `documentUIDsMatchingString:options:completionHandler:previewTextHandler:`.
+- (void)documentUIDsMatchingString:(NSString *)searchString options:(NSDictionary *)options completionHandler:(void (^)(NSString *searchString, NSDictionary *resultSet))completionHandler;
+
 /// Query the database for a match of `searchString`. Only direct matches, begins-with and ends-with matches are supported.
-/// Returns a dictionary of UID->`NSIndexSet` of page numbers.
+/// Returns a dictionary of UID->`NSIndexSet` of page numbers in the `completionHandler`.
+/// If you provide an optional `previewTextHandler`, a text preview for all search results will be
+/// extracted from the matching documents and a dictionary of UID->`NSSet` of `PSPDFSearchResult`s will
+/// be returned in the `previewTextHandler`.
+/// @note `previewTextHandler` is optional.
 /// @note Ends-with matches are only possible if `saveReversedPageText` has been YES while the document was indexed.
 /// @warning The completion handler might be called on a different thread.
-- (void)documentUIDsMatchingString:(NSString *)searchString options:(NSDictionary *)options completionHandler:(void (^)(NSString *searchString, NSDictionary *resultSet))completionHandler;
+- (void)documentUIDsMatchingString:(NSString *)searchString options:(NSDictionary *)options completionHandler:(void (^)(NSString *searchString, NSDictionary *resultSet))completionHandler previewTextHandler:(void (^)(NSString *searchString, NSDictionary *resultSet))previewTextHandler;
 
 /// @name Index Status
 
@@ -107,5 +118,9 @@ extern NSString *const PSPDFLibraryMatchExactPhrasesOnlyKey;
 
 /// Clear all database objects. Will clear ALL content in `path`.
 - (void)clearAllIndexes;
+
+/// Cancels all pending preview text operations.
+/// @note The `previewTextHandler` of cancelled operations will not be called.
+- (void)cancelAllPreviewTextOperations;
 
 @end

@@ -12,6 +12,7 @@
 
 #import "PSPDFStatefulTableViewController.h"
 #import "PSPDFStyleable.h"
+#import "PSPDFOverridable.h"
 
 @class PSPDFDocument, PSPDFOutlineViewController, PSPDFOutlineElement, PSPDFOutlineCell;
 
@@ -28,7 +29,7 @@
 @interface PSPDFOutlineViewController : PSPDFStatefulTableViewController <UISearchDisplayDelegate, PSPDFStyleable>
 
 /// Designated initializer.
-- (id)initWithDocument:(PSPDFDocument *)document delegate:(id<PSPDFOutlineViewControllerDelegate>)delegate;
+- (instancetype)initWithDocument:(PSPDFDocument *)document delegate:(id<PSPDFOutlineViewControllerDelegate>)delegate NS_DESIGNATED_INITIALIZER;
 
 /// Allow to long-press to copy the title. Defaults to YES.
 @property (nonatomic, assign) BOOL allowCopy;
@@ -64,6 +65,10 @@
 // Cell delegate - expand/shrink content.
 - (void)outlineCellDidTapDisclosureButton:(PSPDFOutlineCell *)cell;
 
+// Used on iOS 8+ only, otherwise `searchDisplayController` is used.
+@property (nonatomic, strong, readonly) UISearchController *searchController;
+
+// The search bar used with `UISearchController` or `UISearchDisplayController`.
 @property (nonatomic, strong, readonly) UISearchBar *searchBar;
 
 @end

@@ -19,7 +19,7 @@ typedef NS_ENUM(NSUInteger, PSPDFReachability) {
     PSPDFReachabilityWWAN
 };
 
-/// Posted when the reachabily changes.
+/// Posted when the reachability changes.
 extern NSString *const PSPDFReachabilityDidChangeNotification;
 
 @interface PSPDFReachabilityObserver : NSObject

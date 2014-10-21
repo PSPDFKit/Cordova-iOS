@@ -16,14 +16,14 @@
 
 // We need to explicitly disable animations here, else image weirdly animates because of an implicit animation context when the popover animates.
 // Don't do this when we edit, since we do want the animation there.
-- (void)performBlockWithoutAnimationIfResizingPopover:(dispatch_block_t)block;
+- (void)performBlockWithoutAnimationIfResizingPopover:(void (^)(void))block;
 
 @end
 
 @interface PSPDFTableViewCell (SubclassingHooks)
 
-// Called when the iOS 7+ font system base size is changed.
-- (void)contentSizeDidChangeNotification:(NSNotification *)notification NS_REQUIRES_SUPER;
+// Called when the font system base size is changed.
+- (void)contentSizeDidChange NS_REQUIRES_SUPER;
 
 @end
 

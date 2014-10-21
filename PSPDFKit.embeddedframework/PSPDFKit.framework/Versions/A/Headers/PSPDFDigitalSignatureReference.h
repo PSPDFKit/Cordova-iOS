@@ -10,7 +10,6 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
 #import "PSPDFModel.h"
 
 /** The different transform methods (see Section 8.7.1, “Transform Methods”).
@@ -30,7 +29,7 @@ typedef NS_ENUM(NSUInteger, PSPDFDigitalSignatureReferenceTransformMethod) {
 @interface PSPDFDigitalSignatureReference : PSPDFModel
 
 /// Designated initializer.
-- (id)initWithDictionary:(CGPDFDictionaryRef)dict;
+- (instancetype)initWithDictionary:(CGPDFDictionaryRef)dict NS_DESIGNATED_INITIALIZER;
 
 /// (Required) The name of the transform method (see Section 8.7.1, “Transform Methods”) that guides the object digest computation or modification analysis that takes place when the signature is validated.
 @property (nonatomic, assign) PSPDFDigitalSignatureReferenceTransformMethod transformMethod;

@@ -17,18 +17,23 @@
 @interface PSPDFSearchResultCell : PSPDFTableViewCell <PSPDFCacheDelegate>
 
 /// Will configure the cell with a search result model object.
+/// @note This method will perform formatting and then calls `configureWithDocument:page:text:detailText:`
 - (void)configureWithSearchResult:(PSPDFSearchResult *)searchResult;
+
+/// Will configure the cell with the given document, page, text and detail text.
+- (void)configureWithDocument:(PSPDFDocument *)document page:(NSUInteger)page text:(NSString *)text detailText:(NSAttributedString *)detailText;
 
 /// Height calculation.
 + (CGFloat)heightForSearchResult:(PSPDFSearchResult *)searchResult numberOfPreviewLines:(NSUInteger)numberOfPreviewLines;
 
 /// The associated document.
-@property (atomic, weak, readonly) PSPDFDocument *document;
+@property (nonatomic, weak, readonly) PSPDFDocument *document;
 
 /// The search results page.
-@property (atomic, assign, readonly) NSUInteger page;
+@property (nonatomic, assign, readonly) NSUInteger page;
 
 /// Searches the outline for the most matching entry, displays e.g. "Section 100, Page 2" instead of just "Page 2".
+/// @note Set before the cell is displayed.
 @property (nonatomic, assign) BOOL useOutlineForPageNames;
 
 @end

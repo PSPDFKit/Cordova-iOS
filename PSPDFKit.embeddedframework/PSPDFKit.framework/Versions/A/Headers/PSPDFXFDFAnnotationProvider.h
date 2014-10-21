@@ -10,7 +10,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <Foundation/Foundation.h>
 #import "PSPDFContainerAnnotationProvider.h"
 
 /// Concrete implementation of the `PSPDFAnnotationProvider` protocol that uses a XFDF file as a source.
@@ -21,8 +21,8 @@
 @interface PSPDFXFDFAnnotationProvider : PSPDFContainerAnnotationProvider
 
 /// Designated initializers.
-- (id)initWithDocumentProvider:(PSPDFDocumentProvider *)documentProvider;
-- (id)initWithDocumentProvider:(PSPDFDocumentProvider *)documentProvider fileURL:(NSURL *)XFDFFileURL;
+- (instancetype)initWithDocumentProvider:(PSPDFDocumentProvider *)documentProvider NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDocumentProvider:(PSPDFDocumentProvider *)documentProvider fileURL:(NSURL *)XFDFFileURL NS_DESIGNATED_INITIALIZER;
 
 /// The XFDF file URL.
 @property (nonatomic, copy, readonly) NSURL *fileURL;

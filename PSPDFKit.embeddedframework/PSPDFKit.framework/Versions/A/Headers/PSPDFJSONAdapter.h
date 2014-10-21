@@ -83,7 +83,7 @@ extern const NSInteger PSPDFJSONAdapterErrorNoClassFound;
 ///                  parsing or initializing an instance of `modelClass`.
 ///
 /// Returns an instance of `modelClass` upon success, or nil if a parsing error occurred.
-+ (id)modelOfClass:(Class)modelClass fromJSONDictionary:(NSDictionary *)JSONDictionary error:(NSError **)error;
++ (id)modelOfClass:(Class)modelClass fromJSONDictionary:(NSDictionary *)JSONDictionary error:(NSError *__autoreleasing*)error;
 
 /// Converts a model into a JSON representation.
 ///
@@ -104,12 +104,12 @@ extern const NSInteger PSPDFJSONAdapterErrorNoClassFound;
 ///                  parsing or initializing an instance of `modelClass`.
 ///
 /// Returns an initialized adapter upon success, or nil if a parsing error occurred.
-- (id)initWithJSONDictionary:(NSDictionary *)JSONDictionary modelClass:(Class)modelClass error:(NSError **)error;
+- (instancetype)initWithJSONDictionary:(NSDictionary *)JSONDictionary modelClass:(Class)modelClass error:(NSError *__autoreleasing*)error;
 
 /// Initializes the receiver with an existing model.
 ///
 /// model - The model to use for JSON serialization. This argument must not be nil.
-- (id)initWithModel:(PSPDFModel<PSPDFJSONSerializing> *)model;
+- (instancetype)initWithModel:(PSPDFModel<PSPDFJSONSerializing> *)model;
 
 /// Serializes the receiver's `model` into JSON.
 ///

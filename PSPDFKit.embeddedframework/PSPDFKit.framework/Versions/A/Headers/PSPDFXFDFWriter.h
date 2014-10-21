@@ -10,7 +10,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <Foundation/Foundation.h>
 #import "PSPDFAnnotation.h"
 #import "PSPDFAnnotationProvider.h"
 
@@ -19,6 +19,6 @@
 @interface PSPDFXFDFWriter : NSObject
 
 /// Writes the given annotations to the given `outputStream` and blocks until done.
-- (BOOL)writeAnnotations:(NSArray *)annotations toOutputStream:(NSOutputStream *)outputStream documentProvider:(PSPDFDocumentProvider *)documentProvider error:(NSError **)error;
+- (BOOL)writeAnnotations:(NSArray *)annotations toOutputStream:(NSOutputStream *)outputStream documentProvider:(PSPDFDocumentProvider *)documentProvider error:(NSError *__autoreleasing*)error;
 
 @end

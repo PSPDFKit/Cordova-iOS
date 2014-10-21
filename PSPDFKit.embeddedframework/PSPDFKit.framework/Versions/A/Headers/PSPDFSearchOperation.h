@@ -10,7 +10,8 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "PSPDFAnnotation.h"
 
 @class PSPDFDocument, PSPDFSearchOperation;
@@ -34,10 +35,10 @@
 @interface PSPDFSearchOperation : NSOperation
 
 /// Initialize with document reference and the search term.
-- (id)initWithDocument:(PSPDFDocument *)document searchTerm:(NSString *)searchTerm;
+- (instancetype)initWithDocument:(PSPDFDocument *)document searchTerm:(NSString *)searchTerm NS_DESIGNATED_INITIALIZER;
 
 /// Customize range of pages that should be searched. Set to nil to search whole document.
-/// Hint: Use `PSPDFIndexSetFromArray()` to convert `NSNumber-NSArrays` to an `NSIndexSet`.
+/// @note See `psc_indexSet` to convert `NSNumber-NSArrays` to an `NSIndexSet`.
 @property (nonatomic, copy) NSIndexSet *pageRanges;
 
 /// If set to YES, `pageRanges` will be searched first, then all following pages.
@@ -73,9 +74,8 @@
 
 @interface PSPDFSearchOperation (Advanced)
 
-// Customize start/end of the preview string, in relation to the found element.
-// Defaults to 20/180.
-@property (nonatomic, assign) NSUInteger previewStringStartLocation;
-@property (nonatomic, assign) NSUInteger previewStringEndLocation;
+// Customize start/length of the preview string, in relation to the found element.
+// Defaults to 20/160.
+@property (nonatomic, assign) NSRange previewRange;
 
 @end

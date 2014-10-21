@@ -10,7 +10,8 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PSPDFKitGlobal.h"
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
 @class PSPDFDocument, PSPDFConversionOperation;
 
@@ -52,21 +53,21 @@ typedef void (^PSPDFProgressBlock)(NSUInteger currentPage, NSUInteger numberOfPr
 
 /// Generate a PDF from a `PSPDFDocument` into a file. `options` can also contain `CGPDFContext` options.
 /// @note For `pageRanges` you can use `@[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, document.pageCount)]]` to convert the whole document.
-- (BOOL)generatePDFFromDocument:(PSPDFDocument *)document pageRanges:(NSArray *)pageRanges outputFileURL:(NSURL *)fileURL options:(NSDictionary *)options progressBlock:(PSPDFProgressBlock)progressBlock error:(NSError **)error;
+- (BOOL)generatePDFFromDocument:(PSPDFDocument *)document pageRanges:(NSArray *)pageRanges outputFileURL:(NSURL *)fileURL options:(NSDictionary *)options progressBlock:(PSPDFProgressBlock)progressBlock error:(NSError *__autoreleasing*)error;
 
 /// Generate a PDF from a `PSPDFDocument` into data. 'options' can also contain `CGPDFContext` options.
 /// @note For `pageRanges` you can use `@[[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, document.pageCount)]]` to convert the whole document.
 /// @warning Don't use with large files, since iOS has no virtual memory the process will be force-closed on exhaustive memory usage. 10-20MB should be the maximum for safe in-memory usage.
-- (NSData *)generatePDFFromDocument:(PSPDFDocument *)document pageRanges:(NSArray *)pageRanges options:(NSDictionary *)options progressBlock:(PSPDFProgressBlock)progressBlock error:(NSError **)error;
+- (NSData *)generatePDFFromDocument:(PSPDFDocument *)document pageRanges:(NSArray *)pageRanges options:(NSDictionary *)options progressBlock:(PSPDFProgressBlock)progressBlock error:(NSError *__autoreleasing*)error;
 
 /// Generates a PDF from a string. Does allow simple html tags. Will not work with complex HTML pages.
 /// e.g. `@"This is a <b>test</b>` in `<span style='color:red'>color.</span>`
 /// @note Must be called from the main thread.
-- (BOOL)generatePDFFromHTMLString:(NSString *)HTML outputFileURL:(NSURL *)fileURL options:(NSDictionary *)options error:(NSError **)error;
+- (BOOL)generatePDFFromHTMLString:(NSString *)HTML outputFileURL:(NSURL *)fileURL options:(NSDictionary *)options error:(NSError *__autoreleasing*)error;
 
 /// Like the above, but create a temporary PDF in memory.
 /// @note Must be called from the main thread.
-- (NSData *)generatePDFFromHTMLString:(NSString *)HTML options:(NSDictionary *)options error:(NSError **)error;
+- (NSData *)generatePDFFromHTMLString:(NSString *)HTML options:(NSDictionary *)options error:(NSError *__autoreleasing*)error;
 
 /**
  Renders a PDF from an `URL` (web or `fileURL`). This will take a while and is non-blocking.
@@ -99,6 +100,8 @@ typedef void (^PSPDFProgressBlock)(NSUInteger currentPage, NSUInteger numberOfPr
  Don't manually override NSOperation's `completionBlock`.
  If this helper is used, operation will be automatically queued in `conversionOperationQueue`.
  When a password is set, only link annotations can be added as dictionary (this does not affect flattening)
+
+ Don't use this for PDF files!
 */
 - (PSPDFConversionOperation *)generatePDFFromURL:(NSURL *)inputURL outputFileURL:(NSURL *)outputURL options:(NSDictionary *)options completionBlock:(void (^)(NSURL *fileURL, NSError *error))completionBlock;
 
@@ -115,8 +118,8 @@ typedef void (^PSPDFProgressBlock)(NSUInteger currentPage, NSUInteger numberOfPr
 @interface PSPDFConversionOperation : NSOperation
 
 /// Designated initializer.
-- (id)initWithURL:(NSURL *)inputURL outputFileURL:(NSURL *)outputFileURL options:(NSDictionary *)options completionBlock:(void (^)(NSURL *fileURL, NSError *error))completionBlock;
-- (id)initWithURL:(NSURL *)inputURL options:(NSDictionary *)options completionBlock:(void (^)(NSData *fileData, NSError *error))completionBlock;
+- (instancetype)initWithURL:(NSURL *)inputURL outputFileURL:(NSURL *)outputFileURL options:(NSDictionary *)options completionBlock:(void (^)(NSURL *fileURL, NSError *error))completionBlock NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)inputURL options:(NSDictionary *)options completionBlock:(void (^)(NSData *fileData, NSError *error))completionBlock NS_DESIGNATED_INITIALIZER;
 
 /// Input. Needs to be a file URL.
 @property (nonatomic, copy, readonly) NSURL *inputURL;
