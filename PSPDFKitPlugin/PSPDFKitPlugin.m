@@ -417,16 +417,26 @@
     return value;
 }
 
-- (NSArray *)optionKeysForValue:(NSInteger)value ofType:(NSString *)type
+- (NSArray *)optionKeysForValue:(NSUInteger)value ofType:(NSString *)type
 {
     NSDictionary *dict = [self enumValuesOfType:type];
     NSMutableArray *keys = [NSMutableArray array];
     for (NSString *key in dict)
     {
         NSNumber *number = dict[key];
-        if (number  && (value & [number integerValue]))
-        {
-            [keys addObject:key];
+        if (number) {
+            if ([number unsignedIntegerValue] == NSUIntegerMax)
+            {
+                if (value == NSUIntegerMax)
+                {
+                    return @[key];
+                }
+            } else {
+                if (value & [number unsignedIntegerValue])
+                {
+                    [keys addObject:key];
+                }
+            }
         }
     }
     return keys;
@@ -513,8 +523,38 @@
             
   @{@"none": @(PSPDFThumbnailBarModeNone),
     @"scrobbleBar": @(PSPDFThumbnailBarModeScrobbleBar),
-    @"scrollable": @(PSPDFThumbnailBarModeScrollable)}
-        
+    @"scrollable": @(PSPDFThumbnailBarModeScrollable)},
+
+        @"PSPDFAnnotationType":
+
+  @{@"none": @(PSPDFAnnotationTypeNone),
+    @"undefined": @(PSPDFAnnotationTypeUndefined),
+    @"link": @(PSPDFAnnotationTypeLink),
+    @"highlight": @(PSPDFAnnotationTypeHighlight),
+    @"strikeOut": @(PSPDFAnnotationTypeStrikeOut),
+    @"underline": @(PSPDFAnnotationTypeUnderline),
+    @"squiggly": @(PSPDFAnnotationTypeSquiggly),
+    @"freeText": @(PSPDFAnnotationTypeFreeText),
+    @"ink": @(PSPDFAnnotationTypeInk),
+    @"square": @(PSPDFAnnotationTypeSquare),
+    @"circle": @(PSPDFAnnotationTypeCircle),
+    @"line": @(PSPDFAnnotationTypeLine),
+    @"note": @(PSPDFAnnotationTypeNote),
+    @"stamp": @(PSPDFAnnotationTypeStamp),
+    @"caret": @(PSPDFAnnotationTypeCaret),
+    @"richMedia": @(PSPDFAnnotationTypeRichMedia),
+    @"screen": @(PSPDFAnnotationTypeScreen),
+    @"widget": @(PSPDFAnnotationTypeWidget),
+    @"sound": @(PSPDFAnnotationTypeSound),
+    @"file": @(PSPDFAnnotationTypeFile),
+    @"polygon": @(PSPDFAnnotationTypePolygon),
+    @"polyLine": @(PSPDFAnnotationTypePolyLine),
+    @"popup": @(PSPDFAnnotationTypePopup),
+    @"watermark": @(PSPDFANnotationTypeWatermark),
+    @"trapNet": @(PSPDFAnnotationTypeTrapNet),
+    @"3D": @(PSPDFAnnotationType3D),
+    @"redact": @(PSPDFAnnotationTypeRedact),
+    @"all": @(PSPDFAnnotationTypeAll)}
         };
         
         //Note: this method crashes the second time a
@@ -607,7 +647,7 @@
 - (void)setAllowedMenuActionsForPSPDFDocumentWithJSON:(NSArray *)options
 {
     PSPDFTextSelectionMenuAction menuActions = (PSPDFTextSelectionMenuAction) [self optionsValueForKeys:options ofType:@"PSPDFTextSelectionMenuAction" withDefault:PSPDFTextSelectionMenuActionAll];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.allowedMenuActions = menuActions;
     }];
 }
@@ -630,6 +670,19 @@
 - (void)setBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
     //not supported, use pageBackgroundColor instead
+}
+
+- (NSArray *)renderAnnotationTypesAsJSON
+{
+    NSArray *types = [self optionKeysForValue:_pdfDocument.renderAnnotationTypes ofType:@"PSPDFAnnotationType"];
+    return types;
+}
+
+- (void)setRenderAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)options
+{
+
+    PSPDFAnnotationType types = (PSPDFAnnotationType) [self optionsValueForKeys:options ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
+    _pdfDocument.renderAnnotationTypes = types;
 }
 
 #pragma mark PSPDFViewController setters and getters

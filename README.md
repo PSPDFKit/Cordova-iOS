@@ -201,6 +201,7 @@ Document annotation options
     annotationsEnabled
     canEmbedAnnotations
     defaultAnnotationUsername
+    renderAnnotationTypes (none, undefined, link, highlight, strikeOut, underline, squiggly, freeText, ink, square, circle, line, note, stamp, caret, richMedia, screen, widget, sound, file, polygon, polyLine, popup, watermark, trapNet, 3D, redact, all)
     
 Document hints
   
@@ -241,7 +242,7 @@ PDF Controller options
     passwordDialogEnabled
     useParentNavigationBar
     shouldRestoreNavigationBarStyle
-    allowedMenuActions (search, define, wikipediaAsFallback, all)
+    allowedMenuActions (search, define, wikipedia, speak, all)
  
 HUD options
     
