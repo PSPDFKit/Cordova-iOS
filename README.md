@@ -201,7 +201,7 @@ Document annotation options
     annotationsEnabled
     canEmbedAnnotations
     defaultAnnotationUsername
-    renderAnnotationTypes (none, undefined, link, highlight, strikeOut, underline, squiggly, freeText, ink, square, circle, line, note, stamp, caret, richMedia, screen, widget, sound, file, polygon, polyLine, popup, watermark, trapNet, 3D, redact, all)
+    renderAnnotationTypes (None, Undefined, Link, Highlight, StrikeOut, Underline, Squiggly, FreeText, Ink, Square, Circle, Line, Text, Stamp, Caret, RichMedia, Screen, Widget, Sound, FileAttachment, Polygon, PolyLine, Popup, Watermark, TrapNet, 3D, Redact, All)
     
 Document hints
   

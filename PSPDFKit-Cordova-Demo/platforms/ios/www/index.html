@@ -44,6 +44,39 @@
             app.initialize();
         </script>
         <script>
+            function testRenderAnnotationTypes() {
+                PSPDFKitPlugin.setOption('renderAnnotationTypes', 0);
+                PSPDFKitPlugin.getOptions(['renderAnnotationTypes'], function (values) {
+                    console.log('renderAnnotationTypes(should be ""):' + values.renderAnnotationTypes);
+                });
+                PSPDFKitPlugin.setOption('renderAnnotationTypes', ['Link', 'Text']);
+                PSPDFKitPlugin.getOptions(['renderAnnotationTypes'], function (values) {
+                    console.log('renderAnnotationTypes(should be "Link", "Text"):' + values.renderAnnotationTypes);
+                });
+
+                PSPDFKitPlugin.setOption('renderAnnotationTypes', []);
+                PSPDFKitPlugin.getOptions(['renderAnnotationTypes'], function (values) {
+                    console.log('renderAnnotationTypes (should be "All"):' + values.renderAnnotationTypes);
+                });
+
+                PSPDFKitPlugin.setOption('renderAnnotationTypes', ['All']);
+                PSPDFKitPlugin.getOptions(['renderAnnotationTypes'], function (values) {
+                    console.log('renderAnnotationTypes:(should be "All"):' + values.renderAnnotationTypes);
+                });
+            }
+
+            function testAllowedMenuActions() {
+                PSPDFKitPlugin.setOption('allowedMenuActions', 0);
+                PSPDFKitPlugin.getOptions(['allowedMenuActions'], function (values) {
+                    console.log('allowedMenuActions (should be ""):' + values.allowedMenuActions);
+                });
+                PSPDFKitPlugin.setOption('allowedMenuActions', ['search']);
+                PSPDFKitPlugin.getOptions(['allowedMenuActions'], function (values) {
+                    console.log('allowedMenuActions (should be "search"):' + values.allowedMenuActions);
+                });
+
+            }
+
             function buttonAction() {
                 PSPDFKitPlugin.setLicenseKey("YOUR KEY HERE");
                 // listen for event

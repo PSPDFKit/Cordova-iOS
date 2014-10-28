@@ -64,19 +64,19 @@
             //try custom animated setter
             NSString *setter = [prefix stringByAppendingFormat:@"AnimatedFor%@WithJSON:", [object class]];
             if (animated && [self respondsToSelector:NSSelectorFromString(setter)]) {
-                [self setValue:options[key] forKey:[key stringByAppendingFormat:@"AnimatedFor%@WithJSON", [object class]]];
+                [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"AnimatedFor%@WithJSON", [object class]]];
             }
             else {
                 //try custom setter
                 setter = [prefix stringByAppendingFormat:@"For%@WithJSON:", [object class]];
                 if ([self respondsToSelector:NSSelectorFromString(setter)]) {
-                    [self setValue:options[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
+                    [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
                 }
                 else {
                     //use KVC
                     setter = [prefix stringByAppendingString:@":"];
                     if ([object respondsToSelector:NSSelectorFromString(setter)]) {
-                        [object setValue:options[key] forKey:key];
+                        [object setValue:newOptions[key] forKey:key];
                     }
                 }
             }
@@ -399,6 +399,15 @@
 
 - (NSInteger)optionsValueForKeys:(NSArray *)keys ofType:(NSString *)type withDefault:(NSInteger)defaultValue
 {
+    if (!keys)
+    {
+        return 0;
+    }
+    if ([keys isKindOfClass:NSNumber.class]) {
+        if (((NSNumber *)keys).integerValue == 0) {
+            return 0;
+        }
+    }
     if (![keys isKindOfClass:[NSArray class]])
     {
         keys = @[keys];
@@ -411,8 +420,26 @@
     for (id key in keys)
     {
         NSNumber *number = [self enumValuesOfType:type][key];
-        if (number) value += [number integerValue];
-        else if ([self isNumeric:key]) value += [key integerValue];
+        if (number)
+        {
+            value += [number integerValue];
+        }
+        else
+        {
+            if ([key isKindOfClass:NSString.class])
+            {
+                // Try to find with uppercase first letter
+                NSString *keyStr = [NSString stringWithFormat:@"%@%@", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
+                number = [self enumValuesOfType:type][keyStr];
+                if (number) {
+                    value += [number integerValue];
+                }
+            }
+            else if ([self isNumeric:key])
+            {
+                value += [key integerValue];
+            }
+        }
     }
     return value;
 }
@@ -527,34 +554,34 @@
 
         @"PSPDFAnnotationType":
 
-  @{@"none": @(PSPDFAnnotationTypeNone),
-    @"undefined": @(PSPDFAnnotationTypeUndefined),
-    @"link": @(PSPDFAnnotationTypeLink),
-    @"highlight": @(PSPDFAnnotationTypeHighlight),
-    @"strikeOut": @(PSPDFAnnotationTypeStrikeOut),
-    @"underline": @(PSPDFAnnotationTypeUnderline),
-    @"squiggly": @(PSPDFAnnotationTypeSquiggly),
-    @"freeText": @(PSPDFAnnotationTypeFreeText),
-    @"ink": @(PSPDFAnnotationTypeInk),
-    @"square": @(PSPDFAnnotationTypeSquare),
-    @"circle": @(PSPDFAnnotationTypeCircle),
-    @"line": @(PSPDFAnnotationTypeLine),
-    @"note": @(PSPDFAnnotationTypeNote),
-    @"stamp": @(PSPDFAnnotationTypeStamp),
-    @"caret": @(PSPDFAnnotationTypeCaret),
-    @"richMedia": @(PSPDFAnnotationTypeRichMedia),
-    @"screen": @(PSPDFAnnotationTypeScreen),
-    @"widget": @(PSPDFAnnotationTypeWidget),
-    @"sound": @(PSPDFAnnotationTypeSound),
-    @"file": @(PSPDFAnnotationTypeFile),
-    @"polygon": @(PSPDFAnnotationTypePolygon),
-    @"polyLine": @(PSPDFAnnotationTypePolyLine),
-    @"popup": @(PSPDFAnnotationTypePopup),
-    @"watermark": @(PSPDFANnotationTypeWatermark),
-    @"trapNet": @(PSPDFAnnotationTypeTrapNet),
-    @"3D": @(PSPDFAnnotationType3D),
-    @"redact": @(PSPDFAnnotationTypeRedact),
-    @"all": @(PSPDFAnnotationTypeAll)}
+  @{@"None": @(PSPDFAnnotationTypeNone),
+    @"Undefined": @(PSPDFAnnotationTypeUndefined),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeLink): @(PSPDFAnnotationTypeLink),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeHighlight): @(PSPDFAnnotationTypeHighlight),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeStrikeOut): @(PSPDFAnnotationTypeStrikeOut),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeUnderline): @(PSPDFAnnotationTypeUnderline),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeSquiggly): @(PSPDFAnnotationTypeSquiggly),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeFreeText): @(PSPDFAnnotationTypeFreeText),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeInk): @(PSPDFAnnotationTypeInk),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeSquare): @(PSPDFAnnotationTypeSquare),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeCircle): @(PSPDFAnnotationTypeCircle),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeLine): @(PSPDFAnnotationTypeLine),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeNote): @(PSPDFAnnotationTypeNote),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeStamp): @(PSPDFAnnotationTypeStamp),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeCaret): @(PSPDFAnnotationTypeCaret),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRichMedia): @(PSPDFAnnotationTypeRichMedia),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeScreen): @(PSPDFAnnotationTypeScreen),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeWidget): @(PSPDFAnnotationTypeWidget),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeSound): @(PSPDFAnnotationTypeSound),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeFile): @(PSPDFAnnotationTypeFile),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypePolygon): @(PSPDFAnnotationTypePolygon),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypePolyLine): @(PSPDFAnnotationTypePolyLine),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypePopup): @(PSPDFAnnotationTypePopup),
+    PSPDFStringFromAnnotationType(PSPDFANnotationTypeWatermark): @(PSPDFANnotationTypeWatermark),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeTrapNet): @(PSPDFAnnotationTypeTrapNet),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationType3D): @(PSPDFAnnotationType3D),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRedact): @(PSPDFAnnotationTypeRedact),
+    @"All": @(PSPDFAnnotationTypeAll)}
         };
         
         //Note: this method crashes the second time a
@@ -644,19 +671,6 @@
     return [self enumKeyForValue:_pdfDocument.annotationSaveMode ofType:@"PSPDFAnnotationSaveMode"];
 }
 
-- (void)setAllowedMenuActionsForPSPDFDocumentWithJSON:(NSArray *)options
-{
-    PSPDFTextSelectionMenuAction menuActions = (PSPDFTextSelectionMenuAction) [self optionsValueForKeys:options ofType:@"PSPDFTextSelectionMenuAction" withDefault:PSPDFTextSelectionMenuActionAll];
-    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
-        builder.allowedMenuActions = menuActions;
-    }];
-}
-
-- (NSArray *)allowedMenuActionsAsJSON
-{
-    return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
-}
-
 - (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
     _pdfDocument.backgroundColor = [self colorWithString:color];
@@ -680,7 +694,6 @@
 
 - (void)setRenderAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)options
 {
-
     PSPDFAnnotationType types = (PSPDFAnnotationType) [self optionsValueForKeys:options ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
     _pdfDocument.renderAnnotationTypes = types;
 }
@@ -834,6 +847,19 @@
 - (NSString *)backgroundColorAsJSON
 {
     return [self colorAsString:_pdfController.configuration.backgroundColor];
+}
+
+- (void)setAllowedMenuActionsForPSPDFViewControllerWithJSON:(NSArray *)options
+{
+    PSPDFTextSelectionMenuAction menuActions = (PSPDFTextSelectionMenuAction) [self optionsValueForKeys:options ofType:@"PSPDFTextSelectionMenuAction" withDefault:PSPDFTextSelectionMenuActionAll];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.allowedMenuActions = menuActions;
+    }];
+}
+
+- (NSArray *)allowedMenuActionsAsJSON
+{
+    return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
 }
 
 #pragma mark Document methods
