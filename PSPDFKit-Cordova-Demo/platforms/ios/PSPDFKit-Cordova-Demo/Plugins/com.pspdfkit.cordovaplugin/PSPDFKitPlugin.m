@@ -703,7 +703,7 @@
 - (void)setPageTransitionForPSPDFViewControllerWithJSON:(NSString *)transition
 {
     PSPDFPageTransition pageTransition = (PSPDFPageTransition) [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageTransitionScrollPerPage];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.pageTransition = pageTransition;
     }];
 }
@@ -731,7 +731,7 @@
 - (void)setThumbnailBarModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
     PSPDFThumbnailBarMode thumbnailBarMode = (PSPDFThumbnailBarMode) [self enumValueForKey:mode ofType:@"PSPDFThumbnailBarMode" withDefault:PSPDFThumbnailBarModeScrobbleBar];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.thumbnailBarMode = thumbnailBarMode;
     }];
 }
@@ -744,7 +744,7 @@
 - (void)setPageModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
     PSPDFPageMode pageMode = (PSPDFPageMode) [self enumValueForKey:mode ofType:@"PSPDFPageMode" withDefault:PSPDFPageModeAutomatic];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.pageMode = pageMode;
     }];
 }
@@ -757,7 +757,7 @@
 - (void)setScrollDirectionForPSPDFViewControllerWithJSON:(NSString *)mode
 {
     PSPDFScrollDirection scrollDirection = (PSPDFScrollDirection) [self enumValueForKey:mode ofType:@"PSPDFScrollDirection" withDefault:PSPDFScrollDirectionHorizontal];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.scrollDirection = scrollDirection;
     }];
 }
@@ -770,7 +770,7 @@
 - (void)setLinkActionForPSPDFViewControllerWithJSON:(NSString *)mode
 {
     PSPDFLinkAction linkAction = (PSPDFLinkAction) [self enumValueForKey:mode ofType:@"PSPDFLinkAction" withDefault:PSPDFLinkActionInlineBrowser];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.linkAction = linkAction;
     }];
 }
@@ -783,7 +783,7 @@
 - (void)setHUDViewModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
     PSPDFHUDViewMode HUDViewMode = (PSPDFHUDViewMode) [self enumValueForKey:mode ofType:@"PSPDFHUDViewMode" withDefault:PSPDFHUDViewModeAutomatic];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.HUDViewMode = HUDViewMode;
     }];
 }
@@ -796,7 +796,7 @@
 - (void)setHUDViewAnimationForPSPDFViewControllerWithJSON:(NSString *)mode
 {
     PSPDFHUDViewAnimation HUDViewAnimation = (PSPDFHUDViewAnimation) [self enumValueForKey:mode ofType:@"HUDViewAnimation" withDefault:PSPDFHUDViewAnimationFade];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.HUDViewAnimation = HUDViewAnimation;
     }];
 }
@@ -839,7 +839,7 @@
 - (void)setBackgroundColorForPSPDFViewControllerWithJSON:(NSString *)color
 {
     UIColor *backgroundColor = [self colorWithString:color];
-    [_pdfController.configuration configurationUpdatedWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.backgroundColor = backgroundColor;
     }];
 }
