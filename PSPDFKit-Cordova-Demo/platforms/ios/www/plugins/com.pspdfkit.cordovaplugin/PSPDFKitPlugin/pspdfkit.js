@@ -26,7 +26,9 @@ var PSPDFKitPlugin = new function() {
                     for (var i = 0; i < arguments.length; i++) {
                         argArray.push(arguments[i]);
                         if (methodArgs[i] == 'callback') {
-                            callback = arguments[i];
+                            if (typeof (arguments[i]) == "function") {
+                                callback = arguments[i];
+                            }
                         }
                     }
                     cordova.exec(function (result) {

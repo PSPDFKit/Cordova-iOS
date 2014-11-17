@@ -298,8 +298,8 @@ The following events are supported by the PSPDFKitPlugin class
     didEndPageScrollingAnimation
     didBeginPageZooming
     didEndPageZooming
-    didTapOnPageView
-    didLongPressOnPageView
+    didTapOnPageView (`return false;` to set an event as processed and disable default handling)
+    didLongPressOnPageView (`return false;` to set an event as processed and disable default handling)
     shouldSelectText
     didSelectText
     willDismiss

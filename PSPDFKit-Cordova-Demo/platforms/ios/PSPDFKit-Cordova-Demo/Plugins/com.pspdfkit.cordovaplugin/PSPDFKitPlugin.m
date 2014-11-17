@@ -1082,21 +1082,6 @@
 
 #pragma mark Delegate methods
 
-- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSetDocument:(PSPDFDocument *)document
-{
-    return [self sendEventWithJSON:@{@"type": @"shouldSetDocument", @"path": [document.fileURL path]?: [NSNull null]}];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController willDisplayDocument:(PSPDFDocument *)document
-{
-    [self sendEventWithJSON:@{@"type": @"willDisplayDocument", @"path": [document.fileURL path]?: [NSNull null]}];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController didDisplayDocument:(PSPDFDocument *)document
-{
-    [self sendEventWithJSON:@{@"type": @"didDisplayDocument", @"path": [document.fileURL path]?: [NSNull null]}];
-}
-
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldScrollToPage:(NSUInteger)page
 {
     return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'shouldScrollToPage',page:%ld}", (long)page]];
@@ -1154,16 +1139,20 @@
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController didTapOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint
 {
-    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didTapOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
+    // inverted because it's almost always YES (due to handling JS eval calls).
+    // in order to set this event as handled use explicit "return false;" in JS callback.
+    return ![self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didTapOnPageView',viewPoint:[%g,%g]}", viewPoint.x, viewPoint.y]];
 }
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController didLongPressOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint gestureRecognizer:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLongPressOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
+    // inverted because it's almost always YES (due to handling JS eval calls).
+    // in order to set this event as handled use explicit "return false;" in JS callback.
+    return ![self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLongPressOnPageView',viewPoint:[%g,%g]}", viewPoint.x, viewPoint.y]];
 }
 
 static NSString *PSPDFStringFromCGRect(CGRect rect) {
-    return [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
+    return [NSString stringWithFormat:@"[%g,%g,%g,%g]", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
 }
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
