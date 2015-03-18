@@ -1,6 +1,0 @@
-framework module PSPDFKit {
-	umbrella header "PSPDFKit.h"
-	requires objc
-	export *
-    module * { export * }
-}
