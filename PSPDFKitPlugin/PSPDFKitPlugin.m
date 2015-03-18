@@ -287,7 +287,7 @@
     return [formatter numberFromString:value] != nil;
 }
 
-- (PSPDFBarButtonItem *)standardBarButtonWithName:(NSString *)name
+- (UIBarButtonItem *)standardBarButtonWithName:(NSString *)name
 {
     NSString *selectorString = [name stringByAppendingString:@"ButtonItem"];
     if ([_pdfController respondsToSelector:NSSelectorFromString(selectorString)]) {
@@ -326,8 +326,7 @@
             item = [[UIBarButtonItem alloc] initWithImage:image landscapeImagePhone:landscapeImage style:style target:self action:@selector(customBarButtonItemAction:)];
         }
         else {
-            item = [[PSPDFBarButtonItem alloc] initWithTitle:JSON[@"title"] style:style target:self action:@selector(customBarButtonItemAction:)];
-            [(PSPDFBarButtonItem *)item setPdfController:_pdfController];
+            item = [[UIBarButtonItem alloc] initWithTitle:JSON[@"title"] style:style target:self action:@selector(customBarButtonItemAction:)];
         }
         
         item.tintColor = JSON[@"tintColor"]? [self colorWithString:JSON[@"tintColor"]]: item.tintColor;
@@ -351,7 +350,7 @@
     return items;
 }
 
-- (void)customBarButtonItemAction:(PSPDFBarButtonItem *)sender
+- (void)customBarButtonItemAction:(UIBarButtonItem *)sender
 {
     NSInteger index = [_pdfController.leftBarButtonItems indexOfObject:sender];
     if (index == NSNotFound) {
