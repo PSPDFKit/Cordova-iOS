@@ -319,7 +319,7 @@
         
         UIBarButtonItemStyle style = [self enumValueForKey:JSON[@"style"]
                                                     ofType:@"UIBarButtonItemStyle"
-                                               withDefault:UIBarButtonItemStyleBordered];
+                                               withDefault:UIBarButtonItemStylePlain];
         
         UIBarButtonItem *item = nil;
         if (image) {
@@ -478,8 +478,7 @@
                         
         @"UIBarButtonItemStyle":
             
-  @{@"bordered": @(UIBarButtonItemStyleBordered),
-    @"plain": @(UIBarButtonItemStylePlain),
+  @{@"plain": @(UIBarButtonItemStylePlain),
     @"done": @(UIBarButtonItemStyleDone)},
         
         @"PSPDFAnnotationSaveMode":
