@@ -1,6 +1,8 @@
 PSPDFKit-Cordova
 ================
 
+**This plugin works with Cordova version 3.4.0 and above.**
+
 Install
 -----------
 
