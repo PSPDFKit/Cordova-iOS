@@ -521,8 +521,8 @@
         
         @"PSPDFScrollDirection":
             
-  @{@"single": @(PSPDFScrollDirectionHorizontal),
-    @"double": @(PSPDFScrollDirectionVertical)},
+  @{@"horizontal": @(PSPDFScrollDirectionHorizontal),
+    @"vertical": @(PSPDFScrollDirectionVertical)},
         
         @"PSPDFLinkAction":
     
