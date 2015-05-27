@@ -218,8 +218,8 @@
     [scanner scanHexInt:&rgba];
     CGFloat red = ((rgba & 0xFF000000) >> 24) / 255.0f;
     CGFloat green = ((rgba & 0x00FF0000) >> 16) / 255.0f;
-	CGFloat blue = ((rgba & 0x0000FF00) >> 8) / 255.0f;
-	return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
+    CGFloat blue = ((rgba & 0x0000FF00) >> 8) / 255.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
 }
 
 - (void)getComponents:(CGFloat *)rgba ofColor:(UIColor *)color
@@ -521,8 +521,8 @@
         
         @"PSPDFScrollDirection":
             
-  @{@"horizontal": @(PSPDFScrollDirectionHorizontal),
-    @"vertical": @(PSPDFScrollDirectionVertical)},
+  @{@"single": @(PSPDFScrollDirectionHorizontal),
+    @"double": @(PSPDFScrollDirectionVertical)},
         
         @"PSPDFLinkAction":
     
@@ -616,7 +616,7 @@
 - (void)setLicenseKey:(CDVInvokedUrlCommand *)command {
     NSString *key = [command argumentAtIndex:0];
     if (key.length > 0) {
-        PSPDFSetLicenseKey(key.UTF8String);
+        [PSPDFKit setLicenseKey:key];
     }
 }
 
@@ -858,6 +858,43 @@
 - (NSArray *)allowedMenuActionsAsJSON
 {
     return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
+}
+
+- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options error:(NSError *__autoreleasing*)error
+{
+    [[PSPDFProcessor defaultProcessor] generatePDFFromHTMLString:html
+                                                   outputFileURL:[NSURL fileURLWithPath:filePath]
+                                                         options:options
+                                                           error:error];
+}
+
+#pragma mark PDFProcessing methods
+
+- (void)convertPDFFromHTMLString:(CDVInvokedUrlCommand *)command
+{
+    NSString *decodeHTMLString = [[[command argumentAtIndex:0] stringByReplacingOccurrencesOfString:@"+" withString:@""]stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *fileName = [command argumentAtIndex:1 withDefault:@"Sample"];
+    NSDictionary *options = [command argumentAtIndex:2 withDefault:nil];
+    NSError *error;
+    NSString *outputFilePath = [NSTemporaryDirectory()
+                                stringByAppendingPathComponent:[fileName stringByAppendingPathExtension:@"pdf"]];
+    
+    [self generatePDFFromHTMLString:decodeHTMLString outputFile:outputFilePath options:options error:&error];
+    CDVPluginResult *pluginResult;
+    
+    if (error)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                     messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domin": error.domain}];
+    }
+    else
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                     messageAsDictionary:@{@"filePath":outputFilePath}];
+    }
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
 }
 
 #pragma mark Document methods
@@ -1112,7 +1149,7 @@
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didEndPageDragging',willDecelerate:%@,velocity:{%g,%g}}", decelerate? @"true": @"false", velocity.x, velocity.y]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didBeginPageDragging',willDecelerate:%@,velocity:{%g,%g}}", decelerate? @"true": @"false", velocity.x, velocity.y]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageScrollingAnimation:(UIScrollView *)scrollView

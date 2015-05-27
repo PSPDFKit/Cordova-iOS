@@ -26,7 +26,9 @@ var PSPDFKitPlugin = new function() {
                     for (var i = 0; i < arguments.length; i++) {
                         argArray.push(arguments[i]);
                         if (methodArgs[i] == 'callback') {
-                            callback = arguments[i];
+                            if (typeof (arguments[i]) == "function") {
+                                callback = arguments[i];
+                            }
                         }
                     }
                     cordova.exec(function (result) {
@@ -46,10 +48,12 @@ var PSPDFKitPlugin = new function() {
     this.dispatchEvent = function(event) {
         var result = undefined;
         var functions = listeners[event.type];
-        for (var i = 0; i < functions.length; i++) {
-            result = functions[i](event);
-            if (typeof result != 'undefined') {
-                if (!result) return result;
+        if (functions) {
+            for (var i = 0; i < functions.length; i++) {
+                result = functions[i](event);
+                if (typeof result != 'undefined') {
+                    if (!result) return result;
+                }
             }
         }
         return result;
@@ -86,7 +90,12 @@ var PSPDFKitPlugin = new function() {
     addMethods({
                setLicenseKey: ['key'],
                });
-
+    //PDF Generation method
+    
+    addMethods({
+               convertPDFFromHTMLString: ['html', 'fileName', 'options', 'callback'],
+               });
+    
     //document methods
     
     addMethods({

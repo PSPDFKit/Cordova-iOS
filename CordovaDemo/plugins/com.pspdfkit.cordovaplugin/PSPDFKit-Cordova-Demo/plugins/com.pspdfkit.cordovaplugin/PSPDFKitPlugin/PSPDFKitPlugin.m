@@ -64,19 +64,19 @@
             //try custom animated setter
             NSString *setter = [prefix stringByAppendingFormat:@"AnimatedFor%@WithJSON:", [object class]];
             if (animated && [self respondsToSelector:NSSelectorFromString(setter)]) {
-                [self setValue:options[key] forKey:[key stringByAppendingFormat:@"AnimatedFor%@WithJSON", [object class]]];
+                [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"AnimatedFor%@WithJSON", [object class]]];
             }
             else {
                 //try custom setter
                 setter = [prefix stringByAppendingFormat:@"For%@WithJSON:", [object class]];
                 if ([self respondsToSelector:NSSelectorFromString(setter)]) {
-                    [self setValue:options[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
+                    [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
                 }
                 else {
                     //use KVC
                     setter = [prefix stringByAppendingString:@":"];
                     if ([object respondsToSelector:NSSelectorFromString(setter)]) {
-                        [object setValue:options[key] forKey:key];
+                        [object setValue:newOptions[key] forKey:key];
                     }
                 }
             }
@@ -218,8 +218,8 @@
     [scanner scanHexInt:&rgba];
     CGFloat red = ((rgba & 0xFF000000) >> 24) / 255.0f;
     CGFloat green = ((rgba & 0x00FF0000) >> 16) / 255.0f;
-	CGFloat blue = ((rgba & 0x0000FF00) >> 8) / 255.0f;
-	return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
+    CGFloat blue = ((rgba & 0x0000FF00) >> 8) / 255.0f;
+    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0f];
 }
 
 - (void)getComponents:(CGFloat *)rgba ofColor:(UIColor *)color
@@ -287,7 +287,7 @@
     return [formatter numberFromString:value] != nil;
 }
 
-- (PSPDFBarButtonItem *)standardBarButtonWithName:(NSString *)name
+- (UIBarButtonItem *)standardBarButtonWithName:(NSString *)name
 {
     NSString *selectorString = [name stringByAppendingString:@"ButtonItem"];
     if ([_pdfController respondsToSelector:NSSelectorFromString(selectorString)]) {
@@ -319,15 +319,14 @@
         
         UIBarButtonItemStyle style = [self enumValueForKey:JSON[@"style"]
                                                     ofType:@"UIBarButtonItemStyle"
-                                               withDefault:UIBarButtonItemStyleBordered];
+                                               withDefault:UIBarButtonItemStylePlain];
         
         UIBarButtonItem *item = nil;
         if (image) {
             item = [[UIBarButtonItem alloc] initWithImage:image landscapeImagePhone:landscapeImage style:style target:self action:@selector(customBarButtonItemAction:)];
         }
         else {
-            item = [[PSPDFBarButtonItem alloc] initWithTitle:JSON[@"title"] style:style target:self action:@selector(customBarButtonItemAction:)];
-            [(PSPDFBarButtonItem *)item setPdfController:_pdfController];
+            item = [[UIBarButtonItem alloc] initWithTitle:JSON[@"title"] style:style target:self action:@selector(customBarButtonItemAction:)];
         }
         
         item.tintColor = JSON[@"tintColor"]? [self colorWithString:JSON[@"tintColor"]]: item.tintColor;
@@ -351,18 +350,18 @@
     return items;
 }
 
-- (void)customBarButtonItemAction:(PSPDFBarButtonItem *)sender
+- (void)customBarButtonItemAction:(UIBarButtonItem *)sender
 {
     NSInteger index = [_pdfController.leftBarButtonItems indexOfObject:sender];
     if (index == NSNotFound) {
         index = [_pdfController.rightBarButtonItems indexOfObject:sender];
         if (index != NSNotFound) {
-            NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchRightBarButtonAction(%i)", index];
+            NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchRightBarButtonAction(%ld)", (long)index];
             [self.webView stringByEvaluatingJavaScriptFromString:script];
         }
     }
     else {
-        NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchLeftBarButtonAction(%i)", index];
+        NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchLeftBarButtonAction(%ld)", (long)index];
         [self.webView stringByEvaluatingJavaScriptFromString:script];
     }
 }
@@ -397,8 +396,17 @@
     return nil;
 }
 
-- (NSInteger)optionsValueForKeys:(NSArray *)keys ofType:(NSString *)type withDefault:(int)defaultValue
+- (NSInteger)optionsValueForKeys:(NSArray *)keys ofType:(NSString *)type withDefault:(NSInteger)defaultValue
 {
+    if (!keys)
+    {
+        return 0;
+    }
+    if ([keys isKindOfClass:NSNumber.class]) {
+        if (((NSNumber *)keys).integerValue == 0) {
+            return 0;
+        }
+    }
     if (![keys isKindOfClass:[NSArray class]])
     {
         keys = @[keys];
@@ -411,22 +419,50 @@
     for (id key in keys)
     {
         NSNumber *number = [self enumValuesOfType:type][key];
-        if (number) value += [number integerValue];
-        else if ([self isNumeric:key]) value += [key integerValue];
+        if (number)
+        {
+            value += [number integerValue];
+        }
+        else
+        {
+            if ([key isKindOfClass:NSString.class])
+            {
+                // Try to find with uppercase first letter
+                NSString *keyStr = [NSString stringWithFormat:@"%@%@", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
+                number = [self enumValuesOfType:type][keyStr];
+                if (number) {
+                    value += [number integerValue];
+                }
+            }
+            else if ([self isNumeric:key])
+            {
+                value += [key integerValue];
+            }
+        }
     }
     return value;
 }
 
-- (NSArray *)optionKeysForValue:(int)value ofType:(NSString *)type
+- (NSArray *)optionKeysForValue:(NSUInteger)value ofType:(NSString *)type
 {
     NSDictionary *dict = [self enumValuesOfType:type];
     NSMutableArray *keys = [NSMutableArray array];
     for (NSString *key in dict)
     {
         NSNumber *number = dict[key];
-        if (number  && (value & [number integerValue]))
-        {
-            [keys addObject:key];
+        if (number) {
+            if ([number unsignedIntegerValue] == NSUIntegerMax)
+            {
+                if (value == NSUIntegerMax)
+                {
+                    return @[key];
+                }
+            } else {
+                if (value & [number unsignedIntegerValue])
+                {
+                    [keys addObject:key];
+                }
+            }
         }
     }
     return keys;
@@ -442,8 +478,7 @@
                         
         @"UIBarButtonItemStyle":
             
-  @{@"bordered": @(UIBarButtonItemStyleBordered),
-    @"plain": @(UIBarButtonItemStylePlain),
+  @{@"plain": @(UIBarButtonItemStylePlain),
     @"done": @(UIBarButtonItemStyleDone)},
         
         @"PSPDFAnnotationSaveMode":
@@ -513,8 +548,38 @@
             
   @{@"none": @(PSPDFThumbnailBarModeNone),
     @"scrobbleBar": @(PSPDFThumbnailBarModeScrobbleBar),
-    @"scrollable": @(PSPDFThumbnailBarModeScrollable)}
-        
+    @"scrollable": @(PSPDFThumbnailBarModeScrollable)},
+
+        @"PSPDFAnnotationType":
+
+  @{@"None": @(PSPDFAnnotationTypeNone),
+    @"Undefined": @(PSPDFAnnotationTypeUndefined),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeLink): @(PSPDFAnnotationTypeLink),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeHighlight): @(PSPDFAnnotationTypeHighlight),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeStrikeOut): @(PSPDFAnnotationTypeStrikeOut),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeUnderline): @(PSPDFAnnotationTypeUnderline),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeSquiggly): @(PSPDFAnnotationTypeSquiggly),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeFreeText): @(PSPDFAnnotationTypeFreeText),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeInk): @(PSPDFAnnotationTypeInk),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeSquare): @(PSPDFAnnotationTypeSquare),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeCircle): @(PSPDFAnnotationTypeCircle),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeLine): @(PSPDFAnnotationTypeLine),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeNote): @(PSPDFAnnotationTypeNote),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeStamp): @(PSPDFAnnotationTypeStamp),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeCaret): @(PSPDFAnnotationTypeCaret),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRichMedia): @(PSPDFAnnotationTypeRichMedia),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeScreen): @(PSPDFAnnotationTypeScreen),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeWidget): @(PSPDFAnnotationTypeWidget),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeSound): @(PSPDFAnnotationTypeSound),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeFile): @(PSPDFAnnotationTypeFile),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypePolygon): @(PSPDFAnnotationTypePolygon),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypePolyLine): @(PSPDFAnnotationTypePolyLine),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypePopup): @(PSPDFAnnotationTypePopup),
+    PSPDFStringFromAnnotationType(PSPDFANnotationTypeWatermark): @(PSPDFANnotationTypeWatermark),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeTrapNet): @(PSPDFAnnotationTypeTrapNet),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationType3D): @(PSPDFAnnotationType3D),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRedact): @(PSPDFAnnotationTypeRedact),
+    @"All": @(PSPDFAnnotationTypeAll)}
         };
         
         //Note: this method crashes the second time a
@@ -551,7 +616,7 @@
 - (void)setLicenseKey:(CDVInvokedUrlCommand *)command {
     NSString *key = [command argumentAtIndex:0];
     if (key.length > 0) {
-        PSPDFSetLicenseKey(key.UTF8String);
+        [PSPDFKit setLicenseKey:key];
     }
 }
 
@@ -604,16 +669,6 @@
     return [self enumKeyForValue:_pdfDocument.annotationSaveMode ofType:@"PSPDFAnnotationSaveMode"];
 }
 
-- (void)setAllowedMenuActionsForPSPDFDocumentWithJSON:(NSArray *)options
-{
-    _pdfController.allowedMenuActions = [self optionsValueForKeys:options ofType:@"PSPDFTextSelectionMenuAction" withDefault:PSPDFTextSelectionMenuActionAll];
-}
-
-- (NSArray *)allowedMenuActionsAsJSON
-{
-    return [self optionKeysForValue:_pdfController.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
-}
-
 - (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
     _pdfDocument.backgroundColor = [self colorWithString:color];
@@ -629,16 +684,31 @@
     //not supported, use pageBackgroundColor instead
 }
 
+- (NSArray *)renderAnnotationTypesAsJSON
+{
+    NSArray *types = [self optionKeysForValue:_pdfDocument.renderAnnotationTypes ofType:@"PSPDFAnnotationType"];
+    return types;
+}
+
+- (void)setRenderAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)options
+{
+    PSPDFAnnotationType types = (PSPDFAnnotationType) [self optionsValueForKeys:options ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
+    _pdfDocument.renderAnnotationTypes = types;
+}
+
 #pragma mark PSPDFViewController setters and getters
 
 - (void)setPageTransitionForPSPDFViewControllerWithJSON:(NSString *)transition
 {
-    _pdfController.pageTransition = [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageTransitionScrollPerPage];
+    PSPDFPageTransition pageTransition = (PSPDFPageTransition) [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageTransitionScrollPerPage];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.pageTransition = pageTransition;
+    }];
 }
 
 - (NSString *)pageTransitionAsJSON
 {
-    return [self enumKeyForValue:_pdfController.pageTransition ofType:@"PSPDFPageTransition"];
+    return [self enumKeyForValue:_pdfController.configuration.pageTransition ofType:@"PSPDFPageTransition"];
 }
 
 - (void)setViewModeAnimatedForPSPDFViewControllerWithJSON:(NSString *)mode
@@ -658,62 +728,80 @@
 
 - (void)setThumbnailBarModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    _pdfController.thumbnailBarMode = [self enumValueForKey:mode ofType:@"PSPDFThumbnailBarMode" withDefault:PSPDFThumbnailBarModeScrobbleBar];
+    PSPDFThumbnailBarMode thumbnailBarMode = (PSPDFThumbnailBarMode) [self enumValueForKey:mode ofType:@"PSPDFThumbnailBarMode" withDefault:PSPDFThumbnailBarModeScrobbleBar];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.thumbnailBarMode = thumbnailBarMode;
+    }];
 }
 
 - (NSString *)thumbnailBarMode
 {
-    return [self enumKeyForValue:_pdfController.thumbnailBarMode ofType:@"PSPDFThumbnailBarMode"];
+    return [self enumKeyForValue:_pdfController.configuration.thumbnailBarMode ofType:@"PSPDFThumbnailBarMode"];
 }
 
 - (void)setPageModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    _pdfController.pageMode = [self enumValueForKey:mode ofType:@"PSPDFPageMode" withDefault:PSPDFPageModeAutomatic];
+    PSPDFPageMode pageMode = (PSPDFPageMode) [self enumValueForKey:mode ofType:@"PSPDFPageMode" withDefault:PSPDFPageModeAutomatic];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.pageMode = pageMode;
+    }];
 }
 
 - (NSString *)pageModeAsJSON
 {
-    return [self enumKeyForValue:_pdfController.pageMode ofType:@"PSPDFPageMode"];
+    return [self enumKeyForValue:_pdfController.configuration.pageMode ofType:@"PSPDFPageMode"];
 }
 
 - (void)setScrollDirectionForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    _pdfController.scrollDirection = [self enumValueForKey:mode ofType:@"PSPDFScrollDirection" withDefault:PSPDFScrollDirectionHorizontal];
+    PSPDFScrollDirection scrollDirection = (PSPDFScrollDirection) [self enumValueForKey:mode ofType:@"PSPDFScrollDirection" withDefault:PSPDFScrollDirectionHorizontal];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.scrollDirection = scrollDirection;
+    }];
 }
 
 - (NSString *)scrollDirectionAsJSON
 {
-    return [self enumKeyForValue:_pdfController.scrollDirection ofType:@"PSPDFScrollDirection"];
+    return [self enumKeyForValue:_pdfController.configuration.scrollDirection ofType:@"PSPDFScrollDirection"];
 }
 
 - (void)setLinkActionForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    _pdfController.linkAction = [self enumValueForKey:mode ofType:@"PSPDFLinkAction" withDefault:PSPDFLinkActionInlineBrowser];
+    PSPDFLinkAction linkAction = (PSPDFLinkAction) [self enumValueForKey:mode ofType:@"PSPDFLinkAction" withDefault:PSPDFLinkActionInlineBrowser];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.linkAction = linkAction;
+    }];
 }
 
 - (NSString *)linkActionAsJSON
 {
-    return [self enumKeyForValue:_pdfController.linkAction ofType:@"PSPDFLinkAction"];
+    return [self enumKeyForValue:_pdfController.configuration.linkAction ofType:@"PSPDFLinkAction"];
 }
 
 - (void)setHUDViewModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    _pdfController.HUDViewMode = [self enumValueForKey:mode ofType:@"PSPDFHUDViewMode" withDefault:PSPDFHUDViewModeAutomatic];
+    PSPDFHUDViewMode HUDViewMode = (PSPDFHUDViewMode) [self enumValueForKey:mode ofType:@"PSPDFHUDViewMode" withDefault:PSPDFHUDViewModeAutomatic];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.HUDViewMode = HUDViewMode;
+    }];
 }
 
 - (NSString *)HUDViewModeAsJSON
 {
-    return [self enumKeyForValue:_pdfController.HUDViewMode ofType:@"PSPDFHUDViewMode"];
+    return [self enumKeyForValue:_pdfController.configuration.HUDViewMode ofType:@"PSPDFHUDViewMode"];
 }
 
 - (void)setHUDViewAnimationForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    _pdfController.HUDViewAnimation = [self enumValueForKey:mode ofType:@"HUDViewAnimation" withDefault:PSPDFHUDViewAnimationFade];
+    PSPDFHUDViewAnimation HUDViewAnimation = (PSPDFHUDViewAnimation) [self enumValueForKey:mode ofType:@"HUDViewAnimation" withDefault:PSPDFHUDViewAnimationFade];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.HUDViewAnimation = HUDViewAnimation;
+    }];
 }
 
 - (NSString *)HUDViewAnimationAsJSON
 {
-    return [self enumKeyForValue:_pdfController.HUDViewAnimation ofType:@"PSPDFHUDViewAnimation"];
+    return [self enumKeyForValue:_pdfController.configuration.HUDViewAnimation ofType:@"PSPDFHUDViewAnimation"];
 }
 
 - (void)setHUDVisibleAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)visible
@@ -738,22 +826,75 @@
 
 - (void)setTintColorForPSPDFViewControllerWithJSON:(NSString *)color
 {
-    _pdfController.tintColor = [self colorWithString:color];
+    _pdfController.view.tintColor = [self colorWithString:color];
 }
 
 - (NSString *)tintColorAsJSON
 {
-    return [self colorAsString:_pdfController.tintColor];
+    return [self colorAsString:_pdfController.view.tintColor];
 }
 
 - (void)setBackgroundColorForPSPDFViewControllerWithJSON:(NSString *)color
 {
-    _pdfController.backgroundColor = [self colorWithString:color];
+    UIColor *backgroundColor = [self colorWithString:color];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.backgroundColor = backgroundColor;
+    }];
 }
 
 - (NSString *)backgroundColorAsJSON
 {
-    return [self colorAsString:_pdfController.backgroundColor];
+    return [self colorAsString:_pdfController.configuration.backgroundColor];
+}
+
+- (void)setAllowedMenuActionsForPSPDFViewControllerWithJSON:(NSArray *)options
+{
+    PSPDFTextSelectionMenuAction menuActions = (PSPDFTextSelectionMenuAction) [self optionsValueForKeys:options ofType:@"PSPDFTextSelectionMenuAction" withDefault:PSPDFTextSelectionMenuActionAll];
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.allowedMenuActions = menuActions;
+    }];
+}
+
+- (NSArray *)allowedMenuActionsAsJSON
+{
+    return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
+}
+
+- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options error:(NSError *__autoreleasing*)error
+{
+    [[PSPDFProcessor defaultProcessor] generatePDFFromHTMLString:html
+                                                   outputFileURL:[NSURL fileURLWithPath:filePath]
+                                                         options:options
+                                                           error:error];
+}
+
+#pragma mark PDFProcessing methods
+
+- (void)convertPDFFromHTMLString:(CDVInvokedUrlCommand *)command
+{
+    NSString *decodeHTMLString = [[[command argumentAtIndex:0] stringByReplacingOccurrencesOfString:@"+" withString:@""]stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *fileName = [command argumentAtIndex:1 withDefault:@"Sample"];
+    NSDictionary *options = [command argumentAtIndex:2 withDefault:nil];
+    NSError *error;
+    NSString *outputFilePath = [NSTemporaryDirectory()
+                                stringByAppendingPathComponent:[fileName stringByAppendingPathExtension:@"pdf"]];
+    
+    [self generatePDFFromHTMLString:decodeHTMLString outputFile:outputFilePath options:options error:&error];
+    CDVPluginResult *pluginResult;
+    
+    if (error)
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                     messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domin": error.domain}];
+    }
+    else
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                     messageAsDictionary:@{@"filePath":outputFilePath}];
+    }
+    
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
 }
 
 #pragma mark Document methods
@@ -820,7 +961,7 @@
     BOOL headless = [[command argumentAtIndex:2 withDefault:@NO] boolValue];
     
     if (query) {
-        [_pdfController searchForString:query options:@{PSPDFViewControllerSearchHeadlessKey: @(headless)} animated:animated];
+        [_pdfController searchForString:query options:@{PSPDFViewControllerSearchHeadlessKey: @(headless)} sender:nil animated:animated];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }
     else {
@@ -927,17 +1068,17 @@
 
 - (void)getPage:(CDVInvokedUrlCommand *)command
 {
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:_pdfController.page] callbackId:command.callbackId];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfController.page] callbackId:command.callbackId];
 }
 
 - (void)getScreenPage:(CDVInvokedUrlCommand *)command
 {
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:_pdfController.screenPage] callbackId:command.callbackId];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfController.screenPage] callbackId:command.callbackId];
 }
 
 - (void)getPageCount:(CDVInvokedUrlCommand *)command
 {
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:_pdfDocument.pageCount] callbackId:command.callbackId];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfDocument.pageCount] callbackId:command.callbackId];
 }
 
 - (void)scrollToNextPage:(CDVInvokedUrlCommand *)command
@@ -976,44 +1117,29 @@
 
 #pragma mark Delegate methods
 
-- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSetDocument:(PSPDFDocument *)document
-{
-    return [self sendEventWithJSON:@{@"type": @"shouldSetDocument", @"path": [document.fileURL path]?: [NSNull null]}];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController willDisplayDocument:(PSPDFDocument *)document
-{
-    [self sendEventWithJSON:@{@"type": @"willDisplayDocument", @"path": [document.fileURL path]?: [NSNull null]}];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController didDisplayDocument:(PSPDFDocument *)document
-{
-    [self sendEventWithJSON:@{@"type": @"didDisplayDocument", @"path": [document.fileURL path]?: [NSNull null]}];
-}
-
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldScrollToPage:(NSUInteger)page
 {
-    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'shouldScrollToPage',page:%i}", page]];
+    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'shouldScrollToPage',page:%ld}", (long)page]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didShowPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didShowPageView',page:%i}", pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didShowPageView',page:%ld}", (long) pageView.page]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didRenderPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didRenderPageView',page:%i}", pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didRenderPageView',page:%ld}", (long) pageView.page]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didLoadPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLoadPageView',page:%i}", pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLoadPageView',page:%ld}", (long) pageView.page]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController willUnloadPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'willUnloadPageView',page:%i}", pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'willUnloadPageView',page:%ld}", (long) pageView.page]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didBeginPageDragging:(UIScrollView *)scrollView
@@ -1048,16 +1174,20 @@
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController didTapOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint
 {
-    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didTapOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
+    // inverted because it's almost always YES (due to handling JS eval calls).
+    // in order to set this event as handled use explicit "return false;" in JS callback.
+    return ![self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didTapOnPageView',viewPoint:[%g,%g]}", viewPoint.x, viewPoint.y]];
 }
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController didLongPressOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint gestureRecognizer:(UILongPressGestureRecognizer *)gestureRecognizer
 {
-    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLongPressOnPageView',viewPoint:{%g,%g}}", viewPoint.x, viewPoint.y]];
+    // inverted because it's almost always YES (due to handling JS eval calls).
+    // in order to set this event as handled use explicit "return false;" in JS callback.
+    return ![self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLongPressOnPageView',viewPoint:[%g,%g]}", viewPoint.x, viewPoint.y]];
 }
 
 static NSString *PSPDFStringFromCGRect(CGRect rect) {
-    return [NSString stringWithFormat:@"{%g,%g,%g,%g}", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
+    return [NSString stringWithFormat:@"[%g,%g,%g,%g]", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
 }
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSelectText:(NSString *)text withGlyphs:(NSArray *)glyphs atRect:(CGRect)rect onPageView:(PSPDFPageView *)pageView
