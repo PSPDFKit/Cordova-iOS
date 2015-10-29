@@ -16,7 +16,7 @@ Demo
 You can find a demo app in [CordovaDemo](CordovaDemo).
 
 In order to build it, please download PSPDFKit from your customer portal: https://customers.pspdfkit.com  
-The .dmg file you downloaded contains a directory called `PSPDFKit.embeddedframework`.  
+The .dmg file you downloaded contains a directory called `PSPDFKit.framework`.  
 Please copy this directory to `CordovaDemo/platforms/ios`.
 
 You can set your license key in `CordovaDemo/www/js/index.js`.  
