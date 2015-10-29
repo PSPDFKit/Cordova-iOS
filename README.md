@@ -11,6 +11,21 @@ Install
 
 Read the message at the end and complete installation (add PSPDFKit framework to your Xcode project manually).
 
+PSPDFKit 5.0 Migration Guide
+-----------
+
+Please use the following commands to update your Cordova plugin:
+
+```shell
+$ cordova plugin remove com.pspdfkit.cordovaplugin
+$ cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git
+```
+
+Please read the message after adding the plugin carefully, because the installation instructions have changed:
+
+PSPDFKit now uses a dynamic framework instead of a static one.
+This means you need to remove `PSPDFKit.embeddedframework` (static framework) from your project and instead follow the installation instructions listed here: https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/#toc_dynamic-framework
+
 Demo
 -----------
 
