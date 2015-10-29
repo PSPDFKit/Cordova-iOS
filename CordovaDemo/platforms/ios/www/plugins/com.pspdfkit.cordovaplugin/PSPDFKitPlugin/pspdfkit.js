@@ -90,7 +90,12 @@ var PSPDFKitPlugin = new function() {
     addMethods({
                setLicenseKey: ['key'],
                });
-
+    //PDF Generation method
+    
+    addMethods({
+               convertPDFFromHTMLString: ['html', 'fileName', 'options', 'callback'],
+               });
+    
     //document methods
     
     addMethods({

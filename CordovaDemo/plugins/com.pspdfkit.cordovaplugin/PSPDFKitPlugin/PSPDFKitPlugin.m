@@ -547,7 +547,7 @@
         @"PSPDFThumbnailBarMode":
             
   @{@"none": @(PSPDFThumbnailBarModeNone),
-    @"scrobbleBar": @(PSPDFThumbnailBarModeScrobbleBar),
+    @"scrobbleBar": @(PSPDFThumbnailBarModeScrubberBar),
     @"scrollable": @(PSPDFThumbnailBarModeScrollable)},
 
         @"PSPDFAnnotationType":
@@ -575,7 +575,7 @@
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypePolygon): @(PSPDFAnnotationTypePolygon),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypePolyLine): @(PSPDFAnnotationTypePolyLine),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypePopup): @(PSPDFAnnotationTypePopup),
-    PSPDFStringFromAnnotationType(PSPDFANnotationTypeWatermark): @(PSPDFANnotationTypeWatermark),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeWatermark): @(PSPDFAnnotationTypeWatermark),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeTrapNet): @(PSPDFAnnotationTypeTrapNet),
     PSPDFStringFromAnnotationType(PSPDFAnnotationType3D): @(PSPDFAnnotationType3D),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRedact): @(PSPDFAnnotationTypeRedact),
@@ -671,12 +671,14 @@
 
 - (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
-    _pdfDocument.backgroundColor = [self colorWithString:color];
+    NSMutableDictionary *renderOptions = [_pdfDocument.renderOptions mutableCopy];
+    renderOptions[PSPDFRenderBackgroundFillColorKey] = [self colorWithString:color];
+    _pdfDocument.renderOptions = renderOptions;
 }
 
 - (NSString *)pageBackgroundColorAsJSON
 {
-    return [self colorAsString:_pdfDocument.backgroundColor];
+    return [self colorAsString:_pdfDocument.renderOptions[PSPDFRenderBackgroundFillColorKey]];
 }
 
 - (void)setBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
@@ -728,7 +730,7 @@
 
 - (void)setThumbnailBarModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    PSPDFThumbnailBarMode thumbnailBarMode = (PSPDFThumbnailBarMode) [self enumValueForKey:mode ofType:@"PSPDFThumbnailBarMode" withDefault:PSPDFThumbnailBarModeScrobbleBar];
+    PSPDFThumbnailBarMode thumbnailBarMode = (PSPDFThumbnailBarMode) [self enumValueForKey:mode ofType:@"PSPDFThumbnailBarMode" withDefault:PSPDFThumbnailBarModeScrubberBar];
     [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.thumbnailBarMode = thumbnailBarMode;
     }];
@@ -860,12 +862,12 @@
     return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
 }
 
-- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options error:(NSError *__autoreleasing*)error
+- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options completionBlock:(void (^)(NSError *error))completionBlock
 {
     [[PSPDFProcessor defaultProcessor] generatePDFFromHTMLString:html
                                                    outputFileURL:[NSURL fileURLWithPath:filePath]
                                                          options:options
-                                                           error:error];
+                                                 completionBlock:completionBlock];
 }
 
 #pragma mark PDFProcessing methods
@@ -875,26 +877,27 @@
     NSString *decodeHTMLString = [[[command argumentAtIndex:0] stringByReplacingOccurrencesOfString:@"+" withString:@""]stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSString *fileName = [command argumentAtIndex:1 withDefault:@"Sample"];
     NSDictionary *options = [command argumentAtIndex:2 withDefault:nil];
-    NSError *error;
     NSString *outputFilePath = [NSTemporaryDirectory()
                                 stringByAppendingPathComponent:[fileName stringByAppendingPathExtension:@"pdf"]];
     
-    [self generatePDFFromHTMLString:decodeHTMLString outputFile:outputFilePath options:options error:&error];
-    CDVPluginResult *pluginResult;
+    void (^completionBlock)(NSError *error) = ^(NSError *error) {
+        CDVPluginResult *pluginResult;
+        
+        if (error)
+        {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                         messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domin": error.domain}];
+        }
+        else
+        {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                         messageAsDictionary:@{@"filePath":outputFilePath}];
+        }
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    };
     
-    if (error)
-    {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                     messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domin": error.domain}];
-    }
-    else
-    {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                     messageAsDictionary:@{@"filePath":outputFilePath}];
-    }
-    
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    
+    [self generatePDFFromHTMLString:decodeHTMLString outputFile:outputFilePath options:options completionBlock:completionBlock];
 }
 
 #pragma mark Document methods
