@@ -1,11 +1,13 @@
-Cordova Wrapper for PSPDFKit 5 for iOS
-======================================
+Cordova Wrapper for PSPDFKit 5.1 for iOS
+========================================
 
-**This plugin works with Cordova version 3.4.0 and above.**  
-**Please also make sure that you're using the latest version of Xcode 7.**
+**This plugin works with Cordova version 4.0 and above.**  
+**Please also make sure that you're using the latest version of Xcode 7.2.**
 
 Install
 -----------
+
+We assume you have [a current install of Cordova](https://cordova.apache.org/#getstarted).
 
     cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git
 
@@ -228,7 +230,6 @@ Document options
 
 Document annotation options
   
-    editableAnnotationTypes (see online documentation)
     annotationSaveMode (disabled, externalFile, embedded, embeddedWithExternalFileAsFallback)
     annotationsEnabled
     canEmbedAnnotations
@@ -255,6 +256,7 @@ Page appearance
 
 PDF Controller options
     
+    editableAnnotationTypes (see online documentation)
     pageTransition (scrollPerPage, scrollContinuous, curl)
     viewMode (document, thumbnails)
     pageMode (single, double, automatic)
@@ -345,7 +347,7 @@ The following events are supported by the PSPDFKitPlugin class
 License
 ------------
 
-Copyright 2011-2015 PSPDFKit GmbH. All rights reserved.
+Copyright 2011-2016 PSPDFKit GmbH. All rights reserved.
 
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.

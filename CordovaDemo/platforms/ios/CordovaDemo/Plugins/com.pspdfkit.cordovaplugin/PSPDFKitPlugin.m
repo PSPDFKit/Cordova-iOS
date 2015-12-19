@@ -633,30 +633,33 @@
     return _pdfDocument.fileURL.path;
 }
 
-- (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
+- (void)setEditableAnnotationTypesWithJSON:(NSArray *)types
 {
     if (![types isKindOfClass:[NSArray class]])
     {
         types = @[types];
     }
     
-    NSMutableOrderedSet *qualified = [[NSMutableOrderedSet alloc] init];
+    NSMutableSet *qualified = [[NSMutableSet alloc] init];
     for (NSString *type in types)
     {
-        if ([type hasPrefix:@"PSPDFAnnotationType"]) {
-            [qualified addObject:[type substringFromIndex:19]];
+        NSString *prefix = @"PSPDFAnnotationType";
+        if ([type hasPrefix:prefix]) {
+            [qualified addObject:[type substringFromIndex:prefix.length]];
         }
         else if ([type length]) {
             [qualified addObject:[NSString stringWithFormat:@"%@%@", [[type substringToIndex:1] uppercaseString], [type substringFromIndex:1]]];
         }
     }
     
-    _pdfDocument.editableAnnotationTypes = qualified;
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.editableAnnotationTypes = qualified;
+    }];
 }
 
 - (NSArray *)editableAnnotationTypesAsJSON
 {
-    return [_pdfDocument.editableAnnotationTypes array];
+    return _pdfController.configuration.editableAnnotationTypes.allObjects;
 }
 
 - (void)setAnnotationSaveModeForPSPDFDocumentWithJSON:(NSString *)option
