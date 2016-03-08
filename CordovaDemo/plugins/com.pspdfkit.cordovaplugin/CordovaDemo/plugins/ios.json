@@ -7,18 +7,6 @@
         "files": {
             "framework": {
                 "parents": {
-                    "libsqlite3.dylib": [
-                        {
-                            "xml": false,
-                            "count": 1
-                        }
-                    ],
-                    "libxml2.dylib": [
-                        {
-                            "xml": false,
-                            "count": 1
-                        }
-                    ],
                     "CoreText.framework": [
                         {
                             "xml": false,
@@ -32,12 +20,6 @@
                         }
                     ],
                     "MessageUI.framework": [
-                        {
-                            "xml": false,
-                            "count": 1
-                        }
-                    ],
-                    "libz.dylib": [
                         {
                             "xml": false,
                             "count": 1
@@ -120,12 +102,6 @@
                             "xml": false,
                             "count": 1
                         }
-                    ],
-                    "libc++.dylib": [
-                        {
-                            "xml": false,
-                            "count": 1
-                        }
                     ]
                 }
             },
@@ -142,6 +118,9 @@
         }
     },
     "installed_plugins": {
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
+        },
         "com.pspdfkit.cordovaplugin": {
             "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
         }

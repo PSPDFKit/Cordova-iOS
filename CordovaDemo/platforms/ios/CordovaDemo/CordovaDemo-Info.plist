@@ -65,9 +65,9 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSMainNibFile</key>
-    <string></string>
+    <string/>
     <key>NSMainNibFile~ipad</key>
-    <string></string>
+    <string/>
     <key>UILaunchImages</key>
     <array>
       <dict>
@@ -171,5 +171,10 @@
         <string>{768, 1024}</string>
       </dict>
     </array>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+    </dict>
   </dict>
 </plist>

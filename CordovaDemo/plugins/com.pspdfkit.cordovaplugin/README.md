@@ -1,14 +1,32 @@
-PSPDFKit-Cordova
-================
+Cordova Wrapper for PSPDFKit 5.1 for iOS
+========================================
 
-**This plugin works with Cordova version 3.4.0 and above.**
+**This plugin works with Cordova version 3.9.2 and above.**  
+**Please also make sure that you're using the latest version of Xcode 7.2.**
 
 Install
 -----------
 
+We assume you have [a current install of Cordova](https://cordova.apache.org/#getstarted).
+
     cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git
 
 Read the message at the end and complete installation (add PSPDFKit framework to your Xcode project manually).
+
+PSPDFKit 5.0 Migration Guide
+-----------
+
+Please use the following commands to update your Cordova plugin:
+
+```shell
+$ cordova plugin remove com.pspdfkit.cordovaplugin
+$ cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git
+```
+
+Please read the message after adding the plugin carefully, because the installation instructions have changed:
+
+PSPDFKit now uses a dynamic framework instead of a static one.
+This means you need to remove `PSPDFKit.embeddedframework` (static framework) from your project and instead follow the installation instructions listed here: https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/#toc_dynamic-framework
 
 Demo
 -----------
@@ -212,7 +230,6 @@ Document options
 
 Document annotation options
   
-    editableAnnotationTypes (see online documentation)
     annotationSaveMode (disabled, externalFile, embedded, embeddedWithExternalFileAsFallback)
     annotationsEnabled
     canEmbedAnnotations
@@ -239,6 +256,7 @@ Page appearance
 
 PDF Controller options
     
+    editableAnnotationTypes (see online documentation)
     pageTransition (scrollPerPage, scrollContinuous, curl)
     viewMode (document, thumbnails)
     pageMode (single, double, automatic)
@@ -329,7 +347,7 @@ The following events are supported by the PSPDFKitPlugin class
 License
 ------------
 
-Copyright 2011-2015 PSPDFKit GmbH. All rights reserved.
+Copyright 2011-2016 PSPDFKit GmbH. All rights reserved.
 
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.

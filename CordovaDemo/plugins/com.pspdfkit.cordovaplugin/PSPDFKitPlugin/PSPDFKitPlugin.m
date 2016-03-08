@@ -11,6 +11,7 @@
 //
 
 #import "PSPDFKitPlugin.h"
+#import <WebKit/WebKit.h>
 #import <PSPDFKit/PSPDFKit.h>
 
 @interface PSPDFKitPlugin () <PSPDFViewControllerDelegate>
@@ -265,13 +266,32 @@
             (int)round(rgba[2]*255), rgba[3]];
 }
 
+- (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script {
+    __block NSString *result;
+    if ([self.webView isKindOfClass:UIWebView.class]) {
+        result = [(UIWebView *)self.webView stringByEvaluatingJavaScriptFromString:script];
+    } else {
+        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+        [((WKWebView *)self.webView) evaluateJavaScript:script completionHandler:^(id resultID, NSError *error) {
+            result = [resultID description];
+        }];
+
+        // Ugly way to convert the async call into a sync call.
+        // Since WKWebView calls back on the main thread we can't block.
+        while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW)) {
+            [NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+        }
+    }
+    return result;
+}
+
 - (BOOL)sendEventWithJSON:(id)JSON
 {
     if ([JSON isKindOfClass:[NSDictionary class]]) {
         JSON = [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:JSON options:0 error:NULL] encoding:NSUTF8StringEncoding];
     }
     NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchEvent(%@)", JSON];
-    NSString *result = [self.webView stringByEvaluatingJavaScriptFromString:script];
+    NSString *result = [self stringByEvaluatingJavaScriptFromString:script];
     return [result length]? [result boolValue]: YES;
 }
 
@@ -357,12 +377,12 @@
         index = [_pdfController.rightBarButtonItems indexOfObject:sender];
         if (index != NSNotFound) {
             NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchRightBarButtonAction(%ld)", (long)index];
-            [self.webView stringByEvaluatingJavaScriptFromString:script];
+            [self stringByEvaluatingJavaScriptFromString:script];
         }
     }
     else {
         NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchLeftBarButtonAction(%ld)", (long)index];
-        [self.webView stringByEvaluatingJavaScriptFromString:script];
+        [self stringByEvaluatingJavaScriptFromString:script];
     }
 }
 
@@ -633,30 +653,33 @@
     return _pdfDocument.fileURL.path;
 }
 
-- (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
+- (void)setEditableAnnotationTypesWithJSON:(NSArray *)types
 {
     if (![types isKindOfClass:[NSArray class]])
     {
         types = @[types];
     }
     
-    NSMutableOrderedSet *qualified = [[NSMutableOrderedSet alloc] init];
+    NSMutableSet *qualified = [[NSMutableSet alloc] init];
     for (NSString *type in types)
     {
-        if ([type hasPrefix:@"PSPDFAnnotationType"]) {
-            [qualified addObject:[type substringFromIndex:19]];
+        NSString *prefix = @"PSPDFAnnotationType";
+        if ([type hasPrefix:prefix]) {
+            [qualified addObject:[type substringFromIndex:prefix.length]];
         }
         else if ([type length]) {
             [qualified addObject:[NSString stringWithFormat:@"%@%@", [[type substringToIndex:1] uppercaseString], [type substringFromIndex:1]]];
         }
     }
     
-    _pdfDocument.editableAnnotationTypes = qualified;
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.editableAnnotationTypes = qualified;
+    }];
 }
 
 - (NSArray *)editableAnnotationTypesAsJSON
 {
-    return [_pdfDocument.editableAnnotationTypes array];
+    return _pdfController.configuration.editableAnnotationTypes.allObjects;
 }
 
 - (void)setAnnotationSaveModeForPSPDFDocumentWithJSON:(NSString *)option
@@ -1152,7 +1175,7 @@
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didBeginPageDragging',willDecelerate:%@,velocity:{%g,%g}}", decelerate? @"true": @"false", velocity.x, velocity.y]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didBeginPageDragging',willDecelerate:'%@',velocity:'{%g,%g}'}", decelerate? @"true": @"false", velocity.x, velocity.y]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageScrollingAnimation:(UIScrollView *)scrollView

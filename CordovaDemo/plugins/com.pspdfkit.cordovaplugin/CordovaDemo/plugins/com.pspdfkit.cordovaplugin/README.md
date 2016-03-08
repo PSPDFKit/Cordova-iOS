@@ -1,6 +1,8 @@
 PSPDFKit-Cordova
 ================
 
+**This plugin works with Cordova version 3.4.0 and above.**
+
 Install
 -----------
 
@@ -8,6 +10,20 @@ Install
 
 Read the message at the end and complete installation (add PSPDFKit framework to your Xcode project manually).
 
+Demo
+-----------
+
+You can find a demo app in [CordovaDemo](CordovaDemo).
+
+In order to build it, please download PSPDFKit from your customer portal: https://customers.pspdfkit.com  
+The .dmg file you downloaded contains a directory called `PSPDFKit.framework`.  
+Please copy this directory to `CordovaDemo/platforms/ios`.
+
+You can set your license key in `CordovaDemo/www/js/index.js`.  
+(Look for `PSPDFKitPlugin.setLicenseKey("YOUR KEY");`)
+
+After that, you can build the demo app with `$ cordova build`.  
+To run the demo app in the simulator use `$ cordova emulate`.
 
 Usage
 -----------
