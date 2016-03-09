@@ -274,6 +274,7 @@
         dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
         [((WKWebView *)self.webView) evaluateJavaScript:script completionHandler:^(id resultID, NSError *error) {
             result = [resultID description];
+            dispatch_semaphore_signal(semaphore);
         }];
 
         // Ugly way to convert the async call into a sync call.

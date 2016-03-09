@@ -1,9 +1,0 @@
-{
-    "com.pspdfkit.cordovaplugin": {
-        "source": {
-            "type": "git",
-            "url": "https://github.com/PSPDFKit/Cordova-iOS.git",
-            "subdir": "."
-        }
-    }
-}
