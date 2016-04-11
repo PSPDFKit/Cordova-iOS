@@ -79,7 +79,7 @@ var PSPDFKitPlugin = new function() {
         var existing = listeners[type];
         if (existing) {
             var index;
-            while (index = existing.indexOf(listener)) {
+            while ((index = existing.indexOf(listener)) != -1) {
                 existing.splice(index,1);
             }
         }
