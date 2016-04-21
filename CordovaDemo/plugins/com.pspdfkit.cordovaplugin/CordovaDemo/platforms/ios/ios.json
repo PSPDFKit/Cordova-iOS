@@ -1,0 +1,43 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"PSPDFKitPlugin\"><param name=\"ios-package\" value=\"PSPDFKitPlugin\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
+        },
+        "com.pspdfkit.cordovaplugin": {
+            "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
+        }
+    },
+    "dependent_plugins": {},
+    "modules": [
+        {
+            "file": "plugins/com.pspdfkit.cordovaplugin/PSPDFKitPlugin/pspdfkit.js",
+            "id": "com.pspdfkit.cordovaplugin.PSPDFKitPlugin",
+            "pluginId": "com.pspdfkit.cordovaplugin",
+            "clobbers": [
+                "PSPDFKitPlugin"
+            ]
+        }
+    ],
+    "plugin_metadata": {
+        "cordova-plugin-whitelist": "1.0.0",
+        "com.pspdfkit.cordovaplugin": "1.1.1"
+    }
+}

@@ -373,9 +373,9 @@
 
 - (void)customBarButtonItemAction:(UIBarButtonItem *)sender
 {
-    NSInteger index = [_pdfController.leftBarButtonItems indexOfObject:sender];
+    NSInteger index = [_pdfController.navigationItem.leftBarButtonItems indexOfObject:sender];
     if (index == NSNotFound) {
-        index = [_pdfController.rightBarButtonItems indexOfObject:sender];
+        index = [_pdfController.navigationItem.rightBarButtonItems indexOfObject:sender];
         if (index != NSNotFound) {
             NSString *script = [NSString stringWithFormat:@"PSPDFKitPlugin.dispatchRightBarButtonAction(%ld)", (long)index];
             [self stringByEvaluatingJavaScriptFromString:script];
@@ -598,7 +598,7 @@
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypePopup): @(PSPDFAnnotationTypePopup),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeWatermark): @(PSPDFAnnotationTypeWatermark),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeTrapNet): @(PSPDFAnnotationTypeTrapNet),
-    PSPDFStringFromAnnotationType(PSPDFAnnotationType3D): @(PSPDFAnnotationType3D),
+    PSPDFStringFromAnnotationType(PSPDFAnnotationTypeThreeDimensional): @(PSPDFAnnotationTypeThreeDimensional),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRedact): @(PSPDFAnnotationTypeRedact),
     @"All": @(PSPDFAnnotationTypeAll)}
         };
@@ -842,12 +842,12 @@
 
 - (void)setLeftBarButtonItemsForPSPDFViewControllerWithJSON:(NSArray *)items
 {
-    _pdfController.leftBarButtonItems = [self barButtonItemsWithArray:items] ?: _pdfController.leftBarButtonItems;
+    _pdfController.navigationItem.leftBarButtonItems = [self barButtonItemsWithArray:items] ?: _pdfController.navigationItem.leftBarButtonItems;
 }
 
 - (void)setRightBarButtonItemsForPSPDFViewControllerWithJSON:(NSArray *)items
 {
-    _pdfController.rightBarButtonItems = [self barButtonItemsWithArray:items] ?: _pdfController.rightBarButtonItems;
+    _pdfController.navigationItem.rightBarButtonItems = [self barButtonItemsWithArray:items] ?: _pdfController.navigationItem.rightBarButtonItems;
 }
 
 - (void)setTintColorForPSPDFViewControllerWithJSON:(NSString *)color
@@ -888,10 +888,7 @@
 
 - (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options completionBlock:(void (^)(NSError *error))completionBlock
 {
-    [[PSPDFProcessor defaultProcessor] generatePDFFromHTMLString:html
-                                                   outputFileURL:[NSURL fileURLWithPath:filePath]
-                                                         options:options
-                                                 completionBlock:completionBlock];
+    [PSPDFProcessor generatePDFFromHTMLString:html outputFileURL:[NSURL fileURLWithPath:filePath] options:options completionBlock:completionBlock];
 }
 
 #pragma mark PDFProcessing methods
