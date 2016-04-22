@@ -1,8 +1,8 @@
-Cordova Wrapper for PSPDFKit 5.1 for iOS
+Cordova Wrapper for PSPDFKit 5.3.2 for iOS
 ========================================
 
 **This plugin works with Cordova version 3.9.2 and above.**  
-**Please also make sure that you're using the latest version of Xcode 7.2.**
+**Please also make sure that you're using the latest version of Xcode 7.3.**
 
 Install
 -----------
@@ -353,4 +353,4 @@ THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN CO
 AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
 UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
 
-http://pspdfkit.com/license.html
+You need a commercial license to use this project. Contact sales@pspdfkit.com for details.
