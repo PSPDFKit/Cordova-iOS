@@ -11,7 +11,10 @@ We assume you have [a current install of Cordova](https://cordova.apache.org/#ge
 
     cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git
 
-Read the message at the end and complete installation (add PSPDFKit framework to your Xcode project manually).
+Read the message at the end and complete installation.
+
+**You will need to manually edit the Xcode project and add PSPDFKit framework to your project manually.
+There is no automatic support for dynamic frameworks in Cordova yet. You will get a linker error if you forget this step.**
 
 PSPDFKit 5.0 Migration Guide
 -----------
