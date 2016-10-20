@@ -695,14 +695,15 @@
 
 - (void)setPageBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
 {
-    NSMutableDictionary *renderOptions = [_pdfDocument.renderOptions mutableCopy];
-    renderOptions[PSPDFRenderBackgroundFillColorKey] = [self colorWithString:color];
-    _pdfDocument.renderOptions = renderOptions;
+    NSMutableDictionary *renderOptions = [[_pdfDocument renderOptionsForType:PSPDFRenderTypeAll context:nil] mutableCopy];
+    renderOptions[PSPDFRenderOptionBackgroundFillColorKey] = [self colorWithString:color];
+    [_pdfDocument setRenderOptions:renderOptions type:PSPDFRenderTypeAll];
 }
 
 - (NSString *)pageBackgroundColorAsJSON
 {
-    return [self colorAsString:_pdfDocument.renderOptions[PSPDFRenderBackgroundFillColorKey]];
+    NSDictionary *renderOptions = [_pdfDocument renderOptionsForType:PSPDFRenderTypeAll context:nil];
+    return [self colorAsString:renderOptions[PSPDFRenderOptionBackgroundFillColorKey]];
 }
 
 - (void)setBackgroundColorForPSPDFDocumentWithJSON:(NSString *)color
@@ -837,7 +838,7 @@
 
 - (void)setPageAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)page
 {
-    [_pdfController setPage:[page integerValue] animated:YES];
+    [_pdfController setPageIndex:[page integerValue] animated:YES];
 }
 
 - (void)setLeftBarButtonItemsForPSPDFViewControllerWithJSON:(NSArray *)items
@@ -1000,7 +1001,7 @@
 - (void)saveAnnotations:(CDVInvokedUrlCommand *)command
 {
     NSError *error = nil;
-    [_pdfController.document saveAnnotationsWithError:&error];
+    [_pdfController.document save:&error];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryWithError:error]] callbackId:command.callbackId];
 }
 
@@ -1081,7 +1082,7 @@
     BOOL animated = [[command argumentAtIndex:1 withDefault:@NO] boolValue];
     
     if (page != NSNotFound) {
-        [_pdfController setPage:page animated:animated];
+        [_pdfController setPageIndex:page animated:animated];
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                     callbackId:command.callbackId];
     }
@@ -1092,12 +1093,7 @@
 
 - (void)getPage:(CDVInvokedUrlCommand *)command
 {
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfController.page] callbackId:command.callbackId];
-}
-
-- (void)getScreenPage:(CDVInvokedUrlCommand *)command
-{
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfController.screenPage] callbackId:command.callbackId];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfController.pageIndex] callbackId:command.callbackId];
 }
 
 - (void)getPageCount:(CDVInvokedUrlCommand *)command
@@ -1148,22 +1144,22 @@
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didShowPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didShowPageView',page:%ld}", (long) pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didShowPageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didRenderPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didRenderPageView',page:%ld}", (long) pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didRenderPageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didLoadPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLoadPageView',page:%ld}", (long) pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLoadPageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController willUnloadPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'willUnloadPageView',page:%ld}", (long) pageView.page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'willUnloadPageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController didBeginPageDragging:(UIScrollView *)scrollView

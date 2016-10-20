@@ -1,8 +1,8 @@
-Cordova Wrapper for PSPDFKit 5.3.2 for iOS
+Cordova Wrapper for PSPDFKit v6 for iOS
 ========================================
 
-**This plugin works with Cordova version 3.9.2 and above.**  
-**Please also make sure that you're using the latest version of Xcode 7.3.**
+**This plugin works with Cordova version 6.3.1 and above.**  
+**Please also make sure that you're using the latest version of Xcode 8.**
 
 Install
 -----------
@@ -15,21 +15,6 @@ Read the message at the end and complete installation.
 
 **You will need to manually edit the Xcode project and add PSPDFKit framework to your project manually.
 There is no automatic support for dynamic frameworks in Cordova yet. You will get a linker error if you forget this step.**
-
-PSPDFKit 5.0 Migration Guide
------------
-
-Please use the following commands to update your Cordova plugin:
-
-```shell
-$ cordova plugin remove com.pspdfkit.cordovaplugin
-$ cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git
-```
-
-Please read the message after adding the plugin carefully, because the installation instructions have changed:
-
-PSPDFKit now uses a dynamic framework instead of a static one.
-This means you need to remove `PSPDFKit.embeddedframework` (static framework) from your project and instead follow the installation instructions listed here: https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/#toc_dynamic-framework
 
 Demo
 -----------
@@ -143,10 +128,6 @@ This method will scroll to the specified page (0-indexed). The optional animated
     getPage(callback(page));
     
 This method returns the current page (0-indexed). The page will be returned as the first argument to the callback function provided. The function itself returns no value.
-    
-    getScreenPage(callback(page));
-    
-This method returns the current screen page (see online documentation for details). The page will be returned as the first argument to the callback function provided. The function itself returns no value.
 
     getPageCount(callback(count));
     

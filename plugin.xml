@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin id="com.pspdfkit.cordovaplugin" version="1.1.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+<plugin id="com.pspdfkit.cordovaplugin" version="1.2.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 	<engines>
-		<engine name="cordova" version=">=3.4.0"/>
+		<engine name="cordova" version=">=6.3.1"/>
 	</engines>
 	<name>PSPDFKitPlugin</name>
-	<license>Copyright 2011-2014 PSPDFKit GmbH. All rights reserved.
+	<license>Copyright 2011-2016 PSPDFKit GmbH. All rights reserved.
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT. UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
 http://pspdfkit.com/license.html</license>
 	<platform name="ios">
@@ -46,8 +46,8 @@ The .dmg file you downloaded contains a directory called PSPDFKit.framework.
 Please add this directory to your Xcode project file in platforms/ios and follow
 the installation instructions listed here: https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/#toc_dynamic-framework
 
-Since this plugin is iOS 8+ only, you will have to set the deployment target
-of your Xcode project in platforms/ios to iOS 8.
+Since this plugin is iOS 9+ only, you will have to set the deployment target
+of your Xcode project in platforms/ios to iOS 9.
 
 Plugin usage example:
 
