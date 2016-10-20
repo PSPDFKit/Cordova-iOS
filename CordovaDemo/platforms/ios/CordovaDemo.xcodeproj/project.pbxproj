@@ -56,7 +56,7 @@
 		C459C5B3CCCB444DB9E03F94 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2161C2B5D9564C218CCC0E93 /* MessageUI.framework */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
 		EBCF3857DEEE415A8299D69A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAD1755807DC487DB3DF9E27 /* CFNetwork.framework */; };
-		DD23C46CB9424F5795A2C502 /* PSPDFKitPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 26CDCD02E426425A957F2EC0 /* PSPDFKitPlugin.m */; };
+		4534BD0402E94973A9003A2D /* PSPDFKitPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 29C0732B96A5495F9F671190 /* PSPDFKitPlugin.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -150,8 +150,8 @@
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
 		F3BFF269F7C24E018B3C9160 /* CoreMedia.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = CordovaDemo/config.xml; sourceTree = "<group>"; };
-		26CDCD02E426425A957F2EC0 /* PSPDFKitPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "PSPDFKitPlugin.m"; path = "com.pspdfkit.cordovaplugin/PSPDFKitPlugin.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		7EF80DA6E7BF4040B7B06101 /* PSPDFKitPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PSPDFKitPlugin.h"; path = "com.pspdfkit.cordovaplugin/PSPDFKitPlugin.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		29C0732B96A5495F9F671190 /* PSPDFKitPlugin.m */ = {isa = PBXFileReference; name = "PSPDFKitPlugin.m"; path = "com.pspdfkit.cordovaplugin/PSPDFKitPlugin.m"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; explicitFileType = undefined; includeInIndex = 0; };
+		9BDB135715C24A128CBD542F /* PSPDFKitPlugin.h */ = {isa = PBXFileReference; name = "PSPDFKitPlugin.h"; path = "com.pspdfkit.cordovaplugin/PSPDFKitPlugin.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,8 +282,8 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				26CDCD02E426425A957F2EC0 /* PSPDFKitPlugin.m */,
-				7EF80DA6E7BF4040B7B06101 /* PSPDFKitPlugin.h */,
+				29C0732B96A5495F9F671190 /* PSPDFKitPlugin.m */,
+				9BDB135715C24A128CBD542F /* PSPDFKitPlugin.h */,
 			);
 			name = Plugins;
 			path = CordovaDemo/Plugins;
@@ -483,7 +483,7 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
-				DD23C46CB9424F5795A2C502 /* PSPDFKitPlugin.m in Sources */,
+				4534BD0402E94973A9003A2D /* PSPDFKitPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,7 +515,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "CordovaDemo/CordovaDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -549,7 +549,7 @@
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "CordovaDemo/CordovaDemo-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -593,7 +593,7 @@
 					"\"$(OBJROOT)/UninstalledProducts/include\"",
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
@@ -637,7 +637,7 @@
 					"\"$(OBJROOT)/UninstalledProducts/include\"",
 					"\"$(BUILT_PRODUCTS_DIR)\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				OTHER_LDFLAGS = (
 					"-weak_framework",
 					CoreFoundation,
