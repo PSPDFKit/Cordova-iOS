@@ -896,7 +896,7 @@
 
 - (void)convertPDFFromHTMLString:(CDVInvokedUrlCommand *)command
 {
-    NSString *decodeHTMLString = [[[command argumentAtIndex:0] stringByReplacingOccurrencesOfString:@"+" withString:@""]stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *decodeHTMLString = [[[command argumentAtIndex:0] stringByReplacingOccurrencesOfString:@"+" withString:@""]stringByRemovingPercentEncoding];
     NSString *fileName = [command argumentAtIndex:1 withDefault:@"Sample"];
     NSDictionary *options = [command argumentAtIndex:2 withDefault:nil];
     NSString *outputFilePath = [NSTemporaryDirectory()
