@@ -125,6 +125,11 @@ var PSPDFKitPlugin = new function() {
         scrollToNextPage: ['animated'],
         scrollToPreviousPage: ['animated'],
     });
+
+    //appaerance
+    addMethods({
+        setAppearanceMode: ['appearanceMode'],
+    });
     
     //toolbar
     
