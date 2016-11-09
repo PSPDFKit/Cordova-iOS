@@ -28,8 +28,8 @@
     "dependent_plugins": {},
     "modules": [
         {
-            "file": "plugins/com.pspdfkit.cordovaplugin/PSPDFKitPlugin/pspdfkit.js",
             "id": "com.pspdfkit.cordovaplugin.PSPDFKitPlugin",
+            "file": "plugins/com.pspdfkit.cordovaplugin/PSPDFKitPlugin/pspdfkit.js",
             "pluginId": "com.pspdfkit.cordovaplugin",
             "clobbers": [
                 "PSPDFKitPlugin"

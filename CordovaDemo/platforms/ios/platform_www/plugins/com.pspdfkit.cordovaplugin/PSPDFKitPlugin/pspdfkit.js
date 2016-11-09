@@ -1,4 +1,5 @@
-cordova.define("com.pspdfkit.cordovaplugin.PSPDFKitPlugin", function(require, exports, module) { //
+cordova.define("com.pspdfkit.cordovaplugin.PSPDFKitPlugin", function(require, exports, module) {
+//
 //  PSPDFKit.h
 //  PSPDFPlugin for Apache Cordova
 //
