@@ -660,6 +660,31 @@
     return _pdfDocument.fileURL.path;
 }
 
+
+- (void)setPrintSharingOptionsForPSPDFDocumentWithJSON:(NSArray *)options
+{
+    if (![options isKindOfClass:[NSArray class]])
+    {
+        options = @[options];
+    }
+    
+    NSMutableSet *qualified = [[NSMutableSet alloc] init];
+    for (NSString *type in options)
+    {
+        NSString *prefix = @"PSPDFAnnotationType";
+        if ([type hasPrefix:prefix]) {
+            [qualified addObject:[type substringFromIndex:prefix.length]];
+        }
+        else if ([type length]) {
+            [qualified addObject:[NSString stringWithFormat:@"%@%@", [[type substringToIndex:1] uppercaseString], [type substringFromIndex:1]]];
+        }
+    }
+    
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.editableAnnotationTypes = qualified;
+    }];
+}
+
 - (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
 {
     if (![types isKindOfClass:[NSArray class]])
