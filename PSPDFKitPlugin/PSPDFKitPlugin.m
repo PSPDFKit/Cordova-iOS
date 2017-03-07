@@ -671,7 +671,7 @@
     NSMutableSet *qualified = [[NSMutableSet alloc] init];
     for (NSString *type in options)
     {
-        NSString *prefix = @"PSPDFAnnotationType";
+        NSString *prefix = @"PSPDFDocumentSharingOptions";
         if ([type hasPrefix:prefix]) {
             [qualified addObject:[type substringFromIndex:prefix.length]];
         }
