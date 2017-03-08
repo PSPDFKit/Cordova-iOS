@@ -522,7 +522,21 @@
     @"wikipedia": @(PSPDFTextSelectionMenuActionWikipedia),
     @"speak": @(PSPDFTextSelectionMenuActionSpeak),
     @"all": @(PSPDFTextSelectionMenuActionAll)},
-    
+        
+        
+        @"PSPDFDocumentSharingOptions":
+    @{@"None":@(PSPDFDocumentSharingOptionNone),
+      @"CurrentPageOnly":@(PSPDFDocumentSharingOptionCurrentPageOnly),
+      @"PageRange":@(PSPDFDocumentSharingOptionPageRange),
+      @"AllPages":@(PSPDFDocumentSharingOptionAllPages),
+      @"AnnotatedPages":@(PSPDFDocumentSharingOptionAnnotatedPages),
+      @"EmbedAnnotations":@(PSPDFDocumentSharingOptionEmbedAnnotations),
+      @"FlattenAnnotations":@(PSPDFDocumentSharingOptionFlattenAnnotations),
+      @"AnnotationsSummary":@(PSPDFDocumentSharingOptionAnnotationsSummary),
+      @"RemoveAnnotations":@(PSPDFDocumentSharingOptionRemoveAnnotations),
+      @"OriginalFile":@(PSPDFDocumentSharingOptionOriginalFile)},
+      
+
         @"PSPDFPageTransition":
 
   @{@"scrollPerPage": @(PSPDFPageTransitionScrollPerPage),
@@ -663,26 +677,42 @@
 
 - (void)setPrintSharingOptionsForPSPDFDocumentWithJSON:(NSArray *)options
 {
+   
     if (![options isKindOfClass:[NSArray class]])
     {
         options = @[options];
     }
-    
-    NSMutableSet *qualified = [[NSMutableSet alloc] init];
-    for (NSString *type in options)
+    NSMutableArray *mysettings = [[NSMutableArray alloc] init];
+    for (NSString *option in options)
     {
-        NSString *prefix = @"PSPDFDocumentSharingOptions";
-        if ([type hasPrefix:prefix]) {
-            [qualified addObject:[type substringFromIndex:prefix.length]];
-        }
-        else if ([type length]) {
-            [qualified addObject:[NSString stringWithFormat:@"%@%@", [[type substringToIndex:1] uppercaseString], [type substringFromIndex:1]]];
+        if ([option length]) {
+            NSInteger newOption = [self enumValueForKey:[NSString stringWithFormat:@"%@%@", [[option substringToIndex:1] uppercaseString], [option substringFromIndex:1]] ofType:@"PSPDFDocumentSharingOptions" withDefault:PSPDFDocumentSharingOptionNone];
+            
+            [mysettings addObject:[NSString stringWithFormat:@"%li", (long)newOption]];
+            
+            
         }
     }
     
-    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
-        builder.editableAnnotationTypes = qualified;
+    
+    NSString *optionsAll = [mysettings componentsJoinedByString:@""];
+    
+    NSInteger newSettings = [optionsAll integerValue];
+    
+    
+    [_pdfController updateConfigurationWithoutReloadingWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.printSharingOptions = newSettings;
+        
     }];
+ 
+ 
+}
+
+
+
+- (int)printSharingOptionsAsJSON
+{
+    return _pdfController.configuration.printSharingOptions;
 }
 
 - (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
@@ -706,6 +736,7 @@
     
     [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.editableAnnotationTypes = qualified;
+        
     }];
 }
 
