@@ -700,14 +700,14 @@
     NSInteger newSettings = [optionsAll integerValue];
     
     
-    [_pdfController updateConfigurationWithoutReloadingWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.printSharingOptions = newSettings;
         
     }];
+    
  
  
 }
-
 
 
 - (int)printSharingOptionsAsJSON
