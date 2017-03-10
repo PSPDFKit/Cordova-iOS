@@ -887,11 +887,6 @@
     return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
 }
 
-- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options completionBlock:(void (^)(NSError *error))completionBlock
-{
-    [PSPDFProcessor generatePDFFromHTMLString:html outputFileURL:[NSURL fileURLWithPath:filePath] options:options completionBlock:completionBlock];
-}
-
 #pragma mark PDFProcessing methods
 
 - (void)convertPDFFromHTMLString:(CDVInvokedUrlCommand *)command
@@ -920,6 +915,11 @@
     };
     
     [self generatePDFFromHTMLString:decodeHTMLString outputFile:outputFilePath options:options completionBlock:completionBlock];
+}
+
+- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options completionBlock:(void (^)(NSError *error))completionBlock
+{
+    [PSPDFProcessor generatePDFFromHTMLString:html outputFileURL:[NSURL fileURLWithPath:filePath] options:options completionBlock:completionBlock];
 }
 
 #pragma mark Document methods
