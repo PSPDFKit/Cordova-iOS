@@ -608,6 +608,21 @@
     @"sepia": @(PSPDFAppearanceModeSepia),
     @"night": @(PSPDFAppearanceModeNight)},
 
+        @"PSPDFDocumentSharingOptions":
+
+  @{@"None": @(PSPDFDocumentSharingOptionNone),
+    @"CurrentPageOnly": @(PSPDFDocumentSharingOptionCurrentPageOnly),
+    @"PageRange": @(PSPDFDocumentSharingOptionPageRange),
+    @"AllPages": @(PSPDFDocumentSharingOptionAllPages),
+    @"AnnotatedPages": @(PSPDFDocumentSharingOptionAnnotatedPages),
+    @"EmbedAnnotations": @(PSPDFDocumentSharingOptionEmbedAnnotations),
+    @"FlattenAnnotations": @(PSPDFDocumentSharingOptionFlattenAnnotations),
+    @"AnnotationsSummary": @(PSPDFDocumentSharingOptionAnnotationsSummary),
+    @"RemoveAnnotations": @(PSPDFDocumentSharingOptionRemoveAnnotations),
+    @"FlattenAnnotationsForPrint": @(PSPDFDocumentSharingOptionFlattenAnnotationsForPrint),
+    @"OriginalFile": @(PSPDFDocumentSharingOptionOriginalFile),
+    @"Image": @(PSPDFDocumentSharingOptionImage)},
+
         };
         
         //Note: this method crashes the second time a
@@ -892,6 +907,32 @@
 - (NSArray *)allowedMenuActionsAsJSON
 {
     return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
+}
+
+- (void)setPrintSharingOptionsForPSPDFViewControllerWithJSON:(NSArray *)options
+{
+    if (![options isKindOfClass:[NSArray class]])
+    {
+        options = @[options];
+    }
+
+    NSUInteger sharingOptions = 0;
+    for (NSString *option in options)
+    {
+        if ([option length]) {
+            NSInteger newOption = [self enumValueForKey:[NSString stringWithFormat:@"%@%@", [[option substringToIndex:1] uppercaseString], [option substringFromIndex:1]] ofType:@"PSPDFDocumentSharingOptions" withDefault:PSPDFDocumentSharingOptionNone];
+            sharingOptions = sharingOptions | newOption;
+        }
+    }
+
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.printSharingOptions = sharingOptions;
+    }];
+}
+
+- (NSNumber *)printSharingOptionsAsJSON
+{
+    return @(_pdfController.configuration.printSharingOptions);
 }
 
 #pragma mark PDFProcessing methods
