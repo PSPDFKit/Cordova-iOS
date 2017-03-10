@@ -41,7 +41,8 @@ var app = {
         // Show PDF with curl transition and white background
         PSPDFKitPlugin.present('pdf/PSPDFKit 6 QuickStart Guide.pdf', {
             pageTransition : 'curl',
-            backgroundColor: 'white'
+            backgroundColor: 'white',
+//            printSharingOptions: ['RemoveAnnotations', 'AllPages']
         });
     },
     // Update DOM on a Received Event
