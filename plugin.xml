@@ -4,7 +4,7 @@
 		<engine name="cordova" version=">=6.3.1"/>
 	</engines>
 	<name>PSPDFKitPlugin</name>
-	<license>Copyright 2011-2016 PSPDFKit GmbH. All rights reserved.
+	<license>Copyright 2011-2017 PSPDFKit GmbH. All rights reserved.
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT. UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
 http://pspdfkit.com/license.html</license>
 	<platform name="ios">
@@ -44,7 +44,7 @@ Please download PSPDFKit from your customer portal: https://customers.pspdfkit.c
 
 The .dmg file you downloaded contains a directory called PSPDFKit.framework.
 Please add this directory to your Xcode project file in platforms/ios and follow
-the installation instructions listed here: https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/#toc_dynamic-framework
+the installation instructions listed here: https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/
 
 Since this plugin is iOS 9+ only, you will have to set the deployment target
 of your Xcode project in platforms/ios to iOS 9.

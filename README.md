@@ -1,4 +1,4 @@
-Cordova Wrapper for PSPDFKit v6 for iOS
+Cordova Wrapper for PSPDFKit 6 for iOS
 ========================================
 
 **This plugin works with Cordova version 6.3.1 and above.**  
@@ -93,7 +93,7 @@ This method saves any changed annotations in the current or last opened document
     
 This method can be used to set multiple document and view controller settings at once. The options set will be applied to the current document (if there is one) as well as all subsequently displayed documents. All currently supported values are listed below under Options. The optional animated argument determines if the property should be animated. Not all property changes can be animated, so if the property does not support animation the animated argument will be ignored.
     
-    getOptionss(names, callback(values));
+    getOptions(names, callback(values));
 
 This method can be used to get several document or view controller options in a single call. The first argument is an array of option names, the second is a callback that will receive an object containing all the specified values by name. All currently supported values are listed below under Options.
     
@@ -331,7 +331,7 @@ The following events are supported by the PSPDFKitPlugin class
 License
 ------------
 
-Copyright 2011-2016 PSPDFKit GmbH. All rights reserved.
+Copyright 2011-2017 PSPDFKit GmbH. All rights reserved.
 
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
