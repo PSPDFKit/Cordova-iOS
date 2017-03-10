@@ -604,9 +604,9 @@
 
         @"PSPDFAppearanceMode":
 
-            @{@"default": @(PSPDFAppearanceModeDefault),
-              @"sepia": @(PSPDFAppearanceModeSepia),
-              @"night": @(PSPDFAppearanceModeNight)},
+  @{@"default": @(PSPDFAppearanceModeDefault),
+    @"sepia": @(PSPDFAppearanceModeSepia),
+    @"night": @(PSPDFAppearanceModeNight)},
 
         @"PSPDFDocumentSharingOptions":
 
