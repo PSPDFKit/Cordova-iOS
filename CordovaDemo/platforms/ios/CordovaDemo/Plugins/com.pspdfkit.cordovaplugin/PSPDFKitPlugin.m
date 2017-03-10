@@ -600,7 +600,14 @@
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeTrapNet): @(PSPDFAnnotationTypeTrapNet),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeThreeDimensional): @(PSPDFAnnotationTypeThreeDimensional),
     PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRedact): @(PSPDFAnnotationTypeRedact),
-    @"All": @(PSPDFAnnotationTypeAll)}
+    @"All": @(PSPDFAnnotationTypeAll)},
+
+        @"PSPDFAppearanceMode":
+
+  @{@"default": @(PSPDFAppearanceModeDefault),
+    @"sepia": @(PSPDFAppearanceModeSepia),
+    @"night": @(PSPDFAppearanceModeNight)},
+
         };
         
         //Note: this method crashes the second time a
@@ -1072,6 +1079,15 @@
             [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
         }
     }
+}
+
+#pragma mark Appearance
+
+- (void)setAppearanceMode:(CDVInvokedUrlCommand *)command {
+    NSString *appearanceMode = [command argumentAtIndex:0];
+    NSInteger value = [self enumValueForKey:appearanceMode ofType:@"PSPDFAppearanceMode" withDefault:PSPDFAppearanceModeDefault];
+
+    [_pdfController.appearanceModeManager setAppearanceMode:value];
 }
 
 #pragma mark Paging
