@@ -1133,6 +1133,18 @@
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfController.appearanceModeManager.appearanceMode] callbackId:command.callbackId];
 }
 
+#pragma mark Cache
+
+- (void)clearCache:(CDVInvokedUrlCommand *)command {
+    [PSPDFKit.sharedInstance.cache clearCache];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
+}
+
+- (void)removeCacheForPresentedDocument:(CDVInvokedUrlCommand *)command {
+    [PSPDFKit.sharedInstance.cache removeCacheForDocument:_pdfDocument];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
+}
+
 #pragma mark Paging
 
 - (void)setPage:(CDVInvokedUrlCommand *)command

@@ -127,7 +127,14 @@ var PSPDFKitPlugin = new function() {
         scrollToNextPage: ['animated'],
         scrollToPreviousPage: ['animated'],
     });
-    
+
+    //cache
+
+    addMethods({
+        clearCache: [],
+        removeCacheForPresentedDocument: [],
+    });
+
     //toolbar
     
     var leftBarButtonItems = ['close'];
