@@ -677,7 +677,7 @@
     return _pdfDocument.fileURL.path;
 }
 
-- (void)setEditableAnnotationTypesWithJSON:(NSArray *)types
+- (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
 {
     if (![types isKindOfClass:[NSArray class]])
     {
@@ -696,7 +696,7 @@
         }
     }
     
-    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithoutReloadingWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.editableAnnotationTypes = qualified;
     }];
 }
