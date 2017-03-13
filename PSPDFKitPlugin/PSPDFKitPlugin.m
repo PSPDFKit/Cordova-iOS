@@ -391,6 +391,7 @@
 {
     if (path) {
         path = [path stringByExpandingTildeInPath];
+        path = [path stringByReplacingOccurrencesOfString:@"file:" withString:@""];
         if (![path isAbsolutePath]) {
             path = [[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"www"] stringByAppendingPathComponent:path];
         }
