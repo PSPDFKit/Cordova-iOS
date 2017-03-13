@@ -2,7 +2,7 @@
 //  PSPDFKit.m
 //  PSPDFPlugin for Apache Cordova
 //
-//  Copyright 2013 PSPDFKit GmbH. All rights reserved.
+//  Copyright © 2013-2017 PSPDFKit GmbH. All rights reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
@@ -522,21 +522,7 @@
     @"wikipedia": @(PSPDFTextSelectionMenuActionWikipedia),
     @"speak": @(PSPDFTextSelectionMenuActionSpeak),
     @"all": @(PSPDFTextSelectionMenuActionAll)},
-        
-        
-        @"PSPDFDocumentSharingOptions":
-    @{@"None":@(PSPDFDocumentSharingOptionNone),
-      @"CurrentPageOnly":@(PSPDFDocumentSharingOptionCurrentPageOnly),
-      @"PageRange":@(PSPDFDocumentSharingOptionPageRange),
-      @"AllPages":@(PSPDFDocumentSharingOptionAllPages),
-      @"AnnotatedPages":@(PSPDFDocumentSharingOptionAnnotatedPages),
-      @"EmbedAnnotations":@(PSPDFDocumentSharingOptionEmbedAnnotations),
-      @"FlattenAnnotations":@(PSPDFDocumentSharingOptionFlattenAnnotations),
-      @"AnnotationsSummary":@(PSPDFDocumentSharingOptionAnnotationsSummary),
-      @"RemoveAnnotations":@(PSPDFDocumentSharingOptionRemoveAnnotations),
-      @"OriginalFile":@(PSPDFDocumentSharingOptionOriginalFile)},
-      
-
+    
         @"PSPDFPageTransition":
 
   @{@"scrollPerPage": @(PSPDFPageTransitionScrollPerPage),
@@ -618,9 +604,25 @@
 
         @"PSPDFAppearanceMode":
 
-            @{@"default": @(PSPDFAppearanceModeDefault),
-              @"sepia": @(PSPDFAppearanceModeSepia),
-              @"night": @(PSPDFAppearanceModeNight)},
+  @{@"default": @(PSPDFAppearanceModeDefault),
+    @"sepia": @(PSPDFAppearanceModeSepia),
+    @"night": @(PSPDFAppearanceModeNight)},
+
+        @"PSPDFDocumentSharingOptions":
+
+  @{@"None": @(PSPDFDocumentSharingOptionNone),
+    @"CurrentPageOnly": @(PSPDFDocumentSharingOptionCurrentPageOnly),
+    @"PageRange": @(PSPDFDocumentSharingOptionPageRange),
+    @"AllPages": @(PSPDFDocumentSharingOptionAllPages),
+    @"AnnotatedPages": @(PSPDFDocumentSharingOptionAnnotatedPages),
+    @"EmbedAnnotations": @(PSPDFDocumentSharingOptionEmbedAnnotations),
+    @"FlattenAnnotations": @(PSPDFDocumentSharingOptionFlattenAnnotations),
+    @"AnnotationsSummary": @(PSPDFDocumentSharingOptionAnnotationsSummary),
+    @"RemoveAnnotations": @(PSPDFDocumentSharingOptionRemoveAnnotations),
+    @"FlattenAnnotationsForPrint": @(PSPDFDocumentSharingOptionFlattenAnnotationsForPrint),
+    @"OriginalFile": @(PSPDFDocumentSharingOptionOriginalFile),
+    @"Image": @(PSPDFDocumentSharingOptionImage)},
+
         };
         
         //Note: this method crashes the second time a
@@ -674,47 +676,6 @@
     return _pdfDocument.fileURL.path;
 }
 
-
-- (void)setPrintSharingOptionsForPSPDFDocumentWithJSON:(NSArray *)options
-{
-   
-    if (![options isKindOfClass:[NSArray class]])
-    {
-        options = @[options];
-    }
-    NSMutableArray *mysettings = [[NSMutableArray alloc] init];
-    for (NSString *option in options)
-    {
-        if ([option length]) {
-            NSInteger newOption = [self enumValueForKey:[NSString stringWithFormat:@"%@%@", [[option substringToIndex:1] uppercaseString], [option substringFromIndex:1]] ofType:@"PSPDFDocumentSharingOptions" withDefault:PSPDFDocumentSharingOptionNone];
-            
-            [mysettings addObject:[NSString stringWithFormat:@"%li", (long)newOption]];
-            
-            
-        }
-    }
-    
-    
-    NSString *optionsAll = [mysettings componentsJoinedByString:@""];
-    
-    NSInteger newSettings = [optionsAll integerValue];
-    
-    
-    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
-        builder.printSharingOptions = newSettings;
-        
-    }];
-    
- 
- 
-}
-
-
-- (int)printSharingOptionsAsJSON
-{
-    return _pdfController.configuration.printSharingOptions;
-}
-
 - (void)setEditableAnnotationTypesForPSPDFDocumentWithJSON:(NSArray *)types
 {
     if (![types isKindOfClass:[NSArray class]])
@@ -734,9 +695,8 @@
         }
     }
     
-    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+    [_pdfController updateConfigurationWithoutReloadingWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.editableAnnotationTypes = qualified;
-        
     }];
 }
 
@@ -949,9 +909,30 @@
     return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
 }
 
-- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options completionBlock:(void (^)(NSError *error))completionBlock
+- (void)setPrintSharingOptionsForPSPDFViewControllerWithJSON:(NSArray *)options
 {
-    [PSPDFProcessor generatePDFFromHTMLString:html outputFileURL:[NSURL fileURLWithPath:filePath] options:options completionBlock:completionBlock];
+    if (![options isKindOfClass:[NSArray class]])
+    {
+        options = @[options];
+    }
+
+    NSUInteger sharingOptions = 0;
+    for (NSString *option in options)
+    {
+        if ([option length]) {
+            NSInteger newOption = [self enumValueForKey:[NSString stringWithFormat:@"%@%@", [[option substringToIndex:1] uppercaseString], [option substringFromIndex:1]] ofType:@"PSPDFDocumentSharingOptions" withDefault:PSPDFDocumentSharingOptionNone];
+            sharingOptions = sharingOptions | newOption;
+        }
+    }
+
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.printSharingOptions = sharingOptions;
+    }];
+}
+
+- (NSNumber *)printSharingOptionsAsJSON
+{
+    return @(_pdfController.configuration.printSharingOptions);
 }
 
 #pragma mark PDFProcessing methods
@@ -982,6 +963,11 @@
     };
     
     [self generatePDFFromHTMLString:decodeHTMLString outputFile:outputFilePath options:options completionBlock:completionBlock];
+}
+
+- (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options completionBlock:(void (^)(NSError *error))completionBlock
+{
+    [PSPDFProcessor generatePDFFromHTMLString:html outputFileURL:[NSURL fileURLWithPath:filePath] options:options completionBlock:completionBlock];
 }
 
 #pragma mark Document methods
