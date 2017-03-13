@@ -128,6 +128,12 @@ var PSPDFKitPlugin = new function() {
         scrollToPreviousPage: ['animated'],
     });
 
+    //appearance
+    
+    addMethods({
+        setAppearanceMode: ['appearanceMode'],
+    });
+
     //cache
 
     addMethods({

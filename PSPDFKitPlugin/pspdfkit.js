@@ -2,7 +2,7 @@
 //  PSPDFKit.h
 //  PSPDFPlugin for Apache Cordova
 //
-//  Copyright 2013 PSPDFKit GmbH. All rights reserved.
+//  Copyright © 2013-2017 PSPDFKit GmbH. All rights reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
@@ -88,13 +88,14 @@ var PSPDFKitPlugin = new function() {
     //license key
     
     addMethods({
-               setLicenseKey: ['key'],
-               });
+        setLicenseKey: ['key'],
+    });
+
     //PDF Generation method
     
     addMethods({
-               convertPDFFromHTMLString: ['html', 'fileName', 'options', 'callback'],
-               });
+        convertPDFFromHTMLString: ['html', 'fileName', 'options', 'callback'],
+    });
     
     //document methods
     
@@ -125,13 +126,20 @@ var PSPDFKitPlugin = new function() {
         scrollToNextPage: ['animated'],
         scrollToPreviousPage: ['animated'],
     });
-    
+
     //appearance
     
     addMethods({
         setAppearanceMode: ['appearanceMode'],
     });
-    
+
+    //cache
+
+    addMethods({
+        clearCache: [],
+        removeCacheForPresentedDocument: [],
+    });
+
     //toolbar
     
     var leftBarButtonItems = ['close'];
