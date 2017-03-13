@@ -1129,6 +1129,8 @@
     NSInteger value = [self enumValueForKey:appearanceMode ofType:@"PSPDFAppearanceMode" withDefault:PSPDFAppearanceModeDefault];
 
     [_pdfController.appearanceModeManager setAppearanceMode:value];
+
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int)_pdfController.appearanceModeManager.appearanceMode] callbackId:command.callbackId];
 }
 
 #pragma mark Paging
