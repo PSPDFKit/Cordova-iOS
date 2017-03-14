@@ -143,7 +143,7 @@ var PSPDFKitPlugin = new function() {
     //toolbar
     
     var leftBarButtonItems = ['close'];
-    var rightBarButtonItems = ['search', 'outline', 'viewMode'];
+    var rightBarButtonItems = ['search', 'outline', 'thumbnails'];
     
     this.dispatchLeftBarButtonAction = function(index)
     {
