@@ -677,7 +677,7 @@
     return _pdfDocument.fileURL.path;
 }
 
-- (void)setEditableAnnotationTypesWithJSON:(NSArray *)types
+- (void)setEditableAnnotationTypesForPSPDFViewControllerWithJSON:(NSArray *)types
 {
     if (![types isKindOfClass:[NSArray class]])
     {
