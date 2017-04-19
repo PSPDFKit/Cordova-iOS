@@ -1023,7 +1023,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 {
     [_navigationController.presentingViewController dismissViewControllerAnimated:YES completion:^{
         
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
                                     callbackId:command.callbackId];
     }];
 }
