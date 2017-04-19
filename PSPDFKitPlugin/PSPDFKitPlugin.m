@@ -873,6 +873,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 
 - (void)setLeftBarButtonItemsForPSPDFViewControllerWithJSON:(NSArray *)items
 {
+    _pdfController.navigationItem.closeBarButtonItem = nil;
     _pdfController.navigationItem.leftBarButtonItems = [self barButtonItemsWithArray:items] ?: _pdfController.navigationItem.leftBarButtonItems;
 }
 
