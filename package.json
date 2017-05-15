@@ -1,0 +1,13 @@
+{
+  "name": "com.pspdfkit.cordovaplugin",
+  "version": "1.2.0",
+  "description": "PSPDFKit Cordova Plugin for iOS",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PSPDFKit/Cordova-iOS.git"
+  },
+  "keywords": [
+    "pspdfkit"
+  ],
+  "author": "PSPDFKit GmbH"
+}
