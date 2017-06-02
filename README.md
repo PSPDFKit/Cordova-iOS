@@ -28,7 +28,7 @@ The .dmg file you downloaded contains a directory called `PSPDFKit.framework`.
 Please copy this directory to `CordovaDemo/platforms/ios`.
 
 You can set your license key in `CordovaDemo/www/js/index.js`.  
-(Look for `PSPDFKitPlugin.setLicenseKey("YOUR KEY");`)
+(Look for `PSPDFKitPlugin.setLicenseKey('YOUR KEY');`)
 
 After that, you can build the demo app with `$ cordova build`.  
 To run the demo app in the simulator use `$ cordova emulate`.

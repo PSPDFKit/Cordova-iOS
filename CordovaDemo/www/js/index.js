@@ -36,7 +36,7 @@ var app = {
         app.receivedEvent('deviceready');
 
         // Set your license key here
-        PSPDFKitPlugin.setLicenseKey("YOUR KEY");
+        PSPDFKitPlugin.setLicenseKey('YOUR KEY');
 
         // Show PDF with curl transition and white background
         PSPDFKitPlugin.present('pdf/PSPDFKit 6 QuickStart Guide.pdf', {
