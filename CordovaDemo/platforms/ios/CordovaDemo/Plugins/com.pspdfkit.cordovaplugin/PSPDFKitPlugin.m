@@ -44,6 +44,8 @@
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
     [newOptions addEntriesFromDictionary:options];
     self.defaultOptions = newOptions;
+
+    [self resetBarButtonItemsIfNeededForOptions:newOptions];
     
     //set document and controller values
     [self setOptions:options forObject:_pdfController.document animated:animated];
@@ -488,6 +490,15 @@
         }
     }
     return keys;
+}
+
+- (void)resetBarButtonItemsIfNeededForOptions:(NSDictionary *)options
+{
+    // Reset left- and rightBarButtonItems to not cause duplicated button issues
+    if ([options.allKeys containsObject:@"leftBarButtonItems"] && [options.allKeys containsObject:@"rightBarButtonItems"]) {
+        NSDictionary *resetBarButtonsOptions = @{@"leftBarButtonItems": @[], @"rightBarButtonItems": @[]};
+        [self setOptions:resetBarButtonsOptions forObject:_pdfController animated:NO];
+    }
 }
 
 #pragma mark Enums and options
@@ -995,6 +1006,9 @@
         _pdfController.delegate = self;
         _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
     }
+
+    [self resetBarButtonItemsIfNeededForOptions:newOptions];
+
     [self setOptions:newOptions forObject:_pdfController animated:NO];
     _pdfController.document = _pdfDocument;
     
