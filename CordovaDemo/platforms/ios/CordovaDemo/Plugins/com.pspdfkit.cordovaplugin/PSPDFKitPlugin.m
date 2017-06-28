@@ -273,19 +273,26 @@
     if ([self.webView isKindOfClass:UIWebView.class]) {
         result = [(UIWebView *)self.webView stringByEvaluatingJavaScriptFromString:script];
     } else {
-        dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
-        [((WKWebView *)self.webView) evaluateJavaScript:script completionHandler:^(id resultID, NSError *error) {
-            result = [resultID description];
-            dispatch_semaphore_signal(semaphore);
-        }];
-
-        // Ugly way to convert the async call into a sync call.
-        // Since WKWebView calls back on the main thread we can't block.
-        while (dispatch_semaphore_wait(semaphore, DISPATCH_TIME_NOW)) {
-            [NSRunLoop.currentRunLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-        }
+        runOnMainQueueWithoutDeadlocking(^{
+            [((WKWebView *)self.webView) evaluateJavaScript:script completionHandler:^(id resultID, NSError *error) {
+                result = [resultID description];
+            }];
+        });
     }
     return result;
+}
+
+// http://stackoverflow.com/questions/5225130/grand-central-dispatch-gcd-vs-performselector-need-a-better-explanation/5226271#5226271
+void runOnMainQueueWithoutDeadlocking(void (^block)(void))
+{
+    if ([NSThread isMainThread])
+    {
+        block();
+    }
+    else
+    {
+        dispatch_sync(dispatch_get_main_queue(), block);
+    }
 }
 
 - (BOOL)sendEventWithJSON:(id)JSON

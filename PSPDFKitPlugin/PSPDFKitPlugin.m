@@ -499,7 +499,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     return keys;
 }
 
- - (void)resetBarButtonItemsIfNeededForOptions:(NSDictionary *)options
+- (void)resetBarButtonItemsIfNeededForOptions:(NSDictionary *)options
 {
     // Reset left- and rightBarButtonItems to not cause duplicated button issues
     if ([options.allKeys containsObject:@"leftBarButtonItems"] && [options.allKeys containsObject:@"rightBarButtonItems"]) {
