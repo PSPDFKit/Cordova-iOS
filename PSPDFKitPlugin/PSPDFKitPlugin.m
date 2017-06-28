@@ -955,6 +955,18 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     return @(_pdfController.configuration.printSharingOptions);
 }
 
+- (void)setShouldAskForAnnotationUsernameForPSPDFViewControllerWithJSON:(NSNumber *)shouldAskForAnnotationUsername
+{
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.shouldAskForAnnotationUsername = shouldAskForAnnotationUsername.boolValue;
+    }];
+}
+
+- (NSNumber *)shouldAskForAnnotationUsernameAsJSON
+{
+    return @(_pdfController.configuration.shouldAskForAnnotationUsername);
+}
+
 #pragma mark PDFProcessing methods
 
 - (void)convertPDFFromHTMLString:(CDVInvokedUrlCommand *)command
