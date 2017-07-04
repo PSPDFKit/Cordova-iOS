@@ -967,6 +967,18 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     return @(_pdfController.configuration.shouldAskForAnnotationUsername);
 }
 
+- (void)setPageGrabberEnabledForPSPDFViewControllerWithJSON:(NSNumber *)pageGrabberEnabled
+{
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.pageGrabberEnabled = pageGrabberEnabled.boolValue;
+    }];
+}
+
+- (NSNumber *)pageGrabberEnabledAsJSON
+{
+    return @(_pdfController.configuration.pageGrabberEnabled);
+}
+
 #pragma mark PDFProcessing methods
 
 - (void)convertPDFFromHTMLString:(CDVInvokedUrlCommand *)command
