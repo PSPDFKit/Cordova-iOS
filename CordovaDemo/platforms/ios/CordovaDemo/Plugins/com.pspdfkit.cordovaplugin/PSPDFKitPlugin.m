@@ -976,7 +976,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 
 - (NSNumber *)pageGrabberEnabledAsJSON
 {
-    return @([_pdfController.configuration isPageGrabberEnabled]);
+    return @(_pdfController.configuration.pageGrabberEnabled);
 }
 
 #pragma mark PDFProcessing methods
