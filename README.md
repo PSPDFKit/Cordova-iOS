@@ -186,7 +186,7 @@ Scrolls to the previous page. The optional animated argument determines if the s
     setLeftBarButtonItems(items);
     setRightBarButtonItems(items);
 
-These methods allw you to configure the toolbar items for the PDF viewer. The items should be supplied as an array. Each element in the array should be either a string representing a standard toolbar item (see Standard toolbar items below for a list of supported values) or an object with the forma specified below.
+These methods allow you to configure the toolbar items for the PDF viewer. The items should be supplied as an array. Each element in the array should be either a string representing a standard toolbar item (see Standard toolbar items below for a list of supported values) or an object with the format specified below.
 
 You can optionally set these toolbar buttons using the setOption(s) functions, or the options parameter of the `present()` function by using the keys `leftBarButtonItems` and `rightBarButtonItems`.
 
