@@ -203,7 +203,7 @@ Custom toolbar buttons should be specified as an object in the following format:
 
     {title: 'Hello', action: function() {
         //do something
-    });
+    }};
     
 You can optionally include the following values:
 
