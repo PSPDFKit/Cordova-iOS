@@ -561,8 +561,8 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
         
         @"PSPDFScrollDirection":
             
-  @{@"single": @(PSPDFScrollDirectionHorizontal),
-    @"double": @(PSPDFScrollDirectionVertical)},
+  @{@"horizontal": @(PSPDFScrollDirectionHorizontal),
+    @"vertical": @(PSPDFScrollDirectionVertical)},
         
         @"PSPDFLinkAction":
     
