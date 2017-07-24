@@ -105,6 +105,7 @@ var PSPDFKitPlugin = new function() {
         reload: [],
         search: ['query', 'animated', 'headless'],
         saveAnnotations: ['callback'],
+        getHasDirtyAnnotations: ['callback'],
     });
     
     //configuration

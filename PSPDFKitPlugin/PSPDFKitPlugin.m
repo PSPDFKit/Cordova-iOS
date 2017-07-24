@@ -1100,6 +1100,12 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryWithError:error]] callbackId:command.callbackId];
 }
 
+
+- (void)getHasDirtyAnnotations:(CDVInvokedUrlCommand *)command
+{
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:_pdfDocument.hasDirtyAnnotations] callbackId:command.callbackId];
+}
+
 #pragma mark Configuration
 
 - (void)setOptions:(CDVInvokedUrlCommand *)command
