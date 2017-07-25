@@ -1095,9 +1095,10 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 
 - (void)saveAnnotations:(CDVInvokedUrlCommand *)command
 {
-    NSError *error = nil;
-    [_pdfController.document save:&error];
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryWithError:error]] callbackId:command.callbackId];
+    // Completion handler is called on the main queue
+    [_pdfController.document saveWithCompletionHandler:^(NSError *error, NSArray<PSPDFAnnotation *> *savedAnnotations) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryWithError:error]] callbackId:command.callbackId];
+    }];
 }
 
 #pragma mark Configuration
