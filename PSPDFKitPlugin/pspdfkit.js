@@ -179,6 +179,13 @@ var PSPDFKitPlugin = new function() {
     {
         callback(rightBarButtonItems);
     }
+
+    //annotation toolbar
+    addMethods({
+        hideAnnotationToolbar: [],
+        showAnnotationToolbar: [],
+        toggleAnnotationToolbar: [],
+    });
     
 };
 module.exports = PSPDFKitPlugin;

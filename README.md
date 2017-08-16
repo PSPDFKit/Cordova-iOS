@@ -195,6 +195,12 @@ You can optionally set these toolbar buttons using the setOption(s) functions, o
 
 These methods retrieve the current left and right toolbar items arrays.
 
+    toggleAnnotationToolbar();
+    showAnnotationToolbar();
+    hideAnnotationToolbar();
+
+These methods control the display of the annotation toolbar.
+
 
 Custom toolbar button format
 ----------------------------
