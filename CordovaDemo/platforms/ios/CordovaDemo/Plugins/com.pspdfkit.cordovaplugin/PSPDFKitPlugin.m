@@ -1259,6 +1259,38 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
                                 callbackId:command.callbackId];
 }
 
+#pragma mark Annotation Toolbar methods
+
+- (void)hideAnnotationToolbar:(CDVInvokedUrlCommand *)command
+{
+    [_pdfController.annotationToolbarController updateHostView:nil container:nil viewController:_pdfController];
+    [_pdfController.annotationToolbarController hideToolbarAnimated:YES];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
+- (void)showAnnotationToolbar:(CDVInvokedUrlCommand *)command
+{
+    // Must be in document view mode when showing annotation toolbar
+    [_pdfController setViewMode:PSPDFViewModeDocument animated:YES];
+
+    [_pdfController.annotationToolbarController updateHostView:nil container:nil viewController:_pdfController];
+    [_pdfController.annotationToolbarController showToolbarAnimated:YES];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
+- (void)toggleAnnotationToolbar:(CDVInvokedUrlCommand *)command
+{
+    // Must be in document view mode when showing annotation toolbar
+    [_pdfController setViewMode:PSPDFViewModeDocument animated:YES];
+
+    [_pdfController.annotationToolbarController updateHostView:nil container:nil viewController:_pdfController];
+    [_pdfController.annotationToolbarController toggleToolbarAnimated:YES];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                callbackId:command.callbackId];
+}
+
 #pragma mark Delegate methods
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldScrollToPage:(NSUInteger)page
