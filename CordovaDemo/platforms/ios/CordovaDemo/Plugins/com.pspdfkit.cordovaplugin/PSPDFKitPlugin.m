@@ -13,6 +13,7 @@
 #import "PSPDFKitPlugin.h"
 #import <WebKit/WebKit.h>
 #import <PSPDFKit/PSPDFKit.h>
+#import <PSPDFKitUI/PSPDFKitUI.h>
 
 @interface PSPDFKitPlugin () <PSPDFViewControllerDelegate, PSPDFFlexibleToolbarContainerDelegate>
 
