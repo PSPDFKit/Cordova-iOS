@@ -1035,7 +1035,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     if (!_pdfController) {
         _pdfController = [[PSPDFViewController alloc] init];
         _pdfController.delegate = self;
-        [_pdfController annotationToolbarController].delegate = self;
+        _pdfController.annotationToolbarController.delegate = self;
         _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
     }
 
