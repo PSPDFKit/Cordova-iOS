@@ -1492,4 +1492,14 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     [self sendEventWithJSON:@{@"type": @"didHideHUD", @"animated": @(animated)}];
 }
 
+#pragma mark Annotation toolbar delegate methods
+
+- (void)flexibleToolbarContainerDidShow:(nonnull PSPDFFlexibleToolbarContainer *)container {
+    [self sendEventWithJSON:@"{type:'flexibleToolbarContainerDidShow'}"];
+}
+
+- (void)flexibleToolbarContainerDidHide:(nonnull PSPDFFlexibleToolbarContainer *)container {
+    [self sendEventWithJSON:@"{type:'flexibleToolbarContainerDidHide'}"];
+}
+
 @end

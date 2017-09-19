@@ -374,6 +374,8 @@ The following events are supported by the PSPDFKitPlugin class
     didShowHUD
     shouldHideHUD
     didHideHUD
+    flexibleToolbarContainerDidShow
+    flexibleToolbarContainerDidHide
 
 
 License
