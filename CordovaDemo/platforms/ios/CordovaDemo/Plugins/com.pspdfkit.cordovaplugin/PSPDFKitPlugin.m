@@ -1028,7 +1028,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     if (path) {   
         //configure document
         NSURL *url = [self pdfFileURLWithPath:path];
-        _pdfDocument = [PSPDFDocument documentWithURL:url];
+        _pdfDocument = [[PSPDFDocument alloc] initWithURL:url];
         [self setOptions:newOptions forObject:_pdfDocument animated:NO];
     }
         
@@ -1098,7 +1098,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 - (void)saveAnnotations:(CDVInvokedUrlCommand *)command
 {
     // Completion handler is called on the main queue
-    [_pdfController.document saveWithCompletionHandler:^(NSError *error, NSArray<PSPDFAnnotation *> *savedAnnotations) {
+    [_pdfController.document saveWithOptions:nil completionHandler:^(NSError * _Nullable error, NSArray<__kindof PSPDFAnnotation *> * _Nonnull savedAnnotations) {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self dictionaryWithError:error]] callbackId:command.callbackId];
     }];
 }
