@@ -545,7 +545,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     
         @"PSPDFPageTransition":
 
-  @{@"scrollPerPage": @(PSPDFPageTransitionScrollPerPage),
+  @{@"scrollPerSpread": @(PSPDFPageTransitionScrollPerSpread),
     @"scrollContinuous": @(PSPDFPageTransitionScrollContinuous),
     @"curl": @(PSPDFPageTransitionCurl)},
         
@@ -572,18 +572,18 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     @"openSafari": @(PSPDFLinkActionOpenSafari),
     @"inlineBrowser": @(PSPDFLinkActionInlineBrowser)},
         
-        @"PSPDFHUDViewMode":
+        @"PSPDFUserInterfaceViewMode":
             
-  @{@"always": @(PSPDFHUDViewModeAlways),
-    @"automatic": @(PSPDFHUDViewModeAutomatic),
-    @"automaticNoFirstLastPage": @(PSPDFHUDViewModeAutomaticNoFirstLastPage),
-    @"never": @(PSPDFHUDViewModeNever)},
+  @{@"always": @(PSPDFUserInterfaceViewModeAlways),
+    @"automatic": @(PSPDFUserInterfaceViewModeAutomatic),
+    @"automaticNoFirstLastPage": @(PSPDFUserInterfaceViewModeAutomaticNoFirstLastPage),
+    @"never": @(PSPDFUserInterfaceViewModeNever)},
         
-        @"PSPDFHUDViewAnimation":
+        @"PSPDFUserInterfaceViewAnimation":
             
-  @{@"none": @(PSPDFHUDViewAnimationNone),
-    @"fade": @(PSPDFHUDViewAnimationFade),
-    @"slide": @(PSPDFHUDViewAnimationSlide)},
+  @{@"none": @(PSPDFUserInterfaceViewAnimationNone),
+    @"fade": @(PSPDFUserInterfaceViewAnimationFade),
+    @"slide": @(PSPDFUserInterfaceViewAnimationSlide)},
         
         @"PSPDFThumbnailBarMode":
             
@@ -654,25 +654,6 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     }
     return enumsByType[type];
 }
-
-///// Status bar style. (old status will be restored regardless of the style chosen)
-//typedef NS_ENUM(NSInteger, PSPDFStatusBarStyleSetting) {
-//    PSPDFStatusBarInherit,             // Don't change status bar style, but show/hide statusbar on HUD events.
-//    PSPDFStatusBarSmartBlack,          // UIStatusBarStyleBlackOpaque on iPad, UIStatusBarStyleBlackTranslucent on iPhone.
-//    PSPDFStatusBarSmartBlackHideOnIpad,// Similar to PSPDFStatusBarSmartBlack, but also hides statusBar on iPad.
-//    PSPDFStatusBarBlackOpaque,         // Opaque Black everywhere.
-//    PSPDFStatusBarDefault,             // Default statusbar (white on iPhone/black on iPad).
-//    PSPDFStatusBarDisable,             // Never show status bar.
-//};
-
-//// Customize how a single page should be displayed.
-//typedef NS_ENUM(NSInteger, PSPDFPageRenderingMode) {
-//    PSPDFPageRenderingModeThumbnailThenFullPage, // Load cached page async.
-//    PSPDFPageRenderingModeFullPage,              // Load cached page async, no upscaled thumb.
-//    PSPDFPageRenderingModeFullPageBlocking,      // Load cached page directly.
-//    PSPDFPageRenderingModeThumbnailThenRender,   // Don't use cached page but thumb.
-//    PSPDFPageRenderingModeRender                 // Don't use cached page nor thumb.
-//};
 
 #pragma mark License Key
 
@@ -769,7 +750,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 
 - (void)setPageTransitionForPSPDFViewControllerWithJSON:(NSString *)transition
 {
-    PSPDFPageTransition pageTransition = (PSPDFPageTransition) [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageTransitionScrollPerPage];
+    PSPDFPageTransition pageTransition = (PSPDFPageTransition) [self enumValueForKey:transition ofType:@"PSPDFPageTransition" withDefault:PSPDFPageTransitionScrollPerSpread];
     [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
         builder.pageTransition = pageTransition;
     }];
@@ -847,35 +828,35 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     return [self enumKeyForValue:_pdfController.configuration.linkAction ofType:@"PSPDFLinkAction"];
 }
 
-- (void)setHUDViewModeForPSPDFViewControllerWithJSON:(NSString *)mode
+- (void)setUserInterfaceViewModeForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    PSPDFHUDViewMode HUDViewMode = (PSPDFHUDViewMode) [self enumValueForKey:mode ofType:@"PSPDFHUDViewMode" withDefault:PSPDFHUDViewModeAutomatic];
+    PSPDFUserInterfaceViewMode userInterfaceViewMode = (PSPDFUserInterfaceViewMode) [self enumValueForKey:mode ofType:@"PSPDFUserInterfaceViewMode" withDefault:PSPDFUserInterfaceViewModeAutomatic];
     [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
-        builder.HUDViewMode = HUDViewMode;
+        builder.userInterfaceViewMode = userInterfaceViewMode;
     }];
 }
 
-- (NSString *)HUDViewModeAsJSON
+- (NSString *)userInterfaceViewModeAsJSON
 {
-    return [self enumKeyForValue:_pdfController.configuration.HUDViewMode ofType:@"PSPDFHUDViewMode"];
+    return [self enumKeyForValue:_pdfController.configuration.userInterfaceViewMode ofType:@"PSPDFUserInterfaceViewMode"];
 }
 
-- (void)setHUDViewAnimationForPSPDFViewControllerWithJSON:(NSString *)mode
+- (void)setUserInterfaceViewAnimationForPSPDFViewControllerWithJSON:(NSString *)mode
 {
-    PSPDFHUDViewAnimation HUDViewAnimation = (PSPDFHUDViewAnimation) [self enumValueForKey:mode ofType:@"HUDViewAnimation" withDefault:PSPDFHUDViewAnimationFade];
+    PSPDFUserInterfaceViewAnimation userInterfaceViewAnimation = (PSPDFUserInterfaceViewAnimation) [self enumValueForKey:mode ofType:@"UserInterfaceViewAnimation" withDefault:PSPDFUserInterfaceViewAnimationFade];
     [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
-        builder.HUDViewAnimation = HUDViewAnimation;
+        builder.userInterfaceViewAnimation = userInterfaceViewAnimation;
     }];
 }
 
-- (NSString *)HUDViewAnimationAsJSON
+- (NSString *)userInterfaceViewAnimationAsJSON
 {
-    return [self enumKeyForValue:_pdfController.configuration.HUDViewAnimation ofType:@"PSPDFHUDViewAnimation"];
+    return [self enumKeyForValue:_pdfController.configuration.userInterfaceViewAnimation ofType:@"PSPDFUserInterfaceViewAnimation"];
 }
 
-- (void)setHUDVisibleAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)visible
+- (void)setUserInterfaceVisibleAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)visible
 {
-    [_pdfController setHUDVisible:[visible boolValue] animated:YES];
+    [_pdfController setUserInterfaceVisible:[visible boolValue] animated:YES];
 }
 
 - (void)setPageAnimatedForPSPDFViewControllerWithJSON:(NSNumber *)page
@@ -1230,7 +1211,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 - (void)scrollToNextPage:(CDVInvokedUrlCommand *)command
 {
     BOOL animated = [[command argumentAtIndex:0 withDefault:@NO] boolValue];
-    [_pdfController scrollToNextPageAnimated:animated];
+    [_pdfController.documentViewController scrollToNextSpreadAnimated:animated];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                 callbackId:command.callbackId];
 }
@@ -1238,7 +1219,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 - (void)scrollToPreviousPage:(CDVInvokedUrlCommand *)command
 {
     BOOL animated = [[command argumentAtIndex:0 withDefault:@NO] boolValue];
-    [_pdfController scrollToPreviousPageAnimated:animated];
+    [_pdfController.documentViewController scrollToNextSpreadAnimated:animated];
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                 callbackId:command.callbackId];
 }
@@ -1325,31 +1306,6 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     [self sendEventWithJSON:@"{type:'didBeginPageDragging'}"];
 }
 
-- (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
-{
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didBeginPageDragging',willDecelerate:'%@',velocity:'{%g,%g}'}", decelerate? @"true": @"false", velocity.x, velocity.y]];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageScrollingAnimation:(UIScrollView *)scrollView
-{
-    [self sendEventWithJSON:@"{type:'didEndPageScrollingAnimation'}"];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController didBeginPageZooming:(UIScrollView *)scrollView
-{
-    [self sendEventWithJSON:@"{type:'didBeginPageZooming'}"];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController didEndPageZooming:(UIScrollView *)scrollView atScale:(CGFloat)scale
-{
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didEndPageZooming',scale:%g}", scale]];
-}
-
-//- (PSPDFDocument *)pdfViewController:(PSPDFViewController *)pdfController documentForRelativePath:(NSString *)relativePath
-//{
-//    
-//}
-
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController didTapOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint
 {
     // inverted because it's almost always YES (due to handling JS eval calls).
@@ -1378,76 +1334,6 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     [self sendEventWithJSON:@{@"type": @"didSelectText", @"text": text, @"rect": PSPDFStringFromCGRect(rect)}];
 }
 
-//- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forSelectedText:(NSString *)selectedText inRect:(CGRect)textRect onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forSelectedImage:(PSPDFImageInfo *)selectedImage inRect:(CGRect)textRect onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (NSArray *)pdfViewController:(PSPDFViewController *)pdfController shouldShowMenuItems:(NSArray *)menuItems atSuggestedTargetRect:(CGRect)rect forAnnotation:(PSPDFAnnotation *)annotation inRect:(CGRect)annotationRect onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldDisplayAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController didTapOnAnnotation:(PSPDFAnnotation *)annotation annotationPoint:(CGPoint)annotationPoint annotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView pageView:(PSPDFPageView *)pageView viewPoint:(CGPoint)viewPoint
-//{
-//    
-//}
-
-//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSelectAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (void)pdfViewController:(PSPDFViewController *)pdfController didSelectAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (UIView <PSPDFAnnotationViewProtocol> *)pdfViewController:(PSPDFViewController *)pdfController annotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView forAnnotation:(PSPDFAnnotation *)annotation onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (void)pdfViewController:(PSPDFViewController *)pdfController willShowAnnotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (void)pdfViewController:(PSPDFViewController *)pdfController didShowAnnotationView:(UIView <PSPDFAnnotationViewProtocol> *)annotationView onPageView:(PSPDFPageView *)pageView
-//{
-//    
-//}
-
-//- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldShowController:(id)viewController embeddedInController:(id)controller animated:(BOOL)animated
-//{
-//    
-//}
-
-//- (void)pdfViewController:(PSPDFViewController *)pdfController didShowController:(id)viewController embeddedInController:(id)controller animated:(BOOL)animated
-//{
-//    
-//}
-
-//- (void)pdfViewController:(PSPDFViewController *)pdfController requestsUpdateForBarButtonItem:(UIBarButtonItem *)barButtonItem animated:(BOOL)animated
-//{
-//    
-//}
-
-//- (void)pdfViewController:(PSPDFViewController *)pdfController didChangeViewMode:(PSPDFViewMode)viewMode
-//{
-//    
-//}
-
 - (void)pdfViewControllerWillDismiss:(PSPDFViewController *)pdfController
 {
     [self sendEventWithJSON:@"{type:'willDismiss'}"];
@@ -1464,34 +1350,24 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     [self sendEventWithJSON:@"{type:'didDismiss'}"];
 }
 
-- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldShowHUD:(BOOL)animated
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldShowUserInterface:(BOOL)animated
 {
-    return [self sendEventWithJSON:@{@"type": @"shouldShowHUD", @"animated": @(animated)}];
+    return [self sendEventWithJSON:@{@"type": @"shouldShowUserInterface", @"animated": @(animated)}];
 }
 
-- (void)pdfViewController:(PSPDFViewController *)pdfController willShowHUD:(BOOL)animated
+- (void)pdfViewController:(PSPDFViewController *)pdfController didShowUserInterface:(BOOL)animated
 {
-    [self sendEventWithJSON:@{@"type": @"willShowHUD", @"animated": @(animated)}];
+    [self sendEventWithJSON:@{@"type": @"didShowUserInterface", @"animated": @(animated)}];
 }
 
-- (void)pdfViewController:(PSPDFViewController *)pdfController didShowHUD:(BOOL)animated
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldHideUserInterface:(BOOL)animated
 {
-    [self sendEventWithJSON:@{@"type": @"didShowHUD", @"animated": @(animated)}];
+    return [self sendEventWithJSON:@{@"type": @"shouldHideUserInterface", @"animated": @(animated)}];
 }
 
-- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldHideHUD:(BOOL)animated
+- (void)pdfViewController:(PSPDFViewController *)pdfController didHideUserInterface:(BOOL)animated
 {
-    return [self sendEventWithJSON:@{@"type": @"shouldHideHUD", @"animated": @(animated)}];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController willHideHUD:(BOOL)animated
-{
-    [self sendEventWithJSON:@{@"type": @"willHideHUD", @"animated": @(animated)}];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController didHideHUD:(BOOL)animated
-{
-    [self sendEventWithJSON:@{@"type": @"didHideHUD", @"animated": @(animated)}];
+    [self sendEventWithJSON:@{@"type": @"didHideUserInterface", @"animated": @(animated)}];
 }
 
 #pragma mark Annotation toolbar delegate methods
