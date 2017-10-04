@@ -1,8 +1,8 @@
-Cordova Wrapper for PSPDFKit 6 for iOS
+Cordova Wrapper for PSPDFKit 7 for iOS
 ========================================
 
 **This plugin works with Cordova version 6.3.1 and above.**  
-**Please also make sure that you're using the latest version of Xcode 8.**
+**Please also make sure that you're using the latest version of Xcode 9.**
 
 Install
 -----------
@@ -13,7 +13,7 @@ We assume you have [a current install of Cordova](https://cordova.apache.org/#ge
 
 Read the message at the end and complete installation.
 
-**You will need to manually edit the Xcode project and add PSPDFKit framework to your project manually.
+**You will need to manually edit the Xcode project and add PSPDFKit to your project manually.
 There is no automatic support for dynamic frameworks in Cordova yet. You will get a linker error if you forget this step.**
 
 *Note:* Make sure to follow [our integration guide](https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/) to strip the framework, working around an App Store submission bug.
@@ -24,8 +24,8 @@ Demo
 You can find a demo app in [CordovaDemo](CordovaDemo).
 
 In order to build it, please download PSPDFKit from your customer portal: https://customers.pspdfkit.com  
-The .dmg file you downloaded contains a directory called `PSPDFKit.framework`.  
-Please copy this directory to `CordovaDemo/platforms/ios`.
+The .dmg file you downloaded contains two directories called `PSPDFKit.framework` and `PSPDFKitUI.framework`.  
+Please copy these directories to `CordovaDemo/platforms/ios`.
 
 You can set your license key in `CordovaDemo/www/js/index.js`.  
 (Look for `PSPDFKitPlugin.setLicenseKey('YOUR KEY');`)
