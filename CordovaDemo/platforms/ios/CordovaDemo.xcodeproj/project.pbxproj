@@ -19,9 +19,9 @@
 		7D7629B8885B4ADEB3B6C087 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DFE9F4B80E04CB5992AF3D1 /* QuickLook.framework */; };
 		7F84DF7FB1E749EBB22B187A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC528BED4D54989859A215A /* QuartzCore.framework */; };
 		8404071D1F6C202F006FE22B /* PSPDFKitUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8404071C1F6C2028006FE22B /* PSPDFKitUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		846FB56E1F8B9F1A00231F0D /* PSPDFKitPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 846FB56C1F8B9F1A00231F0D /* PSPDFKitPlugin.m */; };
 		9103AA7F4FAA4747B215AC56 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E4EEB4D7A3A4E8F801CE242 /* CoreData.framework */; };
 		91AF4C80CF5E43C29C04808D /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B507FF90814A0BA027B581 /* MediaPlayer.framework */; };
-		9761D785297842648262D3BE /* PSPDFKitPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E636A6106D4BB9A8C37203 /* PSPDFKitPlugin.m */; };
 		9A9A749A24624CEBA2007EBB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 682A7694F45F45E5B37A1396 /* Security.framework */; };
 		A5D9C3167C1D4E0980D4E0BA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 324240AF33E34F1D81A16A7C /* CoreMedia.framework */; };
 		A85F464CB54C4499B54F6345 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B10FBAABE49473D93A18399 /* ImageIO.framework */; };
@@ -70,7 +70,6 @@
 /* Begin PBXFileReference section */
 		00B507FF90814A0BA027B581 /* MediaPlayer.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		0207DA571B56EA530066E2B4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CordovaDemo/Images.xcassets; sourceTree = SOURCE_ROOT; };
-		18E636A6106D4BB9A8C37203 /* PSPDFKitPlugin.m */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.objc; name = PSPDFKitPlugin.m; path = com.pspdfkit.cordovaplugin/PSPDFKitPlugin.m; sourceTree = "<group>"; };
 		1AD44BD0CDFA400BAC408CB6 /* CFNetwork.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -97,6 +96,8 @@
 		7104B2EC580B49C89216BCBB /* MessageUI.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		7E4EEB4D7A3A4E8F801CE242 /* CoreData.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		8404071C1F6C2028006FE22B /* PSPDFKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PSPDFKitUI.framework; sourceTree = "<group>"; };
+		846FB56C1F8B9F1A00231F0D /* PSPDFKitPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PSPDFKitPlugin.m; path = ../../../PSPDFKitPlugin/PSPDFKitPlugin.m; sourceTree = "<group>"; };
+		846FB56D1F8B9F1A00231F0D /* PSPDFKitPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PSPDFKitPlugin.h; path = ../../../PSPDFKitPlugin/PSPDFKitPlugin.h; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* CordovaDemo-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "CordovaDemo-Info.plist"; path = "CordovaDemo/CordovaDemo-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = SOURCE_ROOT; };
 		9B1BE461EE714905B87F91F5 /* AudioToolbox.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B954CAC11DD394BA001A80C4 /* PSPDFKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PSPDFKit.framework; sourceTree = "<group>"; };
@@ -105,7 +106,6 @@
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
 		ED20D73391BF4BF8A89DBA1D /* CoreTelephony.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
-		F34676E16C274746B9234103 /* PSPDFKitPlugin.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = PSPDFKitPlugin.h; path = com.pspdfkit.cordovaplugin/PSPDFKitPlugin.h; sourceTree = "<group>"; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = CordovaDemo/config.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -167,6 +167,8 @@
 				301BF52D109A57CC0062928A /* CordovaLib.xcodeproj */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				307C750510C5A3420062BCA9 /* Plugins */,
+				846FB56D1F8B9F1A00231F0D /* PSPDFKitPlugin.h */,
+				846FB56C1F8B9F1A00231F0D /* PSPDFKitPlugin.m */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -243,8 +245,6 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				18E636A6106D4BB9A8C37203 /* PSPDFKitPlugin.m */,
-				F34676E16C274746B9234103 /* PSPDFKitPlugin.h */,
 			);
 			name = Plugins;
 			path = CordovaDemo/Plugins;
@@ -361,7 +361,7 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
-				9761D785297842648262D3BE /* PSPDFKitPlugin.m in Sources */,
+				846FB56E1F8B9F1A00231F0D /* PSPDFKitPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
