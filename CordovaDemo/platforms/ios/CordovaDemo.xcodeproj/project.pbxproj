@@ -14,7 +14,6 @@
 		302D95F114D2391D003F00A1 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 302D95EF14D2391D003F00A1 /* MainViewController.m */; };
 		302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 302D95F014D2391D003F00A1 /* MainViewController.xib */; };
 		5606C360F0C74DF9B2AD4AEE /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA8806D55D744FC0B8468BB8 /* SystemConfiguration.framework */; };
-		6AFF5BF91D6E424B00AB3073 /* CDVLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6AFF5BF81D6E424B00AB3073 /* CDVLaunchScreen.storyboard */; };
 		7365018C711546588CBCB485 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F0D11BA37CC404CA67DE9B7 /* AVFoundation.framework */; };
 		7D7629B8885B4ADEB3B6C087 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DFE9F4B80E04CB5992AF3D1 /* QuickLook.framework */; };
 		7F84DF7FB1E749EBB22B187A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BC528BED4D54989859A215A /* QuartzCore.framework */; };
@@ -33,6 +32,7 @@
 		D996BA9FA0314632B42B2EF8 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9CFF5B5B4242508F1D76D9 /* CoreText.framework */; };
 		E668D575BFC74F0DA85586C5 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7104B2EC580B49C89216BCBB /* MessageUI.framework */; };
 		F0EBD3064FB546959660E501 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B1BE461EE714905B87F91F5 /* AudioToolbox.framework */; };
+		F88A611E1F8BA42A00FE57E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F88A611D1F8BA42A00FE57E4 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,7 +92,6 @@
 		4B10FBAABE49473D93A18399 /* ImageIO.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		5E9CFF5B5B4242508F1D76D9 /* CoreText.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		682A7694F45F45E5B37A1396 /* Security.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		6AFF5BF81D6E424B00AB3073 /* CDVLaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = CDVLaunchScreen.storyboard; path = CordovaDemo/CDVLaunchScreen.storyboard; sourceTree = SOURCE_ROOT; };
 		7104B2EC580B49C89216BCBB /* MessageUI.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		7E4EEB4D7A3A4E8F801CE242 /* CoreData.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		8404071C1F6C2028006FE22B /* PSPDFKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PSPDFKitUI.framework; sourceTree = "<group>"; };
@@ -107,6 +106,7 @@
 		ED20D73391BF4BF8A89DBA1D /* CoreTelephony.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		ED33DF2A687741AEAF9F8254 /* Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = CordovaDemo/config.xml; sourceTree = "<group>"; };
+		F88A611D1F8BA42A00FE57E4 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CordovaDemo/LaunchScreen.storyboard; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,7 +194,7 @@
 				0207DA571B56EA530066E2B4 /* Images.xcassets */,
 				3047A50E1AB8057F00498E2A /* config */,
 				8D1107310486CEB800E47090 /* CordovaDemo-Info.plist */,
-				6AFF5BF81D6E424B00AB3073 /* CDVLaunchScreen.storyboard */,
+				F88A611D1F8BA42A00FE57E4 /* LaunchScreen.storyboard */,
 			);
 			name = Resources;
 			path = CordovaDemo/Resources;
@@ -328,8 +328,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				302D95F214D2391D003F00A1 /* MainViewController.xib in Resources */,
+				F88A611E1F8BA42A00FE57E4 /* LaunchScreen.storyboard in Resources */,
 				0207DA581B56EA530066E2B4 /* Images.xcassets in Resources */,
-				6AFF5BF91D6E424B00AB3073 /* CDVLaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,7 +382,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
@@ -409,7 +408,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
