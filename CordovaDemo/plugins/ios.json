@@ -121,7 +121,7 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
         },
-        "com.pspdfkit.cordovaplugin": {
+        "pspdfkit-cordova-ios": {
             "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
         }
     },

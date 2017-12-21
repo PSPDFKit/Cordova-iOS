@@ -7,7 +7,7 @@
         "is_top_level": true,
         "variables": {}
     },
-    "com.pspdfkit.cordovaplugin": {
+    "pspdfkit-cordova-ios": {
         "source": {
             "type": "local",
             "path": ".."

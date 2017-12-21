@@ -24,7 +24,7 @@
         "@ionic-native/splash-screen": "3.10.2",
         "@ionic-native/status-bar": "3.10.2",
         "@ionic/storage": "2.0.1",
-        "com.pspdfkit.cordovaplugin": "git+https://github.com/PSPDFKit/Cordova-iOS.git",
+        "pspdfkit-cordova-ios": "git+https://github.com/PSPDFKit/Cordova-iOS.git",
         "cordova-ios": "^4.4.0",
         "cordova-plugin-console": "^1.0.5",
         "cordova-plugin-device": "^1.1.4",
@@ -53,7 +53,7 @@
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
             "ionic-plugin-keyboard": {},
-            "com.pspdfkit.cordovaplugin": {}
+            "pspdfkit-cordova-ios": {}
         },
         "platforms": [
             "ios"
