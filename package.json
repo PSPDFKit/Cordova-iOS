@@ -7,7 +7,16 @@
     "url": "git+https://github.com/PSPDFKit/Cordova-iOS.git"
   },
   "keywords": [
-    "pspdfkit"
+    "pspdfkit",
+    "pdf",
+    "ios",
+    "ecosystem:cordova",
+    "cordova-ios"
   ],
-  "author": "PSPDFKit GmbH"
+  "author": "PSPDFKit GmbH",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PSPDFKit/Cordova-iOS/issues"
+  },
+  "homepage": "https://github.com/PSPDFKit/Cordova-iOS#readme"
 }
