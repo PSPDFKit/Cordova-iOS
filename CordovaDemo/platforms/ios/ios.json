@@ -21,16 +21,16 @@
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
         },
-        "com.pspdfkit.cordovaplugin": {
+        "pspdfkit-cordova-ios": {
             "PACKAGE_NAME": "com.pspdfkit.CordovaDemo"
         }
     },
     "dependent_plugins": {},
     "modules": [
         {
-            "id": "com.pspdfkit.cordovaplugin.PSPDFKitPlugin",
-            "file": "plugins/com.pspdfkit.cordovaplugin/PSPDFKitPlugin/pspdfkit.js",
-            "pluginId": "com.pspdfkit.cordovaplugin",
+            "id": "pspdfkit-cordova-ios.PSPDFKitPlugin",
+            "file": "plugins/pspdfkit-cordova-ios/PSPDFKitPlugin/pspdfkit.js",
+            "pluginId": "pspdfkit-cordova-ios",
             "clobbers": [
                 "PSPDFKitPlugin"
             ]
@@ -38,6 +38,6 @@
     ],
     "plugin_metadata": {
         "cordova-plugin-whitelist": "1.0.0",
-        "com.pspdfkit.cordovaplugin": "1.2.0"
+        "pspdfkit-cordova-ios": "1.2.0"
     }
 }
