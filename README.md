@@ -61,6 +61,18 @@ constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen
 8. Place your `document.pdf` in the `www/pdf` subdirectory.
 9. Try out your app: `ionic cordova emulate ios`
 
+### Troubleshooting
+
+#### Problem:
+
+```sh
+Error: Cannot find plugin.xml for plugin "Cordova-iOS". Please try adding it again.
+```
+
+#### Solution:
+
+Run `cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git` instead of `ionic cordova plugin add https://github.com/PSPDFKit/Cordova-iOS.git`.
+
 Ionic Demo
 -----------
 
