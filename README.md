@@ -322,11 +322,11 @@ PDF Controller options
     shouldRestoreNavigationBarStyle
     allowedMenuActions (search, define, wikipedia, speak, all)
  
-HUD options
+User Interface options
     
-    HUDVisible
-    HUDViewMode (always, automatic, automaticNoFirstLastPage, never)
-    HUDViewAnimation (none, fade, slide)
+    UserInterfaceVisible
+    UserInterfaceViewMode (always, automatic, automaticNoFirstLastPage, never)
+    UserInterfaceViewAnimation (none, fade, slide)
     toolbarEnabled
     allowToolbarTitleChange
     pageLabelEnabled
@@ -345,9 +345,6 @@ Appearance options
     maximumZoomScale
     pagePadding
     shadowEnabled
-    transparentHUD
-    shouldHideNavigationBarWithHUD
-    shouldHideStatusBarWithHUD
     tintColor
     shouldTintPopovers
     shouldTintAlertView
@@ -366,26 +363,20 @@ The following events are supported by the PSPDFKitPlugin class
     shouldSetDocument
     willDisplayDocument
     didDisplayDocument
-    shouldScrollToPage
-    didShowPageView
-    didRenderPageView
-    didLoadPageView
-    willUnloadPageView
-    didBeginPageDragging
-    didBeginPageDragging
-    didEndPageScrollingAnimation
-    didBeginPageZooming
-    didEndPageZooming
+    willBeginDisplayingPageView
+    didFinishRenderTaskForPageView
+    didConfigurePageView
+    didCleanupPageView
     didTapOnPageView (`return false;` to set an event as processed and disable default handling)
     didLongPressOnPageView (`return false;` to set an event as processed and disable default handling)
     shouldSelectText
     didSelectText
     willDismiss
     didDismiss
-    shouldShowHUD
-    didShowHUD
-    shouldHideHUD
-    didHideHUD
+    shouldShowUserInterface
+    didShowUserInterface
+    shouldHideUserInterface
+    didHideUserInterface
     flexibleToolbarContainerDidShow
     flexibleToolbarContainerDidHide
 
