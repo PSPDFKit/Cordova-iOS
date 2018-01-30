@@ -1276,34 +1276,24 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 
 #pragma mark Delegate methods
 
-- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldScrollToPage:(NSUInteger)page
+- (void)pdfViewController:(PSPDFViewController *)pdfController willBeginDisplayingPageView:(PSPDFPageView *)pageView forPageAtIndex:(NSInteger)pageIndex
 {
-    return [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'shouldScrollToPage',page:%ld}", (long)page]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'willBeginDisplayingPageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
-- (void)pdfViewController:(PSPDFViewController *)pdfController didShowPageView:(PSPDFPageView *)pageView
+- (void)pdfViewController:(PSPDFViewController *)pdfController didFinishRenderTaskForPageView:(PSPDFPageView *)pageView
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didShowPageView',page:%ld}", (long) pageView.pageIndex]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didFinishRenderTaskForPageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
-- (void)pdfViewController:(PSPDFViewController *)pdfController didRenderPageView:(PSPDFPageView *)pageView
+- (void)pdfViewController:(PSPDFViewController *)pdfController didConfigurePageView:(PSPDFPageView *)pageView forPageAtIndex:(NSInteger)pageIndex
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didRenderPageView',page:%ld}", (long) pageView.pageIndex]];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didConfigurePageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
-- (void)pdfViewController:(PSPDFViewController *)pdfController didLoadPageView:(PSPDFPageView *)pageView
+- (void)pdfViewController:(PSPDFViewController *)pdfController didCleanupPageView:(PSPDFPageView *)pageView forPageAtIndex:(NSInteger)pageIndex
 {
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didLoadPageView',page:%ld}", (long) pageView.pageIndex]];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController willUnloadPageView:(PSPDFPageView *)pageView
-{
-    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'willUnloadPageView',page:%ld}", (long) pageView.pageIndex]];
-}
-
-- (void)pdfViewController:(PSPDFViewController *)pdfController didBeginPageDragging:(UIScrollView *)scrollView
-{
-    [self sendEventWithJSON:@"{type:'didBeginPageDragging'}"];
+    [self sendEventWithJSON:[NSString stringWithFormat:@"{type:'didCleanupPageView',page:%ld}", (long) pageView.pageIndex]];
 }
 
 - (BOOL)pdfViewController:(PSPDFViewController *)pdfController didTapOnPageView:(PSPDFPageView *)pageView atPoint:(CGPoint)viewPoint
