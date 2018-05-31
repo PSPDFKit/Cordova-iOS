@@ -993,7 +993,8 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 
 - (void)generatePDFFromHTMLString:(NSString *)html outputFile:(NSString *)filePath options:(NSDictionary *)options completionBlock:(void (^)(NSError *error))completionBlock
 {
-    [PSPDFProcessor generatePDFFromHTMLString:html outputFileURL:[NSURL fileURLWithPath:filePath] options:options completionBlock:completionBlock];
+    PSPDFProcessor *processor = [[PSPDFProcessor alloc] initWithOptions:nil];
+    [processor convertHTMLString:html outputFileURL:[NSURL fileURLWithPath:filePath] completionBlock:completionBlock];
 }
 
 #pragma mark Document methods
