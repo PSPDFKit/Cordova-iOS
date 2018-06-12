@@ -410,6 +410,11 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     return nil;
 }
 
+- (BOOL)isImagePath:(NSString *)path {
+    NSString *pathExtension = path.pathExtension.lowercaseString;
+    return [pathExtension isEqualToString:@"png"] || [pathExtension isEqualToString:@"jpeg"] || [pathExtension isEqualToString:@"jpg"];
+}
+
 - (NSInteger)enumValueForKey:(NSString *)key ofType:(NSString *)type withDefault:(int)defaultValue
 {
     NSNumber *number = key? [self enumValuesOfType:type][key]: nil;
@@ -1010,7 +1015,12 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     if (path) {
         //configure document
         NSURL *url = [self pdfFileURLWithPath:path];
-        _pdfDocument = [[PSPDFDocument alloc] initWithURL:url];
+        if ([self isImagePath:path]) {
+            _pdfDocument = [[PSPDFImageDocument alloc] initWithImageURL:url];
+        }
+        else {
+            _pdfDocument = [[PSPDFDocument alloc] initWithURL:url];
+        }
         [self setOptions:newOptions forObject:_pdfDocument animated:NO];
     }
 
