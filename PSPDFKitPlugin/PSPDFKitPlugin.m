@@ -624,7 +624,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
                               PSPDFStringFromAnnotationType(PSPDFAnnotationTypeWatermark): @(PSPDFAnnotationTypeWatermark),
                               PSPDFStringFromAnnotationType(PSPDFAnnotationTypeTrapNet): @(PSPDFAnnotationTypeTrapNet),
                               PSPDFStringFromAnnotationType(PSPDFAnnotationTypeThreeDimensional): @(PSPDFAnnotationTypeThreeDimensional),
-                              PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRedact): @(PSPDFAnnotationTypeRedact),
+                              PSPDFStringFromAnnotationType(PSPDFAnnotationTypeRedaction): @(PSPDFAnnotationTypeRedaction),
                               @"All": @(PSPDFAnnotationTypeAll)},
 
                         @"PSPDFAppearanceMode":
