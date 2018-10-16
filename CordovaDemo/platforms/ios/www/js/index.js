@@ -42,7 +42,10 @@ var app = {
         PSPDFKitPlugin.present('pdf/PSPDFKit 8 QuickStart Guide.pdf', {
             pageTransition : 'curl',
             backgroundColor: 'white',
-//            printSharingOptions: ['RemoveAnnotations', 'AllPages']
+            documentSharingFileFormatOptions: 'image',
+            documentSharingDestination: 'export',
+            documentSharingAnnotationOptions: ['summary', 'embed'],
+            documentSharingPagesOptions: ['all', 'annotated'],
         });
     },
     // Update DOM on a Received Event

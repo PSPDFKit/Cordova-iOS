@@ -633,21 +633,36 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
                               @"sepia": @(PSPDFAppearanceModeSepia),
                               @"night": @(PSPDFAppearanceModeNight)},
 
-//                        @"PSPDFDocumentSharingOptions":
-//
-//                            @{@"None": @(PSPDFDocumentSharingOptionNone),
-//                              @"CurrentPageOnly": @(PSPDFDocumentSharingOptionCurrentPageOnly),
-//                              @"PageRange": @(PSPDFDocumentSharingOptionPageRange),
-//                              @"AllPages": @(PSPDFDocumentSharingOptionAllPages),
-//                              @"AnnotatedPages": @(PSPDFDocumentSharingOptionAnnotatedPages),
-//                              @"EmbedAnnotations": @(PSPDFDocumentSharingOptionEmbedAnnotations),
-//                              @"FlattenAnnotations": @(PSPDFDocumentSharingOptionFlattenAnnotations),
-//                              @"AnnotationsSummary": @(PSPDFDocumentSharingOptionAnnotationsSummary),
-//                              @"RemoveAnnotations": @(PSPDFDocumentSharingOptionRemoveAnnotations),
-//                              @"FlattenAnnotationsForPrint": @(PSPDFDocumentSharingOptionFlattenAnnotationsForPrint),
-//                              @"OriginalFile": @(PSPDFDocumentSharingOptionOriginalFile),
-//                              @"Image": @(PSPDFDocumentSharingOptionImage)},
+                        @"PSPDFDocumentSharingFileFormatOptions":
 
+                            @{@"PDF" : @(PSPDFDocumentSharingFileFormatOptionPDF),
+                              @"original": @(PSPDFDocumentSharingFileFormatOptionOriginal),
+                              @"image": @(PSPDFDocumentSharingFileFormatOptionImage)},
+
+                        @"PSPDFDocumentSharingDestination":
+
+                            @{@"print" : PSPDFDocumentSharingDestinationPrint,
+                              @"export" : PSPDFDocumentSharingDestinationExport,
+                              @"activity" : PSPDFDocumentSharingDestinationActivity,
+                              @"messages" : PSPDFDocumentSharingDestinationMessages,
+                              @"email" : PSPDFDocumentSharingDestinationEmail,
+                              @"otherApplication" : PSPDFDocumentSharingDestinationOtherApplication },
+
+
+                        @"PSPDFDocumentSharingAnnotationOptions":
+
+                            @{@"embed": @(PSPDFDocumentSharingAnnotationOptionEmbed),
+                              @"flatten": @(PSPDFDocumentSharingAnnotationOptionFlatten),
+                              @"flatten_for_print": @(PSPDFDocumentSharingAnnotationOptionFlattenForPrint),
+                              @"summary": @(PSPDFDocumentSharingAnnotationOptionSummary),
+                              @"remove": @(PSPDFDocumentSharingAnnotationOptionRemove)},
+
+                        @"PSPDFDocumentSharingPagesOptions":
+
+                            @{@"all": @(PSPDFDocumentSharingPagesOptionAll),
+                              @"range": @(PSPDFDocumentSharingPagesOptionRange),
+                              @"current": @(PSPDFDocumentSharingPagesOptionCurrent),
+                              @"annotated": @(PSPDFDocumentSharingPagesOptionAnnotated)},
                         };
 
         //Note: this method crashes the second time a
@@ -916,31 +931,69 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     return [self optionKeysForValue:_pdfController.configuration.allowedMenuActions ofType:@"PSPDFTextSelectionMenuAction"];
 }
 
-//- (void)setPrintSharingOptionsForPSPDFViewControllerWithJSON:(NSArray *)options
-//{
-//    if (![options isKindOfClass:[NSArray class]])
-//    {
-//        options = @[options];
-//    }
-//
-//    NSUInteger sharingOptions = 0;
-//    for (NSString *option in options)
-//    {
-//        if ([option length]) {
-//            NSInteger newOption = [self enumValueForKey:[NSString stringWithFormat:@"%@%@", [[option substringToIndex:1] uppercaseString], [option substringFromIndex:1]] ofType:@"PSPDFDocumentSharingOptions" withDefault:PSPDFDocumentSharingOptionNone];
-//            sharingOptions = sharingOptions | newOption;
-//        }
-//    }
-//
-//    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
-//        builder.printSharingOptions = sharingOptions;
-//    }];
-//}
+- (void)setDocumentSharingFileFormatOptionsForPSPDFViewControllerWithJSON:(NSArray *)options
+{
+    PSPDFDocumentSharingConfiguration *sharingConfiguration = [_pdfController.configuration.sharingConfigurations.firstObject configurationUpdatedWithBuilder:^(PSPDFDocumentSharingConfigurationBuilder * builder) {
+        builder.fileFormatOptions = (PSPDFDocumentSharingFileFormatOptions) [self optionsValueForKeys:options ofType:@"PSPDFDocumentSharingFileFormatOptions" withDefault:PSPDFDocumentSharingFileFormatOptionPDF];
+    }];
 
-//- (NSNumber *)printSharingOptionsAsJSON
-//{
-//    return @(_pdfController.configuration.printSharingOptions);
-//}
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.sharingConfigurations = @[sharingConfiguration];
+    }];
+}
+
+- (NSArray *)documentSharingFileFormatOptionsAsJSON
+{
+    return [self optionKeysForValue:_pdfController.configuration.sharingConfigurations.firstObject.fileFormatOptions ofType:@"PSPDFDocumentSharingFileFormatOptions"];
+}
+
+- (void)setDocumentSharingDestinationForPSPDFViewControllerWithJSON:(NSString *)option
+{
+    PSPDFDocumentSharingConfiguration *sharingConfiguration = [_pdfController.configuration.sharingConfigurations.firstObject configurationUpdatedWithBuilder:^(PSPDFDocumentSharingConfigurationBuilder * builder) {
+        builder.destination = (PSPDFDocumentSharingDestination) [self enumValuesOfType:@"PSPDFDocumentSharingDestination"][option];
+    }];
+
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.sharingConfigurations = @[sharingConfiguration];
+    }];
+}
+
+- (NSString *)documentSharingDestinationAsJSON
+{
+    return _pdfController.configuration.sharingConfigurations.firstObject.destination;
+}
+
+- (void)setDocumentSharingAnnotationOptionsForPSPDFViewControllerWithJSON:(NSArray *)options
+{
+    PSPDFDocumentSharingConfiguration *sharingConfiguration = [_pdfController.configuration.sharingConfigurations.firstObject configurationUpdatedWithBuilder:^(PSPDFDocumentSharingConfigurationBuilder * builder) {
+        builder.annotationOptions = (PSPDFDocumentSharingAnnotationOptions) [self optionsValueForKeys:options ofType:@"PSPDFDocumentSharingAnnotationOptions" withDefault:PSPDFDocumentSharingAnnotationOptionEmbed];
+    }];
+
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.sharingConfigurations = @[sharingConfiguration];
+    }];
+}
+
+- (NSArray *)documentSharingAnnotationOptionsAsJSON
+{
+    return [self optionKeysForValue:_pdfController.configuration.sharingConfigurations.firstObject.annotationOptions ofType:@"PSPDFDocumentSharingAnnotationOptions"];
+}
+
+- (void)setDocumentSharingPagesOptionsForPSPDFViewControllerWithJSON:(NSArray *)options
+{
+    PSPDFDocumentSharingConfiguration *sharingConfiguration = [_pdfController.configuration.sharingConfigurations.firstObject configurationUpdatedWithBuilder:^(PSPDFDocumentSharingConfigurationBuilder * builder) {
+        builder.pageSelectionOptions = (PSPDFDocumentSharingPagesOptions) [self optionsValueForKeys:options ofType:@"PSPDFDocumentSharingPagesOptions" withDefault:PSPDFDocumentSharingPagesOptionAll];
+    }];
+
+    [_pdfController updateConfigurationWithBuilder:^(PSPDFConfigurationBuilder *builder) {
+        builder.sharingConfigurations = @[sharingConfiguration];
+    }];
+}
+
+- (NSArray *)documentSharingPagesOptionsAsJSON
+{
+    return [self optionKeysForValue:_pdfController.configuration.sharingConfigurations.firstObject.pageSelectionOptions ofType:@"PSPDFDocumentSharingPagesOptions"];
+}
 
 - (void)setShouldAskForAnnotationUsernameForPSPDFViewControllerWithJSON:(NSNumber *)shouldAskForAnnotationUsername
 {
