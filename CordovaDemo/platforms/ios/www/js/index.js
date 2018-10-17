@@ -39,7 +39,7 @@ var app = {
         PSPDFKitPlugin.setLicenseKey("YOUR KEY");
 
         // Show PDF with curl transition and white background
-        PSPDFKitPlugin.present('pdf/PSPDFKit 7 QuickStart Guide.pdf', {
+        PSPDFKitPlugin.present('pdf/PSPDFKit 8 QuickStart Guide.pdf', {
             pageTransition : 'curl',
             backgroundColor: 'white',
 //            printSharingOptions: ['RemoveAnnotations', 'AllPages']
