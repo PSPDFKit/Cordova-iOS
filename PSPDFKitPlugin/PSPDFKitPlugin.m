@@ -77,10 +77,16 @@
                     [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
                 }
                 else {
-                    //use KVC
-                    setter = [prefix stringByAppendingString:@":"];
-                    if ([object respondsToSelector:NSSelectorFromString(setter)]) {
-                        [object setValue:newOptions[key] forKey:key];
+                    // Try the super class. For example, we try PSPDFDocument methods for Image Documents.
+                    setter = [prefix stringByAppendingFormat:@"For%@WithJSON:", [object superclass]];
+                    if ([self respondsToSelector:NSSelectorFromString(setter)]) {
+                        [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object superclass]]];
+                    } else {
+                        //use KVC
+                        setter = [prefix stringByAppendingString:@":"];
+                        if ([object respondsToSelector:NSSelectorFromString(setter)]) {
+                            [object setValue:newOptions[key] forKey:key];
+                        }
                     }
                 }
             }
