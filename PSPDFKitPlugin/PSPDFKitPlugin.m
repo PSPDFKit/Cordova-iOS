@@ -65,25 +65,26 @@
             //generate setter prefix
             NSString *prefix = [NSString stringWithFormat:@"set%@%@", [[key substringToIndex:1] uppercaseString], [key substringFromIndex:1]];
 
+            BOOL (^setterBlock)(NSString *, Class) = ^BOOL (NSString *suffix, Class klass) {
+                NSString *setter = [[prefix stringByAppendingFormat:suffix, klass] stringByAppendingString:@":"];
+                if ([self respondsToSelector:NSSelectorFromString(setter)]) {
+                    [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:suffix, klass]];
+                    return YES;
+                }
+                return NO;
+            };
+
             //try custom animated setter
-            NSString *setter = [prefix stringByAppendingFormat:@"AnimatedFor%@WithJSON:", [object class]];
-            if (animated && [self respondsToSelector:NSSelectorFromString(setter)]) {
-                [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"AnimatedFor%@WithJSON", [object class]]];
+            if (animated) {
+                setterBlock(@"AnimatedFor%@WithJSON", [object class]);
             }
             else {
                 //try custom setter
-                setter = [prefix stringByAppendingFormat:@"For%@WithJSON:", [object class]];
-                if ([self respondsToSelector:NSSelectorFromString(setter)]) {
-                    [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object class]]];
-                }
-                else {
+                if (!setterBlock(@"For%@WithJSON", [object class])) {
                     // Try the super class. For example, we try PSPDFDocument methods for Image Documents.
-                    setter = [prefix stringByAppendingFormat:@"For%@WithJSON:", [object superclass]];
-                    if ([self respondsToSelector:NSSelectorFromString(setter)]) {
-                        [self setValue:newOptions[key] forKey:[key stringByAppendingFormat:@"For%@WithJSON", [object superclass]]];
-                    } else {
+                    if (!setterBlock(@"For%@WithJSON", [object superclass])) {
                         //use KVC
-                        setter = [prefix stringByAppendingString:@":"];
+                        NSString *setter = [prefix stringByAppendingString:@":"];
                         if ([object respondsToSelector:NSSelectorFromString(setter)]) {
                             [object setValue:newOptions[key] forKey:key];
                         }
