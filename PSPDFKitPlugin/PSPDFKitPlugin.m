@@ -1413,7 +1413,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
 } 
 
 - (CGRect)flexibleToolbarContainerContentRect:(PSPDFFlexibleToolbarContainer *)container forToolbarPosition:(PSPDFFlexibleToolbarPosition)position {
-    // This is a workaround for handling the positioning of the annotation toolbar so that it's not covered by the components of the safe area.
+    // This calls though to the default PDF controller implementation that excludes main UI elements from the available content rect.
     // It is recommended that one calculates the positioning of the toolbar with respect to their own views.
     PSPDFViewController *controller = self.pdfController;
     if ([controller respondsToSelector:@selector(flexibleToolbarContainerContentRect:forToolbarPosition:)]) {
