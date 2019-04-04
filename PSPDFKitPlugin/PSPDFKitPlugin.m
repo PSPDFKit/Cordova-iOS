@@ -21,6 +21,7 @@
 @property (nonatomic, strong) PSPDFViewController *pdfController;
 @property (nonatomic, strong) PSPDFDocument *pdfDocument;
 @property (nonatomic, strong) NSDictionary *defaultOptions;
+@property (nonatomic) BOOL disableAutomaticSaving;
 
 @end
 
@@ -713,6 +714,16 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     }];
 }
 
+- (void)setDisableAutomaticSavingForPSPDFViewControllerWithJSON:(NSNumber *)shouldDisable
+{
+    self.disableAutomaticSaving = shouldDisable.boolValue;
+}
+
+- (NSNumber *)disableAutomaticSavingAsJSON
+{
+    return @(self.disableAutomaticSaving);
+}
+
 - (NSArray *)editableAnnotationTypesAsJSON
 {
     return _pdfController.configuration.editableAnnotationTypes.allObjects;
@@ -1317,6 +1328,11 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 }
 
 #pragma mark Delegate methods
+
+- (BOOL)pdfViewController:(PSPDFViewController *)pdfController shouldSaveDocument:(nonnull PSPDFDocument *)document withOptions:(NSDictionary<PSPDFDocumentSaveOption,id> *__autoreleasing  _Nonnull * _Nonnull)options
+{
+    return !self.disableAutomaticSaving;
+}
 
 - (void)pdfViewController:(PSPDFViewController *)pdfController willBeginDisplayingPageView:(PSPDFPageView *)pageView forPageAtIndex:(NSInteger)pageIndex
 {
