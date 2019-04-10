@@ -20,7 +20,9 @@ Read the message at the end and complete installation.
 **You will need to manually edit the Xcode project and add PSPDFKit to your project manually.
 There is no automatic support for dynamic frameworks in Cordova yet. You will get a linker error if you forget this step.**
 
-*Note:* Make sure to follow [our integration guide](https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/) to strip the framework, working around an App Store submission bug.
+**Note:** Make sure to follow [our integration guide](https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/) to strip the framework, working around an App Store submission bug.
+
+If you wish to integrate PSPDFKit into your project [using CocoaPods](https://pspdfkit.com/guides/ios/current/getting-started/using-cocoapods/), you can use a third-party plugin like [`cordova-plugin-cocoapods-support`](https://github.com/blakgeek/cordova-plugin-cocoapods-support).
 
 Demo
 -----------
