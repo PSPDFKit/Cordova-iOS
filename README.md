@@ -22,7 +22,11 @@ There is no automatic support for dynamic frameworks in Cordova yet. You will ge
 
 **Note:** Make sure to follow [our integration guide](https://pspdfkit.com/guides/ios/current/getting-started/integrating-pspdfkit/) to strip the framework, working around an App Store submission bug.
 
+### Optional: CocoaPods Integration
+
 If you wish to integrate PSPDFKit into your project [using CocoaPods](https://pspdfkit.com/guides/ios/current/getting-started/using-cocoapods/), you can use a third-party plugin like [`cordova-plugin-cocoapods-support`](https://github.com/blakgeek/cordova-plugin-cocoapods-support).
+
+**Important** If you’re an existing customer, you can find the CocoaPods and license keys in your [customer portal](https://customers.pspdfkit.com/). Otherwise, if you don’t already have PSPDFKit, [sign up for our 60-day trial](https://pspdfkit.com/try/) and you will receive an email with the instructions to get started.
 
 Demo
 -----------
