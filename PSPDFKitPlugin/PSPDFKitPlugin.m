@@ -1575,6 +1575,8 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     }
 }
 
+#pragma mark - Helper
+
 + (NSArray <NSDictionary *> *)instantJSONFromAnnotations:(NSArray <PSPDFAnnotation *> *) annotations {
     NSMutableArray <NSDictionary *> *annotationsJSON = [NSMutableArray new];
     for (PSPDFAnnotation *annotation in annotations) {
@@ -1595,4 +1597,72 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     return [annotationsJSON copy];
 }
 
+#pragma mark - Forms
+
+- (void)getFormFieldValue:(CDVInvokedUrlCommand *)command {
+    NSString *fullyQualifiedName = [command argumentAtIndex:0];
+
+    if (fullyQualifiedName.length == 0) {
+        NSLog(@"Invalid fully qualified name.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+        return;
+    }
+
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+
+    id formFieldValue;
+    for (PSPDFFormElement *formElement in document.formParser.forms) {
+        if ([formElement.fullyQualifiedFieldName isEqualToString:fullyQualifiedName]) {
+            formFieldValue = formElement.value;
+            break;
+        }
+    }
+
+    CDVPluginResult *pluginResult;
+    if (formFieldValue) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"value": formFieldValue}];
+    }  else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)setFormFieldValue:(CDVInvokedUrlCommand *)command {
+    NSString *value = [command argumentAtIndex:0];
+    NSString *fullyQualifiedName = [command argumentAtIndex:1];
+
+    if (fullyQualifiedName.length == 0) {
+        NSLog(@"Invalid fully qualified name.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+        return;
+    }
+
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+
+    for (PSPDFFormElement *formElement in document.formParser.forms) {
+        if ([formElement.fullyQualifiedFieldName isEqualToString:fullyQualifiedName]) {
+            if ([formElement isKindOfClass:PSPDFButtonFormElement.class]) {
+                if ([value isEqualToString:@"selected"]) {
+                    [(PSPDFButtonFormElement *)formElement select];
+                } else if ([value isEqualToString:@"deselected"]) {
+                    [(PSPDFButtonFormElement *)formElement deselect];
+                }
+            } else if ([formElement isKindOfClass:PSPDFChoiceFormElement.class]) {
+                ((PSPDFChoiceFormElement *)formElement).selectedIndices = [NSIndexSet indexSetWithIndex:value.integerValue];
+            } else if ([formElement isKindOfClass:PSPDFTextFieldFormElement.class]) {
+                formElement.contents = value;
+            } else if ([formElement isKindOfClass:PSPDFSignatureFormElement.class]) {
+                NSLog(@"Signature form elements are not supported.");
+            } else {
+                NSLog(@"Unsupported form element.");
+            }
+            break;
+        }
+    }
+}
 @end

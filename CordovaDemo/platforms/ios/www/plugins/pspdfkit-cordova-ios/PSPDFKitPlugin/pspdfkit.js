@@ -197,6 +197,11 @@ var PSPDFKitPlugin = new function() {
         getAllUnsavedAnnotations: ['callback']
     });
     
+    //Forms
+    addMethods({
+        setFormFieldValue: ['value', 'fullyQualifiedName', 'callback'],
+        getFormFieldValue: ['fullyQualifiedName', 'callback'],
+    });
 };
 module.exports = PSPDFKitPlugin;
 
