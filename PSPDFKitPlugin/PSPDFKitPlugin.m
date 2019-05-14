@@ -15,6 +15,8 @@
 #import <PSPDFKit/PSPDFKit.h>
 #import <PSPDFKitUI/PSPDFKitUI.h>
 
+#define VALIDATE_DOCUMENT(document, ...) { if (!document.isValid) { NSLog(@"Document is invalid."); return __VA_ARGS__; }}
+
 @interface PSPDFKitPlugin () <PSPDFViewControllerDelegate, PSPDFFlexibleToolbarContainerDelegate>
 
 @property (nonatomic, strong) UINavigationController *navigationController;
@@ -1443,6 +1445,154 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
         return [controller flexibleToolbarContainerContentRect:container forToolbarPosition:position];
     }
     return container.bounds;
+}
+
+#pragma mark - Instant JSON
+
+- (void)getAnnotations:(CDVInvokedUrlCommand *)command {
+    PSPDFPageIndex pageIndex = (PSPDFPageIndex)[[command argumentAtIndex:0] longLongValue];
+    PSPDFAnnotationType type = (PSPDFAnnotationType) [self optionsValueForKeys:@[[command argumentAtIndex:1]] ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
+
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document);
+
+    NSArray <PSPDFAnnotation *> *annotations = [document annotationsForPageAtIndex:pageIndex type:type];
+    NSArray <NSDictionary *> *annotationsJSON = [PSPDFKitPlugin instantJSONFromAnnotations:annotations];
+
+    CDVPluginResult *pluginResult;
+    if (annotationsJSON) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"annotations" : annotationsJSON}];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)addAnnotation:(CDVInvokedUrlCommand *)command {
+    id jsonAnnotation = [command argumentAtIndex:0];
+    NSData *data;
+    if ([jsonAnnotation isKindOfClass:NSString.class]) {
+        data = [jsonAnnotation dataUsingEncoding:NSUTF8StringEncoding];
+    } else if ([jsonAnnotation isKindOfClass:NSDictionary.class])  {
+        data = [NSJSONSerialization dataWithJSONObject:jsonAnnotation options:0 error:nil];
+    } else {
+        NSLog(@"Invalid JSON Annotation.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+        return;
+    }
+
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+    PSPDFDocumentProvider *documentProvider = document.documentProviders.firstObject;
+
+    BOOL success = NO;
+    if (data) {
+        PSPDFAnnotation *annotation = [PSPDFAnnotation annotationFromInstantJSON:data documentProvider:documentProvider error:NULL];
+        success = [document addAnnotations:@[annotation] options:nil];
+    }
+
+    if (success) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:command.callbackId];
+    } else {
+        NSLog(@"Failed to add annotation.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+    }
+}
+
+- (void)removeAnnotationWithUUID:(CDVInvokedUrlCommand *)command {
+    NSString *annotationUUID = [command argumentAtIndex:0];
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+    BOOL success = NO;
+
+    NSArray<PSPDFAnnotation *> *allAnnotations = [[document allAnnotationsOfType:PSPDFAnnotationTypeAll].allValues valueForKeyPath:@"@unionOfArrays.self"];
+    for (PSPDFAnnotation *annotation in allAnnotations) {
+        // Remove the annotation if the uuids match.
+        if ([annotation.uuid isEqualToString:annotationUUID]) {
+            success = [document removeAnnotations:@[annotation] options:nil];
+            break;
+        }
+    }
+
+    if (success) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:command.callbackId];
+    } else {
+        NSLog(@"Failed to remove annotation.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+    }
+}
+
+- (void)getAllUnsavedAnnotations:(CDVInvokedUrlCommand *)command {
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+
+    PSPDFDocumentProvider *documentProvider = document.documentProviders.firstObject;
+    NSData *data = [document generateInstantJSONFromDocumentProvider:documentProvider error:NULL];
+    NSDictionary *annotationsJSON = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:NULL];
+    CDVPluginResult *pluginResult;
+    if (annotationsJSON) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:annotationsJSON];
+    }  else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)addAnnotations:(CDVInvokedUrlCommand *)command {
+    id jsonAnnotations = [command argumentAtIndex:0];
+    NSData *data;
+    if ([jsonAnnotations isKindOfClass:NSString.class]) {
+        data = [jsonAnnotations dataUsingEncoding:NSUTF8StringEncoding];
+    } else if ([jsonAnnotations isKindOfClass:NSDictionary.class])  {
+        data = [NSJSONSerialization dataWithJSONObject:jsonAnnotations options:0 error:nil];
+    } else {
+        NSLog(@"Invalid JSON Annotations.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+        return;
+    }
+
+    PSPDFDataContainerProvider *dataContainerProvider = [[PSPDFDataContainerProvider alloc] initWithData:data];
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+    PSPDFDocumentProvider *documentProvider = document.documentProviders.firstObject;
+    BOOL success = [document applyInstantJSONFromDataProvider:dataContainerProvider toDocumentProvider:documentProvider lenient:NO error:NULL];
+    if (success) {
+        [self.pdfController reloadPageAtIndex:self.pdfController.pageIndex animated:NO];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                    callbackId:command.callbackId];
+    } else {
+        NSLog(@"Failed to add annotations.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+    }
+}
+
++ (NSArray <NSDictionary *> *)instantJSONFromAnnotations:(NSArray <PSPDFAnnotation *> *) annotations {
+    NSMutableArray <NSDictionary *> *annotationsJSON = [NSMutableArray new];
+    for (PSPDFAnnotation *annotation in annotations) {
+        NSDictionary <NSString *, NSString *> *uuidDict = @{@"uuid" : annotation.uuid};
+        NSData *annotationData = [annotation generateInstantJSONWithError:NULL];
+        if (annotationData) {
+            NSMutableDictionary *annotationDictionary = [[NSJSONSerialization JSONObjectWithData:annotationData options:kNilOptions error:NULL] mutableCopy];
+            [annotationDictionary addEntriesFromDictionary:uuidDict];
+            if (annotationDictionary) {
+                [annotationsJSON addObject:annotationDictionary];
+            }
+        } else {
+            // We only generate Instant JSON data for attached annotations. When an annotation is deleted, we only set the annotation uuid.
+            [annotationsJSON addObject:uuidDict];
+        }
+    }
+
+    return [annotationsJSON copy];
 }
 
 @end

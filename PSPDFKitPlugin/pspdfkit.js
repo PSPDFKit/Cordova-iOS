@@ -187,5 +187,14 @@ var PSPDFKitPlugin = new function() {
         toggleAnnotationToolbar: [],
     });
     
+    //Instant JSON
+    addMethods({
+        addAnnotations: ['jsonAnnotations', 'callback'],
+        addAnnotation: ['jsonAnnotation', 'callback'],
+        removeAnnotationWithUUID: ['annotationUUID', 'callback'],
+        getAnnotations: ['pageIndex', 'type', 'callback'],
+        getAllUnsavedAnnotations: ['callback']
+    });
+    
 };
 module.exports = PSPDFKitPlugin;

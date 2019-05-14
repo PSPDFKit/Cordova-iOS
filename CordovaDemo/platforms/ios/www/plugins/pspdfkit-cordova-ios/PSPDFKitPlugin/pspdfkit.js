@@ -3,7 +3,7 @@ cordova.define("pspdfkit-cordova-ios.PSPDFKitPlugin", function(require, exports,
 //  PSPDFKit.h
 //  PSPDFPlugin for Apache Cordova
 //
-//  Copyright © 2013-2017 PSPDFKit GmbH. All rights reserved.
+//  Copyright © 2013-2018 PSPDFKit GmbH. All rights reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
@@ -106,6 +106,7 @@ var PSPDFKitPlugin = new function() {
         reload: [],
         search: ['query', 'animated', 'headless'],
         saveAnnotations: ['callback'],
+        getHasDirtyAnnotations: ['callback'],
     });
     
     //configuration
@@ -179,13 +180,23 @@ var PSPDFKitPlugin = new function() {
     {
         callback(rightBarButtonItems);
     }
-	
-	//annotation toolbar
-	addMethods({
-		hideAnnotationToolbar: [],
-		showAnnotationToolbar: [],
-		toggleAnnotationToolbar: [],
-	});
+
+    //annotation toolbar
+    addMethods({
+        hideAnnotationToolbar: [],
+        showAnnotationToolbar: [],
+        toggleAnnotationToolbar: [],
+    });
+    
+    //Instant JSON
+    addMethods({
+        addAnnotations: ['jsonAnnotations', 'callback'],
+        addAnnotation: ['jsonAnnotation', 'callback'],
+        removeAnnotationWithUUID: ['annotationUUID', 'callback'],
+        getAnnotations: ['pageIndex', 'type', 'callback'],
+        getAllUnsavedAnnotations: ['callback']
+    });
+    
 };
 module.exports = PSPDFKitPlugin;
 
