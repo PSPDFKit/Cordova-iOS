@@ -432,6 +432,59 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     return [pathExtension isEqualToString:@"png"] || [pathExtension isEqualToString:@"jpeg"] || [pathExtension isEqualToString:@"jpg"];
 }
 
+- (void)createXFDFDocumentWithPath:(NSString *)path {
+    NSURL *xfdfFileURL;
+    if (path.isAbsolutePath) {
+        xfdfFileURL = [self pdfFileURLWithPath:path];
+    } else {
+        // Create the XFDF file in the ~/Documents directory
+        NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+        xfdfFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:path]];
+    }
+
+    // Create an XFDF file from the current document if one doesn't already exist.
+    if (![NSFileManager.defaultManager fileExistsAtPath:(NSString *)xfdfFileURL.path]) {
+        // Create the folder where the XFDF file will be saved.
+        NSError *createFolderError;
+        if (![[NSFileManager defaultManager] createDirectoryAtPath:[xfdfFileURL.path stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
+            NSLog(@"Failed to create 'www' directory: %@", createFolderError.localizedDescription);
+            return;
+        }
+
+        // Collect all existing annotations from the document
+        NSMutableArray *annotations = [NSMutableArray array];
+        for (NSArray *pageAnnots in [_pdfDocument allAnnotationsOfType:PSPDFAnnotationTypeAll].allValues) {
+            [annotations addObjectsFromArray:pageAnnots];
+        }
+        // Write the file
+        NSError *error;
+        PSPDFFileDataSink *dataSink = [[PSPDFFileDataSink alloc] initWithFileURL:xfdfFileURL options:PSPDFDataSinkOptionNone error:&error];
+        if (dataSink) {
+            if (![[PSPDFXFDFWriter new] writeAnnotations:annotations toDataSink:dataSink documentProvider:_pdfDocument.documentProviders[0] error:&error]) {
+                NSLog(@"Failed to write XFDF file: %@", error.localizedDescription);
+            }
+        } else {
+            NSLog(@"Failed to open XFDF file: %@", error.localizedDescription);
+        }
+    }
+
+    // Create document and set up the XFDF provider.
+    PSPDFDocument *document = [[PSPDFDocument alloc] initWithURL:_pdfDocument.fileURL];
+    document.annotationSaveMode = PSPDFAnnotationSaveModeExternalFile;
+    document.didCreateDocumentProviderBlock = ^(PSPDFDocumentProvider *documentProvider) {
+        PSPDFXFDFAnnotationProvider *XFDFProvider = [[PSPDFXFDFAnnotationProvider alloc] initWithDocumentProvider:documentProvider fileURL:xfdfFileURL];
+        // Note that if the document you're opening has form fields which you wish to be usable when using XFDF, you should also add the file annotation
+        // provider to the annotation manager's `annotationProviders` array:
+        //
+        // PSPDFFileAnnotationProvider *fileProvider = documentProvider.annotationManager.fileAnnotationProvider;
+        // documentProvider.annotationManager.annotationProviders = @[XFDFProvider, fileProvider];
+        //
+        documentProvider.annotationManager.annotationProviders = @[XFDFProvider];
+    };
+    
+    _pdfDocument = document;
+}
+
 - (NSInteger)enumValueForKey:(NSString *)key ofType:(NSString *)type withDefault:(int)defaultValue
 {
     NSNumber *number = key? [self enumValuesOfType:type][key]: nil;
@@ -1058,6 +1111,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 - (void)present:(CDVInvokedUrlCommand *)command {
     NSString *path = [command argumentAtIndex:0];
     NSDictionary *options = [command argumentAtIndex:1] ?: [command argumentAtIndex:2];
+    NSString *xfdfFile = [command argumentAtIndex:2] ?: [command argumentAtIndex:3];
 
     // merge options with defaults
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
@@ -1086,6 +1140,12 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     [self resetBarButtonItemsIfNeededForOptions:newOptions];
 
     [self setOptions:newOptions forObject:_pdfController animated:NO];
+
+    // Handle XFDF
+    if (xfdfFile.length > 0) {
+        [self createXFDFDocumentWithPath:xfdfFile];
+    }
+
     _pdfController.document = _pdfDocument;
 
     //present controller

@@ -100,7 +100,7 @@ var PSPDFKitPlugin = new function() {
     //document methods
     
     addMethods({
-        present: ['path', 'callback', 'options'],
+        present: ['path', 'callback', 'options', 'xfdfPath'],
         dismiss: ['callback'],
         reload: [],
         search: ['query', 'animated', 'headless'],
