@@ -447,7 +447,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
         // Create the folder where the XFDF file will be saved.
         NSError *createFolderError;
         if (![[NSFileManager defaultManager] createDirectoryAtPath:[xfdfFileURL.path stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
-            NSLog(@"Failed to create 'www' directory: %@", createFolderError.localizedDescription);
+            NSLog(@"Failed to create directory: %@", createFolderError.localizedDescription);
             return;
         }
 
@@ -1111,8 +1111,17 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
 - (void)present:(CDVInvokedUrlCommand *)command {
     NSString *path = [command argumentAtIndex:0];
     NSDictionary *options = [command argumentAtIndex:1] ?: [command argumentAtIndex:2];
-    NSString *xfdfFile = [command argumentAtIndex:2] ?: [command argumentAtIndex:3];
 
+    // Validate the options dictionary
+    if (![options isKindOfClass:NSDictionary.class]) {
+        options = nil;
+    }
+
+    // Validate the xfdf file path
+    NSString *xfdfFilePath = [command argumentAtIndex:2] ?: [command argumentAtIndex:3] ?: [command argumentAtIndex:1];
+    if (![xfdfFilePath isKindOfClass:NSString.class]) {
+        xfdfFilePath = nil;
+    }
     // merge options with defaults
     NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
     [newOptions addEntriesFromDictionary:options];
@@ -1142,8 +1151,8 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void))
     [self setOptions:newOptions forObject:_pdfController animated:NO];
 
     // Handle XFDF
-    if (xfdfFile.length > 0) {
-        [self createXFDFDocumentWithPath:xfdfFile];
+    if (xfdfFilePath.length > 0) {
+        [self createXFDFDocumentWithPath:xfdfFilePath];
     }
 
     _pdfController.document = _pdfDocument;
