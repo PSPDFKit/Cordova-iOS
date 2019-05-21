@@ -1436,8 +1436,15 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     }
 }
 
-- (void)removeAnnotationWithUUID:(CDVInvokedUrlCommand *)command {
-    NSString *annotationUUID = [command argumentAtIndex:0];
+- (void)removeAnnotation:(CDVInvokedUrlCommand *)command {
+    id jsonAnnotation = [command argumentAtIndex:0];
+    NSString *annotationUUID = jsonAnnotation[@"uuid"];
+    if (annotationUUID.length == 0) {
+        NSLog(@"Invalid annotation UUID.");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+    }
+    
     PSPDFDocument *document = self.pdfController.document;
     VALIDATE_DOCUMENT(document)
     BOOL success = NO;

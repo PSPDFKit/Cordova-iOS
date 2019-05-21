@@ -192,7 +192,7 @@ var PSPDFKitPlugin = new function() {
     addMethods({
         addAnnotations: ['jsonAnnotations', 'callback'],
         addAnnotation: ['jsonAnnotation', 'callback'],
-        removeAnnotationWithUUID: ['annotationUUID', 'callback'],
+        removeAnnotation: ['jsonAnnotation', 'callback'],
         getAnnotations: ['pageIndex', 'type', 'callback'],
         getAllUnsavedAnnotations: ['callback']
     });

@@ -404,8 +404,8 @@ The methods below allows you to programmatically access, add, and remove annnota
     // Add a single annotations using an Instant JSON Annotation payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-annotation-json-api
     addAnnotation: ['jsonAnnotation', 'callback'],
 
-    // Remove an annotation by UUID.
-    removeAnnotationWithUUID: ['annotationUUID', 'callback'],
+    // Remove an annotation.
+    removeAnnotation: ['jsonAnnotation', 'callback'],
     
     // Get all the annotations at the specified page index by type.
     getAnnotations: ['pageIndex', 'type', 'callback'],
