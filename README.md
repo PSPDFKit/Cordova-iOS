@@ -396,7 +396,7 @@ Annotation API
 ---------------
 
 
-The methods below allows you to programmatically access, add, and remove annnotations using the Instant JSON format: https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/
+The methods below allows you to programmatically access, add, and remove annotations using the Instant JSON format: https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/
 
     // Add multiple annotations using an Instant JSON Document payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-document-json-api 
     addAnnotations: ['jsonAnnotations', 'callback'],
