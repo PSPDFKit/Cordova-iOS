@@ -137,7 +137,7 @@ The options parameter is an optional object containing configuration properties 
 
 The optional callback will be called once the PDF controller has fully appeared on screen. Calling present() when there is already a PDF presented will load the new PDF in the current modal (in which case the callback will fire immediately).
 
-    presentWithXFDF(path, xfdfPath,[callback], [options]);
+    presentWithXFDF(path, xfdfPath, [callback], [options]);
 
 Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
 
