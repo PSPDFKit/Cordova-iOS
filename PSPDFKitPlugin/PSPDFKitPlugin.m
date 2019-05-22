@@ -416,7 +416,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
     if (![NSFileManager.defaultManager fileExistsAtPath:(NSString *)xfdfFileURL.path]) {
         // Create the folder where the XFDF file will be saved.
         NSError *createFolderError;
-        if (![[NSFileManager defaultManager] createDirectoryAtPath:[xfdfFileURL.path stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
+        if (![NSFileManager.defaultManager createDirectoryAtPath:xfdfFileURL.path.stringByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
             NSLog(@"Failed to create directory: %@", createFolderError.localizedDescription);
             return;
         }
