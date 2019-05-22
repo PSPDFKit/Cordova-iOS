@@ -407,7 +407,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
     if (path.isAbsolutePath) {
         xfdfFileURL = [self pdfFileURLWithPath:path];
     } else {
-        // Create the XFDF file in the ~/Documents directory
+        // Locate the XFDF file in the ~/Documents directory
         NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
         xfdfFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:path]];
     }
