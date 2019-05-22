@@ -129,7 +129,7 @@ Functions
 
 The plugin functions currently implemented are:
 
-    present(path, [callback], [options], xfdfPath);
+    present(path, [callback], [options]);
     
 Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
 
@@ -137,7 +137,15 @@ The options parameter is an optional object containing configuration properties 
 
 The optional callback will be called once the PDF controller has fully appeared on screen. Calling present() when there is already a PDF presented will load the new PDF in the current modal (in which case the callback will fire immediately).
 
-The xfdfPath parameter is an optional string containing the file path (not URL) for the XFDF file backing the PDF document. Relative paths are assumed to be relative to the www directory (if the xfdf path has a different base URL set, we will create an XFDF file in '"~/Documents/" + xfdfPath'). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/myXFDF.xfdf" or "~/Library/Application Support/myXFDF.xfdf". The xfdfPath can be omitted.
+    presentWithXFDF(path, xfdfPath,[callback], [options]);
+
+Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
+
+The xfdfPath should be a  string containing the file path (not URL) for the XFDF file backing the PDF document. Relative paths are assumed to be relative to the www directory (if the xfdf path has a different base URL set, we will create an XFDF file in '"~/Documents/" + xfdfPath'). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/myXFDF.xfdf" or "~/Library/Application Support/myXFDF.xfdf". The xfdfPath cannot be null and must not be omitted.
+
+The options parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
+
+The optional callback will be called once the PDF controller has fully appeared on screen. Calling present() when there is already a PDF presented will load the new PDF in the current modal (in which case the callback will fire immediately).
 
     dismiss([callback]);
     

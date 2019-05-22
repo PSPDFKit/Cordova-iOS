@@ -402,14 +402,46 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
     return [pathExtension isEqualToString:@"png"] || [pathExtension isEqualToString:@"jpeg"] || [pathExtension isEqualToString:@"jpg"];
 }
 
-- (void)createXFDFDocumentWithPath:(NSString *)path {
+- (void)configurePDFViewControllerWithPath:(NSString *)path options:(NSDictionary *)options {
+    // merge options with defaults
+    NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
+    [newOptions addEntriesFromDictionary:options];
+
+    if (path) {
+        //configure document
+        NSURL *url = [self pdfFileURLWithPath:path];
+        if ([self isImagePath:path]) {
+            _pdfDocument = [[PSPDFImageDocument alloc] initWithImageURL:url];
+        }
+        else {
+            _pdfDocument = [[PSPDFDocument alloc] initWithURL:url];
+        }
+        [self setOptions:newOptions forObject:_pdfDocument animated:NO];
+    }
+
+    // configure controller
+    if (!_pdfController) {
+        _pdfController = [[PSPDFViewController alloc] init];
+        _pdfController.delegate = self;
+        _pdfController.annotationToolbarController.delegate = self;
+        _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
+    }
+
+    [self resetBarButtonItemsIfNeededForOptions:newOptions];
+
+    [self setOptions:newOptions forObject:_pdfController animated:NO];
+
+    _pdfController.document = _pdfDocument;
+}
+
+- (PSPDFDocument *)createXFDFDocumentWithPath:(NSString *)xfdfFilePath {
     NSURL *xfdfFileURL;
-    if (path.isAbsolutePath) {
-        xfdfFileURL = [self pdfFileURLWithPath:path];
+    if (xfdfFilePath.isAbsolutePath) {
+        xfdfFileURL = [self pdfFileURLWithPath:xfdfFilePath];
     } else {
         // Locate the XFDF file in the ~/Documents directory
         NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-        xfdfFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:path]];
+        xfdfFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:xfdfFilePath]];
     }
 
     // Create an XFDF file from the current document if one doesn't already exist.
@@ -418,19 +450,14 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
         NSError *createFolderError;
         if (![NSFileManager.defaultManager createDirectoryAtPath:xfdfFileURL.path.stringByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
             NSLog(@"Failed to create directory: %@", createFolderError.localizedDescription);
-            return;
+            return nil;
         }
 
-        // Collect all existing annotations from the document
-        NSMutableArray *annotations = [NSMutableArray array];
-        for (NSArray *pageAnnots in [_pdfDocument allAnnotationsOfType:PSPDFAnnotationTypeAll].allValues) {
-            [annotations addObjectsFromArray:pageAnnots];
-        }
         // Write the file
         NSError *error;
         PSPDFFileDataSink *dataSink = [[PSPDFFileDataSink alloc] initWithFileURL:xfdfFileURL options:PSPDFDataSinkOptionNone error:&error];
         if (dataSink) {
-            if (![[PSPDFXFDFWriter new] writeAnnotations:annotations toDataSink:dataSink documentProvider:_pdfDocument.documentProviders[0] error:&error]) {
+            if (![[PSPDFXFDFWriter new] writeAnnotations:@[] toDataSink:dataSink documentProvider:_pdfDocument.documentProviders[0] error:&error]) {
                 NSLog(@"Failed to write XFDF file: %@", error.localizedDescription);
             }
         } else {
@@ -438,7 +465,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
         }
     }
 
-    // Create document and set up the XFDF provider.
+    // Recreate the document and set up the XFDF provider.
     PSPDFDocument *document = [[PSPDFDocument alloc] initWithURL:_pdfDocument.fileURL];
     document.annotationSaveMode = PSPDFAnnotationSaveModeExternalFile;
     document.didCreateDocumentProviderBlock = ^(PSPDFDocumentProvider *documentProvider) {
@@ -452,7 +479,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
         documentProvider.annotationManager.annotationProviders = @[XFDFProvider];
     };
     
-    _pdfDocument = document;
+    return document;
 }
 
 - (NSInteger)enumValueForKey:(NSString *)key ofType:(NSString *)type withDefault:(int)defaultValue {
@@ -1015,52 +1042,42 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
     NSString *path = [command argumentAtIndex:0];
     NSDictionary *options = [command argumentAtIndex:1] ?: [command argumentAtIndex:2];
 
-    // Validate the options dictionary
-    if (![options isKindOfClass:NSDictionary.class]) {
-        options = nil;
+    [self configurePDFViewControllerWithPath:path options:options];
+
+    // Present the PDF View controller.
+    if (!_navigationController.presentingViewController) {
+        [self.viewController presentViewController:_navigationController animated:YES completion:^{
+
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+                                        callbackId:command.callbackId];
+        }];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+    }
+}
+
+- (void)presentWithXFDF:(CDVInvokedUrlCommand *)command {
+    NSString *path = [command argumentAtIndex:0];
+    NSString *xfdfFilePath = [command argumentAtIndex:1];
+
+    // Validate the XFDF file path.
+    if (xfdfFilePath.length == 0) {
+        NSLog(@"The XFDF path must be a valid string");
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+        return;
     }
 
-    // Validate the xfdf file path
-    NSString *xfdfFilePath = [command argumentAtIndex:2] ?: [command argumentAtIndex:3] ?: [command argumentAtIndex:1];
-    if (![xfdfFilePath isKindOfClass:NSString.class]) {
-        xfdfFilePath = nil;
-    }
-    // merge options with defaults
-    NSMutableDictionary *newOptions = [self.defaultOptions mutableCopy];
-    [newOptions addEntriesFromDictionary:options];
+    NSDictionary *options = [command argumentAtIndex:2] ?: [command argumentAtIndex:3];
 
-    if (path) {
-        //configure document
-        NSURL *url = [self pdfFileURLWithPath:path];
-        if ([self isImagePath:path]) {
-            _pdfDocument = [[PSPDFImageDocument alloc] initWithImageURL:url];
-        }
-        else {
-            _pdfDocument = [[PSPDFDocument alloc] initWithURL:url];
-        }
-        [self setOptions:newOptions forObject:_pdfDocument animated:NO];
-    }
+    [self configurePDFViewControllerWithPath:path options:options];
 
-    // configure controller
-    if (!_pdfController) {
-        _pdfController = [[PSPDFViewController alloc] init];
-        _pdfController.delegate = self;
-        _pdfController.annotationToolbarController.delegate = self;
-        _navigationController = [[UINavigationController alloc] initWithRootViewController:_pdfController];
-    }
-
-    [self resetBarButtonItemsIfNeededForOptions:newOptions];
-
-    [self setOptions:newOptions forObject:_pdfController animated:NO];
-
-    // Handle XFDF
-    if (xfdfFilePath.length > 0) {
-        [self createXFDFDocumentWithPath:xfdfFilePath];
-    }
-
+    // Use the document setup for XFDF.
+    _pdfDocument = [self createXFDFDocumentWithPath:xfdfFilePath];
     _pdfController.document = _pdfDocument;
 
-    //present controller
+    // Present the PDF View controller.
     if (!_navigationController.presentingViewController) {
         [self.viewController presentViewController:_navigationController animated:YES completion:^{
 
@@ -1505,7 +1522,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     PSPDFDocumentProvider *documentProvider = document.documentProviders.firstObject;
     BOOL success = [document applyInstantJSONFromDataProvider:dataContainerProvider toDocumentProvider:documentProvider lenient:NO error:NULL];
     if (success) {
-        [self.pdfController reloadPageAtIndex:self.pdfController.pageIndex animated:NO];
+        [self.pdfController reloadData];
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
                                     callbackId:command.callbackId];
     } else {
