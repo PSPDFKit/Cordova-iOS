@@ -403,23 +403,22 @@ The following events are supported by the PSPDFKitPlugin class
 Annotation API
 ---------------
 
-
 The methods below allows you to programmatically access, add, and remove annotations using the Instant JSON format: https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/
 
     // Add multiple annotations using an Instant JSON Document payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-document-json-api 
-    addAnnotations: ['jsonAnnotations', 'callback'],
+    addAnnotations(jsonAnnotations, [callback]);
 
     // Add a single annotation using an Instant JSON Annotation payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-annotation-json-api
-    addAnnotation: ['jsonAnnotation', 'callback'],
+    addAnnotation(jsonAnnotation, [callback]);
 
     // Remove an annotation.
-    removeAnnotation: ['jsonAnnotation', 'callback'],
+    removeAnnotation(jsonAnnotation, [callback]);
     
     // Get all the annotations at the specified page index by type.
-    getAnnotations: ['pageIndex', 'type', 'callback'],
+    getAnnotations(pageIndex, type, [callback]);
     
     // Get all unsaved annotations.
-    getAllUnsavedAnnotations: ['callback']
+    getAllUnsavedAnnotations(callback(value));
 
     
 Forms API
@@ -428,10 +427,10 @@ Forms API
 The following methods allow you to programmatically fill forms and get the value of a form field.
 
     // Sets the form field value by specifying its fully qualified name.
-    setFormFieldValue: ['value', 'fullyQualifiedName', 'callback'],
+    setFormFieldValue(value, fullyQualifiedName, [callback]);
     
     // Gets the form field value by specifying its fully qualified name.
-    getFormFieldValue: ['fullyQualifiedName', 'callback'],
+    getFormFieldValue(fullyQualifiedName, callback(value));
     
 License
 ------------
