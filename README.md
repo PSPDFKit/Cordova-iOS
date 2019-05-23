@@ -405,8 +405,9 @@ Annotation API
 
 The methods below allows you to programmatically access, add, and remove annotations using the Instant JSON format: https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/
 
-    // Add multiple annotations using an Instant JSON Document payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-document-json-api 
-    addAnnotations(jsonAnnotations, [callback]);
+    // Apply Instant JSON Document payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-document-json-api 
+    // Can be used to add annotations, bookmarks, fill forms, etc.
+    applyInstantJSON(jsonValue, [callback]);
 
     // Add a single annotation using an Instant JSON Annotation payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-annotation-json-api
     addAnnotation(jsonAnnotation, [callback]);

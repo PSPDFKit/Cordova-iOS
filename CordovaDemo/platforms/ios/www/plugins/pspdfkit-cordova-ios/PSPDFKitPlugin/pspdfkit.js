@@ -191,7 +191,7 @@ var PSPDFKitPlugin = new function() {
     
     // Instant JSON
     addMethods({
-        addAnnotations: ['jsonAnnotations', 'callback'],
+        applyInstantJSON: ['jsonValue', 'callback'],
         addAnnotation: ['jsonAnnotation', 'callback'],
         removeAnnotation: ['jsonAnnotation', 'callback'],
         getAnnotations: ['pageIndex', 'type', 'callback'],

@@ -1502,13 +1502,13 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-- (void)addAnnotations:(CDVInvokedUrlCommand *)command {
-    id jsonAnnotations = [command argumentAtIndex:0];
+- (void)applyInstantJSON:(CDVInvokedUrlCommand *)command {
+    id jsonValue = [command argumentAtIndex:0];
     NSData *data;
-    if ([jsonAnnotations isKindOfClass:NSString.class]) {
-        data = [jsonAnnotations dataUsingEncoding:NSUTF8StringEncoding];
-    } else if ([jsonAnnotations isKindOfClass:NSDictionary.class])  {
-        data = [NSJSONSerialization dataWithJSONObject:jsonAnnotations options:0 error:nil];
+    if ([jsonValue isKindOfClass:NSString.class]) {
+        data = [jsonValue dataUsingEncoding:NSUTF8StringEncoding];
+    } else if ([jsonValue isKindOfClass:NSDictionary.class])  {
+        data = [NSJSONSerialization dataWithJSONObject:jsonValue options:0 error:nil];
     } else {
         NSLog(@"Invalid JSON Annotations.");
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
