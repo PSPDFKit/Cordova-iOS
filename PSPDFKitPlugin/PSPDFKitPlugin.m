@@ -186,6 +186,12 @@
         if ([components count] > 3) {
             alpha = [[components[3] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] floatValue];
         }
+
+        // Return clear color if the alpha of the value supplied is 0.
+        if (alpha == 0) {
+            return [UIColor clearColor];
+        }
+
         if ([components count] > 2) {
             NSString *red = [components[0] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
             NSString *green = [components[1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
