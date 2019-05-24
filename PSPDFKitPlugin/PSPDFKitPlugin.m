@@ -188,6 +188,7 @@
         }
 
         // Return clear color if the alpha of the value supplied is 0.
+        // We internally check for clearColor when saving colors for the last used color. See #20042
         if (alpha == 0) {
             return [UIColor clearColor];
         }
