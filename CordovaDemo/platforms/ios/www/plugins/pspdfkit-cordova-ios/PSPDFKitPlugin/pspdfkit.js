@@ -3,7 +3,7 @@ cordova.define("pspdfkit-cordova-ios.PSPDFKitPlugin", function(require, exports,
 //  PSPDFKit.h
 //  PSPDFPlugin for Apache Cordova
 //
-//  Copyright © 2013-2017 PSPDFKit GmbH. All rights reserved.
+//  Copyright © 2013-2019 PSPDFKit GmbH. All rights reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 //  AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
@@ -13,7 +13,7 @@ cordova.define("pspdfkit-cordova-ios.PSPDFKitPlugin", function(require, exports,
 
 var PSPDFKitPlugin = new function() {
     
-    //utilities
+    // Utilities
     
     var self = this;
     function addMethods(methods) {
@@ -42,7 +42,7 @@ var PSPDFKitPlugin = new function() {
         }
     }
     
-    //events
+    // Events
     
     var listeners = {};
     
@@ -86,29 +86,31 @@ var PSPDFKitPlugin = new function() {
         }
     }
 
-    //license key
+    // License key
     
     addMethods({
         setLicenseKey: ['key'],
     });
 
-    //PDF Generation method
+    // PDF Generation method
     
     addMethods({
         convertPDFFromHTMLString: ['html', 'fileName', 'options', 'callback'],
     });
     
-    //document methods
+    // Document methods
     
     addMethods({
         present: ['path', 'callback', 'options'],
+        presentWithXFDF: ['path', 'xfdfPath', 'callback', 'options'],
         dismiss: ['callback'],
         reload: [],
         search: ['query', 'animated', 'headless'],
         saveAnnotations: ['callback'],
+        getHasDirtyAnnotations: ['callback'],
     });
     
-    //configuration
+    // Configuration
     
     addMethods({
         setOptions: ['options', 'animated'],
@@ -117,7 +119,7 @@ var PSPDFKitPlugin = new function() {
         getOption: ['name', 'callback'],
     });
     
-    //page scrolling
+    // Page scrolling
     
     addMethods({
         setPage: ['page', 'animated'],
@@ -128,20 +130,20 @@ var PSPDFKitPlugin = new function() {
         scrollToPreviousPage: ['animated'],
     });
 
-    //appearance
+    // Appearance
     
     addMethods({
         setAppearanceMode: ['appearanceMode'],
     });
 
-    //cache
+    // Cache
 
     addMethods({
         clearCache: [],
         removeCacheForPresentedDocument: [],
     });
 
-    //toolbar
+    // Toolbar
     
     var leftBarButtonItems = ['close'];
     var rightBarButtonItems = ['search', 'outline', 'thumbnails'];
@@ -179,13 +181,28 @@ var PSPDFKitPlugin = new function() {
     {
         callback(rightBarButtonItems);
     }
-	
-	//annotation toolbar
-	addMethods({
-		hideAnnotationToolbar: [],
-		showAnnotationToolbar: [],
-		toggleAnnotationToolbar: [],
-	});
+
+    // Annotation toolbar
+    addMethods({
+        hideAnnotationToolbar: [],
+        showAnnotationToolbar: [],
+        toggleAnnotationToolbar: [],
+    });
+    
+    // Instant JSON
+    addMethods({
+        applyInstantJSON: ['jsonValue', 'callback'],
+        addAnnotation: ['jsonAnnotation', 'callback'],
+        removeAnnotation: ['jsonAnnotation', 'callback'],
+        getAnnotations: ['pageIndex', 'type', 'callback'],
+        getAllUnsavedAnnotations: ['callback']
+    });
+    
+    // Forms
+    addMethods({
+        setFormFieldValue: ['value', 'fullyQualifiedName', 'callback'],
+        getFormFieldValue: ['fullyQualifiedName', 'callback'],
+    });
 };
 module.exports = PSPDFKitPlugin;
 

@@ -131,7 +131,17 @@ The plugin functions currently implemented are:
 
     present(path, [callback], [options]);
     
-Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the page has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
+Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
+
+The options parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
+
+The optional callback will be called once the PDF controller has fully appeared on screen. Calling present() when there is already a PDF presented will load the new PDF in the current modal (in which case the callback will fire immediately).
+
+    presentWithXFDF(path, xfdfPath, [callback], [options]);
+
+Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
+
+The xfdfPath should be a  string containing the file path (not URL) for the XFDF file backing the PDF document. Relative paths are assumed to be relative to the www directory (if the xfdf path has a different base URL set, we will create an XFDF file in '"~/Documents/" + xfdfPath'). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/myXFDF.xfdf" or "~/Library/Application Support/myXFDF.xfdf". The xfdfPath cannot be null and must not be omitted.
 
 The options parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
 
@@ -390,7 +400,39 @@ The following events are supported by the PSPDFKitPlugin class
     flexibleToolbarContainerDidShow
     flexibleToolbarContainerDidHide
 
+Annotation API
+---------------
 
+The methods below allows you to programmatically access, add, and remove annotations using the Instant JSON format: https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/
+
+    // Apply Instant JSON Document payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-document-json-api 
+    // Can be used to add annotations, bookmarks, fill forms, etc.
+    applyInstantJSON(jsonValue, [callback]);
+
+    // Add a single annotation using an Instant JSON Annotation payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-annotation-json-api
+    addAnnotation(jsonAnnotation, [callback]);
+
+    // Remove an annotation.
+    removeAnnotation(jsonAnnotation, [callback]);
+    
+    // Get all the annotations at the specified page index by type.
+    getAnnotations(pageIndex, type, [callback]);
+    
+    // Get all unsaved annotations.
+    getAllUnsavedAnnotations(callback(value));
+
+    
+Forms API
+---------------
+
+The following methods allow you to programmatically fill forms and get the value of a form field.
+
+    // Sets the form field value by specifying its fully qualified name.
+    setFormFieldValue(value, fullyQualifiedName, [callback]);
+    
+    // Gets the form field value by specifying its fully qualified name.
+    getFormFieldValue(fullyQualifiedName, callback(value));
+    
 License
 ------------
 
