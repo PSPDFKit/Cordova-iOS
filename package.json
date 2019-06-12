@@ -1,6 +1,6 @@
 {
   "name": "pspdfkit-cordova-ios",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "PSPDFKit Cordova Plugin for iOS",
   "cordova": {
     "id": "pspdfkit-cordova-ios",
