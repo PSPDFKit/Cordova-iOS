@@ -433,6 +433,17 @@ The following methods allow you to programmatically fill forms and get the value
     // Gets the form field value by specifying its fully qualified name.
     getFormFieldValue(fullyQualifiedName, callback(value));
     
+XFDF API
+---------------
+
+The following methods allow you to import and export from/to a given XFDF file.
+
+    // Imports all annotations from the specified XFDF file to the current document.
+    importXFDF(xfdfPath, callback(value));
+	
+    // Exports all annotations from the current document to the specified XFDF file path in "~/Documents/xfdfPath".
+    exportXFDF(xfdfPath, callback(value));
+    
 License
 ------------
 
