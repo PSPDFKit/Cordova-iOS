@@ -441,7 +441,7 @@ The following methods allow you to import and export from/to a given XFDF file.
     // Imports all annotations from the specified XFDF file to the current document.
     importXFDF(xfdfPath, callback(value));
 	
-    // Exports all annotations from the current document to the specified XFDF file path in "~/Documents/xfdfPath".
+    // Exports all annotations from the current document to the specified XFDF file path in '"~/Documents/" + xfdfPath'.
     exportXFDF(xfdfPath, callback(value));
     
 License
