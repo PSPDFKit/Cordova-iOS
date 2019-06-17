@@ -398,8 +398,13 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
 }
 
 - (NSURL *)writableFileURLWithPath:(NSString *)path override:(BOOL)override copyIfNeeded:(BOOL)copyIfNeeded {
-    NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    NSURL *writableFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:path]];
+    NSURL *writableFileURL;
+    if (path.absolutePath) {
+        writableFileURL = [NSURL fileURLWithPath:path];
+    } else {
+        NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+        writableFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:path]];
+    }
 
     NSFileManager *fileManager = NSFileManager.defaultManager;
     if (override) {
