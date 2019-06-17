@@ -1433,7 +1433,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     if (annotationsJSON) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"annotations" : annotationsJSON}];
     } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to get annotations."];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1508,7 +1508,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     if (annotationsJSON) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:annotationsJSON];
     }  else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to get unsaved annotations"];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1587,7 +1587,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     if (formFieldValue) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"value": formFieldValue}];
     }  else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to get form field value."];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
