@@ -1634,7 +1634,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
 
     NSURL *xfdfFileURL = [self fileURLWithPath:xfdfFilePath];
     if (![NSFileManager.defaultManager fileExistsAtPath:(NSString *)xfdfFileURL.path]) {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The XFDF file does not exisit."] callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The XFDF file does not exist."] callbackId:command.callbackId];
         return;
     }
 
