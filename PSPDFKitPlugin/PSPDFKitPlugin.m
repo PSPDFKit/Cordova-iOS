@@ -1647,7 +1647,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     NSError *error;
     if (![parser parseWithError:&error]) {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                      messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domin": error.domain}];
+                                                      messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         return;
     }
