@@ -408,7 +408,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
 
     // If we don't have a writable file already, we move the provided file to the ~/Documents folder.
     if (![fileManager fileExistsAtPath:(NSString *)writableFileURL.path]) {
-        // Create the folder where the wirtable file will be saved.
+        // Create the folder where the writable file will be saved.
         NSError *createFolderError;
         if (![fileManager createDirectoryAtPath:writableFileURL.path.stringByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
             NSLog(@"Failed to create directory: %@", createFolderError.localizedDescription);
