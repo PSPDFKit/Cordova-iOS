@@ -1684,7 +1684,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     if (dataSink) {
         if (![[PSPDFXFDFWriter new] writeAnnotations:annotations toDataSink:dataSink documentProvider:document.documentProviders[0] error:&error]) {
             CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                          messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domin": error.domain}];
+                                                          messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
     } else {
