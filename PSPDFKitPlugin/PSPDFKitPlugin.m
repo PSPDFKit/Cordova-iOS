@@ -1462,7 +1462,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     }
 
     if (success) {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
                                     callbackId:command.callbackId];
     } else {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to add annotation."] callbackId:command.callbackId];
@@ -1490,7 +1490,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     }
 
     if (success) {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
                                     callbackId:command.callbackId];
     } else {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to remove annotation."] callbackId:command.callbackId];
@@ -1533,7 +1533,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     BOOL success = [document applyInstantJSONFromDataProvider:dataContainerProvider toDocumentProvider:documentProvider lenient:NO error:NULL];
     if (success) {
         [self.pdfController reloadData];
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
                                     callbackId:command.callbackId];
     } else {
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to add annotations."] callbackId:command.callbackId];
@@ -1605,18 +1605,23 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     PSPDFDocument *document = self.pdfController.document;
     VALIDATE_DOCUMENT(document)
 
+    BOOL success = NO;
     for (PSPDFFormElement *formElement in document.formParser.forms) {
         if ([formElement.fullyQualifiedFieldName isEqualToString:fullyQualifiedName]) {
             if ([formElement isKindOfClass:PSPDFButtonFormElement.class]) {
                 if ([value isEqualToString:@"selected"]) {
                     [(PSPDFButtonFormElement *)formElement select];
+                    success = YES;
                 } else if ([value isEqualToString:@"deselected"]) {
                     [(PSPDFButtonFormElement *)formElement deselect];
+                    success = YES;
                 }
             } else if ([formElement isKindOfClass:PSPDFChoiceFormElement.class]) {
                 ((PSPDFChoiceFormElement *)formElement).selectedIndices = [NSIndexSet indexSetWithIndex:value.integerValue];
+                success = YES;
             } else if ([formElement isKindOfClass:PSPDFTextFieldFormElement.class]) {
                 formElement.contents = value;
+                success = YES;
             } else if ([formElement isKindOfClass:PSPDFSignatureFormElement.class]) {
                 NSLog(@"Signature form elements are not supported.");
             } else {
@@ -1624,6 +1629,12 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
             }
             break;
         }
+    }
+    if (success) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
+                                    callbackId:command.callbackId];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to set form field value."] callbackId:command.callbackId];
     }
 }
 
@@ -1650,7 +1661,10 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     PSPDFXFDFParser *parser = [[PSPDFXFDFParser alloc] initWithDataProvider:dataProvider documentProvider:document.documentProviders[0]];
 
     NSError *error;
-    if (![parser parseWithError:&error]) {
+    if ([parser parseWithError:&error]) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
+                                    callbackId:command.callbackId];
+    } else {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                       messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1687,7 +1701,10 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     NSError *error;
     PSPDFFileDataSink *dataSink = [[PSPDFFileDataSink alloc] initWithFileURL:xfdfFileURL options:PSPDFDataSinkOptionNone error:&error];
     if (dataSink) {
-        if (![[PSPDFXFDFWriter new] writeAnnotations:annotations toDataSink:dataSink documentProvider:document.documentProviders[0] error:&error]) {
+        if ([[PSPDFXFDFWriter new] writeAnnotations:annotations toDataSink:dataSink documentProvider:document.documentProviders[0] error:&error]) {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
+                                        callbackId:command.callbackId];
+        } else {
             CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                           messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
