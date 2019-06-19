@@ -1421,8 +1421,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
 
 - (void)getAnnotations:(CDVInvokedUrlCommand *)command {
     PSPDFPageIndex pageIndex = (PSPDFPageIndex)[[command argumentAtIndex:0] longLongValue];
-    PSPDFAnnotationType type = (PSPDFAnnotationType) [self optionsValueForKeys:@[[command argumentAtIndex:1]] ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
-
+    PSPDFAnnotationType type = [self annotationTypeFromInstantJSON:(NSString *)[command argumentAtIndex:1]];
     PSPDFDocument *document = self.pdfController.document;
     VALIDATE_DOCUMENT(document);
 
@@ -1560,6 +1559,14 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     }
 
     return [annotationsJSON copy];
+}
+
+- (PSPDFAnnotationType)annotationTypeFromInstantJSON:(NSString *)typeString {
+    if (typeString.length == 0) {
+        return PSPDFAnnotationTypeAll;
+    }
+    // Strip the `pspdfkit/` prefix from the annotation type if present.
+    return (PSPDFAnnotationType)[self optionsValueForKeys:@[[typeString stringByReplacingOccurrencesOfString:@"pspdfkit/" withString:@""]] ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
 }
 
 #pragma mark - Forms
