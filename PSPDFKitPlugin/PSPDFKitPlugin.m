@@ -385,7 +385,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
     }
 }
 
-- (NSURL *)pdfFileURLWithPath:(NSString *)path {
+- (NSURL *)fileURLWithPath:(NSString *)path {
     if (path) {
         path = [path stringByExpandingTildeInPath];
         path = [path stringByReplacingOccurrencesOfString:@"file:" withString:@""];
@@ -395,6 +395,42 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
         return [NSURL fileURLWithPath:path];
     }
     return nil;
+}
+
+- (NSURL *)writableFileURLWithPath:(NSString *)path override:(BOOL)override copyIfNeeded:(BOOL)copyIfNeeded {
+    NSURL *writableFileURL;
+    if (path.absolutePath) {
+        writableFileURL = [NSURL fileURLWithPath:path];
+    } else {
+        NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+        writableFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:path]];
+    }
+
+    NSFileManager *fileManager = NSFileManager.defaultManager;
+    if (override) {
+        [fileManager removeItemAtURL:writableFileURL error:NULL];
+    }
+
+    // If we don't have a writable file already, we move the provided file to the ~/Documents folder.
+    if (![fileManager fileExistsAtPath:(NSString *)writableFileURL.path]) {
+        // Create the folder where the writable file will be saved.
+        NSError *createFolderError;
+        if (![fileManager createDirectoryAtPath:writableFileURL.path.stringByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
+            NSLog(@"Failed to create directory: %@", createFolderError.localizedDescription);
+            return nil;
+        }
+
+        // Copy the provided file to a writable location if it exists.
+        NSURL *fileURL = [self fileURLWithPath:path];
+        NSError *copyError;
+        if (copyIfNeeded && [fileManager fileExistsAtPath:(NSString *)fileURL.path]) {
+            if (![fileManager copyItemAtURL:fileURL toURL:writableFileURL error:&copyError]) {
+                NSLog(@"Failed to copy item at URL '%@' with error: %@", path, copyError.localizedDescription);
+                return nil;
+            }
+        }
+    }
+    return writableFileURL;
 }
 
 - (BOOL)isImagePath:(NSString *)path {
@@ -409,7 +445,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
 
     if (path) {
         //configure document
-        NSURL *url = [self pdfFileURLWithPath:path];
+        NSURL *url = [self fileURLWithPath:path];
         if ([self isImagePath:path]) {
             _pdfDocument = [[PSPDFImageDocument alloc] initWithImageURL:url];
         }
@@ -435,25 +471,11 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
 }
 
 - (PSPDFDocument *)createXFDFDocumentWithPath:(NSString *)xfdfFilePath {
-    NSURL *xfdfFileURL;
-    if (xfdfFilePath.isAbsolutePath) {
-        xfdfFileURL = [self pdfFileURLWithPath:xfdfFilePath];
-    } else {
-        // Locate the XFDF file in the ~/Documents directory
-        NSString *docsFolder = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-        xfdfFileURL = [NSURL fileURLWithPath:[docsFolder stringByAppendingPathComponent:xfdfFilePath]];
-    }
+    // Copy the XFDF file to the ~/Documents foler or create one if we don't have one.
+    NSURL *xfdfFileURL = [self writableFileURLWithPath:xfdfFilePath override:NO copyIfNeeded:YES];
 
     // Create an XFDF file from the current document if one doesn't already exist.
     if (![NSFileManager.defaultManager fileExistsAtPath:(NSString *)xfdfFileURL.path]) {
-        // Create the folder where the XFDF file will be saved.
-        NSError *createFolderError;
-        if (![NSFileManager.defaultManager createDirectoryAtPath:xfdfFileURL.path.stringByDeletingLastPathComponent withIntermediateDirectories:YES attributes:nil error:&createFolderError]) {
-            NSLog(@"Failed to create directory: %@", createFolderError.localizedDescription);
-            return nil;
-        }
-
-        // Write the file
         NSError *error;
         PSPDFFileDataSink *dataSink = [[PSPDFFileDataSink alloc] initWithFileURL:xfdfFileURL options:PSPDFDataSinkOptionNone error:&error];
         if (dataSink) {
@@ -729,7 +751,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
 
 - (void)setFileURLForPSPDFDocumentWithJSON:(NSString *)path {
     // Brute-Force-Set.
-    [_pdfDocument setValue:[self pdfFileURLWithPath:path] forKey:@"fileURL"];
+    [_pdfDocument setValue:[self fileURLWithPath:path] forKey:@"fileURL"];
 }
 
 - (NSString *)fileURLAsJSON {
@@ -1063,9 +1085,7 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
 
     // Validate the XFDF file path.
     if (xfdfFilePath.length == 0) {
-        NSLog(@"The XFDF path must be a valid string");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The XFDF path must be a valid string."] callbackId:command.callbackId];
         return;
     }
 
@@ -1413,7 +1433,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     if (annotationsJSON) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"annotations" : annotationsJSON}];
     } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to get annotations."];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1427,9 +1447,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     } else if ([jsonAnnotation isKindOfClass:NSDictionary.class])  {
         data = [NSJSONSerialization dataWithJSONObject:jsonAnnotation options:0 error:nil];
     } else {
-        NSLog(@"Invalid JSON Annotation.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid JSON Annotation."] callbackId:command.callbackId];
         return;
     }
 
@@ -1444,12 +1462,10 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     }
 
     if (success) {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
                                     callbackId:command.callbackId];
     } else {
-        NSLog(@"Failed to add annotation.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to add annotation."] callbackId:command.callbackId];
     }
 }
 
@@ -1457,9 +1473,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     id jsonAnnotation = [command argumentAtIndex:0];
     NSString *annotationUUID = jsonAnnotation[@"uuid"];
     if (annotationUUID.length == 0) {
-        NSLog(@"Invalid annotation UUID.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid annotation UUID."] callbackId:command.callbackId];
     }
     
     PSPDFDocument *document = self.pdfController.document;
@@ -1476,12 +1490,10 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     }
 
     if (success) {
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
                                     callbackId:command.callbackId];
     } else {
-        NSLog(@"Failed to remove annotation.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to remove annotation."] callbackId:command.callbackId];
     }
 }
 
@@ -1496,7 +1508,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     if (annotationsJSON) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:annotationsJSON];
     }  else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to get unsaved annotations"];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1510,9 +1522,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     } else if ([jsonValue isKindOfClass:NSDictionary.class])  {
         data = [NSJSONSerialization dataWithJSONObject:jsonValue options:0 error:nil];
     } else {
-        NSLog(@"Invalid JSON Annotations.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid Instant JSON payload."] callbackId:command.callbackId];
         return;
     }
 
@@ -1523,12 +1533,10 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     BOOL success = [document applyInstantJSONFromDataProvider:dataContainerProvider toDocumentProvider:documentProvider lenient:NO error:NULL];
     if (success) {
         [self.pdfController reloadData];
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK]
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
                                     callbackId:command.callbackId];
     } else {
-        NSLog(@"Failed to add annotations.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to add annotations."] callbackId:command.callbackId];
     }
 }
 
@@ -1560,9 +1568,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     NSString *fullyQualifiedName = [command argumentAtIndex:0];
 
     if (fullyQualifiedName.length == 0) {
-        NSLog(@"Invalid fully qualified name.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid fully qualified name."] callbackId:command.callbackId];
         return;
     }
 
@@ -1581,7 +1587,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     if (formFieldValue) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:@{@"value": formFieldValue}];
     }  else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"localizedDescription": @"Failed to get annotations"}];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to get form field value."];
     }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -1592,27 +1598,30 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     NSString *fullyQualifiedName = [command argumentAtIndex:1];
 
     if (fullyQualifiedName.length == 0) {
-        NSLog(@"Invalid fully qualified name.");
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
-                                    callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid fully qualified name."] callbackId:command.callbackId];
         return;
     }
 
     PSPDFDocument *document = self.pdfController.document;
     VALIDATE_DOCUMENT(document)
 
+    BOOL success = NO;
     for (PSPDFFormElement *formElement in document.formParser.forms) {
         if ([formElement.fullyQualifiedFieldName isEqualToString:fullyQualifiedName]) {
             if ([formElement isKindOfClass:PSPDFButtonFormElement.class]) {
                 if ([value isEqualToString:@"selected"]) {
                     [(PSPDFButtonFormElement *)formElement select];
+                    success = YES;
                 } else if ([value isEqualToString:@"deselected"]) {
                     [(PSPDFButtonFormElement *)formElement deselect];
+                    success = YES;
                 }
             } else if ([formElement isKindOfClass:PSPDFChoiceFormElement.class]) {
                 ((PSPDFChoiceFormElement *)formElement).selectedIndices = [NSIndexSet indexSetWithIndex:value.integerValue];
+                success = YES;
             } else if ([formElement isKindOfClass:PSPDFTextFieldFormElement.class]) {
                 formElement.contents = value;
+                success = YES;
             } else if ([formElement isKindOfClass:PSPDFSignatureFormElement.class]) {
                 NSLog(@"Signature form elements are not supported.");
             } else {
@@ -1621,5 +1630,90 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
             break;
         }
     }
+    if (success) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
+                                    callbackId:command.callbackId];
+    } else {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Failed to set form field value."] callbackId:command.callbackId];
+    }
 }
+
+#pragma mark - XFDF
+
+- (void)importXFDF:(CDVInvokedUrlCommand *)command {
+    NSString *xfdfFilePath = [command argumentAtIndex:0];
+    // Validate the XFDF file path.
+    if (xfdfFilePath.length == 0) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The XFDF path must be a valid string."] callbackId:command.callbackId];
+        return;
+    }
+
+    NSURL *xfdfFileURL = [self fileURLWithPath:xfdfFilePath];
+    if (![NSFileManager.defaultManager fileExistsAtPath:(NSString *)xfdfFileURL.path]) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"The XFDF file does not exist."] callbackId:command.callbackId];
+        return;
+    }
+
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+
+    PSPDFFileDataProvider *dataProvider = [[PSPDFFileDataProvider alloc] initWithFileURL:xfdfFileURL];
+    PSPDFXFDFParser *parser = [[PSPDFXFDFParser alloc] initWithDataProvider:dataProvider documentProvider:document.documentProviders[0]];
+
+    NSError *error;
+    if ([parser parseWithError:&error]) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
+                                    callbackId:command.callbackId];
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        return;
+    }
+
+    // Import annotations to the document.
+    NSArray <PSPDFAnnotation *> *annotations = parser.annotations;
+    if (annotations) {
+        [document addAnnotations:annotations options:nil];
+    }
+}
+
+- (void)exportXFDF:(CDVInvokedUrlCommand *)command {
+    NSString *xfdfFilePath = [command argumentAtIndex:0];
+    // Validate the XFDF file path.
+    if (xfdfFilePath.length == 0) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR]
+                                    callbackId:command.callbackId];
+        return;
+    }
+
+    // Always overwrite the XFDF file we export to.
+    NSURL *xfdfFileURL = [self writableFileURLWithPath:xfdfFilePath override:YES copyIfNeeded:NO];
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+
+    // Collect all existing annotations from the document
+    NSMutableArray *annotations = [NSMutableArray array];
+    for (NSArray *pageAnnotations in [document allAnnotationsOfType:PSPDFAnnotationTypeAll].allValues) {
+        [annotations addObjectsFromArray:pageAnnotations];
+    }
+    // Write to the XFDF file.
+    NSError *error;
+    PSPDFFileDataSink *dataSink = [[PSPDFFileDataSink alloc] initWithFileURL:xfdfFileURL options:PSPDFDataSinkOptionNone error:&error];
+    if (dataSink) {
+        if ([[PSPDFXFDFWriter new] writeAnnotations:annotations toDataSink:dataSink documentProvider:document.documentProviders[0] error:&error]) {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES]
+                                        callbackId:command.callbackId];
+        } else {
+            CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                          messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+    } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
 @end

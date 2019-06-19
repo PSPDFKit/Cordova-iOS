@@ -419,7 +419,7 @@ The methods below allows you to programmatically access, add, and remove annotat
     getAnnotations(pageIndex, type, [callback]);
     
     // Get all unsaved annotations.
-    getAllUnsavedAnnotations(callback(value));
+    getAllUnsavedAnnotations([callback]);
 
     
 Forms API
@@ -431,7 +431,18 @@ The following methods allow you to programmatically fill forms and get the value
     setFormFieldValue(value, fullyQualifiedName, [callback]);
     
     // Gets the form field value by specifying its fully qualified name.
-    getFormFieldValue(fullyQualifiedName, callback(value));
+    getFormFieldValue(fullyQualifiedName, [callback]);
+    
+XFDF API
+---------------
+
+The following methods allow you to import and export from/to a given XFDF file.
+
+    // Imports all annotations from the specified XFDF file to the current document.
+    importXFDF(xfdfPath, [callback]);
+	
+    // Exports all annotations from the current document to the specified XFDF file path in '"~/Documents/" + xfdfPath'.
+    exportXFDF(xfdfPath, [callback]);
     
 License
 ------------

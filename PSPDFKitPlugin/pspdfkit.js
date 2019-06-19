@@ -203,5 +203,10 @@ var PSPDFKitPlugin = new function() {
         getFormFieldValue: ['fullyQualifiedName', 'callback'],
     });
     
+    // XFDF
+    addMethods({
+        importXFDF: ['xfdfPath', 'callback'],
+        exportXFDF: ['xfdfPath', 'callback'],
+    });
 };
 module.exports = PSPDFKitPlugin;
