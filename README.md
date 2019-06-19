@@ -407,19 +407,19 @@ The methods below allows you to programmatically access, add, and remove annotat
 
     // Apply Instant JSON Document payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-document-json-api 
     // Can be used to add annotations, bookmarks, fill forms, etc.
-    applyInstantJSON(jsonValue, callback(error));
+    applyInstantJSON(jsonValue, [callback]);
 
     // Add a single annotation using an Instant JSON Annotation payload - https://pspdfkit.com/guides/ios/current/importing-exporting/instant-json/#instant-annotation-json-api
-    addAnnotation(jsonAnnotation, callback(error));
+    addAnnotation(jsonAnnotation, [callback]);
 
     // Remove an annotation.
-    removeAnnotation(jsonAnnotation, callback(error);
+    removeAnnotation(jsonAnnotation, [callback]);
     
     // Get all the annotations at the specified page index by type.
-    getAnnotations(pageIndex, type, callback(valueOrError));
+    getAnnotations(pageIndex, type, [callback]);
     
     // Get all unsaved annotations.
-    getAllUnsavedAnnotations(callback(valueOrError));
+    getAllUnsavedAnnotations([callback]);
 
     
 Forms API
@@ -428,10 +428,10 @@ Forms API
 The following methods allow you to programmatically fill forms and get the value of a form field.
 
     // Sets the form field value by specifying its fully qualified name.
-    setFormFieldValue(value, fullyQualifiedName, callback(error));
+    setFormFieldValue(value, fullyQualifiedName, [callback]);
     
     // Gets the form field value by specifying its fully qualified name.
-    getFormFieldValue(fullyQualifiedName, callback(valueOrError));
+    getFormFieldValue(fullyQualifiedName, [callback]);
     
 XFDF API
 ---------------
@@ -439,10 +439,10 @@ XFDF API
 The following methods allow you to import and export from/to a given XFDF file.
 
     // Imports all annotations from the specified XFDF file to the current document.
-    importXFDF(xfdfPath, callback(error)));
+    importXFDF(xfdfPath, [callback]);
 	
     // Exports all annotations from the current document to the specified XFDF file path in '"~/Documents/" + xfdfPath'.
-    exportXFDF(xfdfPath, callback(error));
+    exportXFDF(xfdfPath, [callback]);
     
 License
 ------------
