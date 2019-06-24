@@ -1561,7 +1561,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     return [annotationsJSON copy];
 }
 
-- (PSPDFAnnotationType)annotationTypeFromInstantJSON:(NSString *)typeString {
+- (PSPDFAnnotationType)annotationTypeFromString:(NSString *)typeString {
     if (typeString.length == 0) {
         return PSPDFAnnotationTypeAll;
     }
