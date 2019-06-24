@@ -1421,7 +1421,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
 
 - (void)getAnnotations:(CDVInvokedUrlCommand *)command {
     PSPDFPageIndex pageIndex = (PSPDFPageIndex)[[command argumentAtIndex:0] longLongValue];
-    PSPDFAnnotationType type = [self annotationTypeFromInstantJSON:(NSString *)[command argumentAtIndex:1]];
+    PSPDFAnnotationType type = [self annotationTypeFromString:(NSString *)[command argumentAtIndex:1]];
     PSPDFDocument *document = self.pdfController.document;
     VALIDATE_DOCUMENT(document);
 
@@ -1562,11 +1562,35 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
 }
 
 - (PSPDFAnnotationType)annotationTypeFromString:(NSString *)typeString {
-    if (typeString.length == 0) {
+    if (!typeString) {
         return PSPDFAnnotationTypeAll;
+    } else if ([typeString isEqualToString:@"pspdfkit/ink"]) {
+        return PSPDFAnnotationTypeInk;
+    } else if ([typeString isEqualToString:@"pspdfkit/link"]) {
+        return PSPDFAnnotationTypeLink;
+    } else if ([typeString isEqualToString:@"pspdfkit/markup/highlight"]) {
+        return PSPDFAnnotationTypeHighlight;
+    } else if ([typeString isEqualToString:@"pspdfkit/markup/squiggly"]) {
+        return PSPDFAnnotationTypeSquiggly;
+    } else if ([typeString isEqualToString:@"pspdfkit/markup/strikeout"]) {
+        return PSPDFAnnotationTypeStrikeOut;
+    } else if ([typeString isEqualToString:@"pspdfkit/markup/underline"]) {
+        return PSPDFAnnotationTypeUnderline;
+    } else if ([typeString isEqualToString:@"pspdfkit/note"]) {
+        return PSPDFAnnotationTypeNote;
+    } else if ([typeString isEqualToString:@"pspdfkit/shape/ellipse"]) {
+        return PSPDFAnnotationTypeCircle;
+    } else if ([typeString isEqualToString:@"pspdfkit/shape/line"]) {
+        return PSPDFAnnotationTypeLine;
+    } else if ([typeString isEqualToString:@"pspdfkit/shape/polygon"]) {
+        return PSPDFAnnotationTypePolygon;
+    } else if ([typeString isEqualToString:@"pspdfkit/shape/rectangle"]) {
+        return PSPDFAnnotationTypeSquare;
+    } else if ([typeString isEqualToString:@"pspdfkit/text"]) {
+        return PSPDFAnnotationTypeFreeText;
+    } else {
+        return (PSPDFAnnotationType)[self optionsValueForKeys:@[[typeString stringByReplacingOccurrencesOfString:@"pspdfkit/" withString:@""]] ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
     }
-    // Strip the `pspdfkit/` prefix from the annotation type if present.
-    return (PSPDFAnnotationType)[self optionsValueForKeys:@[[typeString stringByReplacingOccurrencesOfString:@"pspdfkit/" withString:@""]] ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
 }
 
 #pragma mark - Forms
