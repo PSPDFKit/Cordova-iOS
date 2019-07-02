@@ -466,7 +466,7 @@ The optional string annotationType argument. If omitted, we process 'All' annota
 License
 ------------
 
-Copyright 2011-2018 PSPDFKit GmbH. All rights reserved.
+Copyright 2011-2019 PSPDFKit GmbH. All rights reserved.
 
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.
