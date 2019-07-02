@@ -1759,7 +1759,7 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
     NSURL *processedDocumentURL = [self writableFileURLWithPath:[command argumentAtIndex:1] override:YES copyIfNeeded:NO];
 
     // The annotation type is optional. We default to `All` if it's not specified.
-    NSString *typeString = [command argumentAtIndex:2] ?: [command argumentAtIndex:3];
+    NSString *typeString = [command argumentAtIndex:2];
     PSPDFAnnotationType type = PSPDFAnnotationTypeAll;
     if (typeString.length > 0) {
         type = (PSPDFAnnotationType) [self optionsValueForKeys:@[typeString] ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
