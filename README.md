@@ -448,7 +448,7 @@ The following methods allow you to import and export from/to a given XFDF file.
 Document Processing API
 -----------------------
 
-The following method allows you to process annotation (embed, remove, flatten, or print) and save them to the given document path.
+The following method allows you to process annotations (embed, remove, flatten, or print) and save the processed document to the given document path.
 
     // Processes the current document's annotations and saves the processed document at the specified path.
     processAnnotations(annotationChange, processedDocumentPath, [callback], [annotationType])
