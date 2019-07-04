@@ -89,10 +89,10 @@ Ionic Demo
 You can find an Ionic demo app in [IonicDemo](IonicDemo).
 
 1. Go into the demo app's directory: `cd IonicDemo`
-2. Prepare the app: `ionic cordova prepare`
-3. Follow the instructions that are shown after the PSPDFKit plugin gets added (manually edit the Xcode project)
-4. Set your license key in `IonicDemo/src/app/app.component.ts` (look for `PSPDFKitPlugin.setLicenseKey('YOUR KEY');`)
-5. Put a PDF document into `www/pdf/document.pdf`
+2. Prepare the app: `ionic cordova prepare ios`
+3. Download PSPDFKit from your customer portal: https://customers.pspdfkit.com. The .dmg file you downloaded contains two directories called `PSPDFKit.framework` and `PSPDFKitUI.framework`. Please copy these directories to `IonicDemo/platforms/ios`.
+4. Follow the instructions that are shown after the PSPDFKit plugin gets added (manually edit the Xcode workspace, `IonicDemo.xcworkspace`)  
+5. Set your license key in `IonicDemo/src/app/app.component.ts` (look for `PSPDFKitPlugin.setLicenseKey('YOUR KEY');`)
 6. Build the app with `ionic cordova build ios` and run it with `ionic cordova emulate ios`
 
 Usage
