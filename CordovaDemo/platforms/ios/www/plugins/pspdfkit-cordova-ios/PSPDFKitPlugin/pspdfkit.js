@@ -209,6 +209,11 @@ var PSPDFKitPlugin = new function() {
         importXFDF: ['xfdfPath', 'callback'],
         exportXFDF: ['xfdfPath', 'callback'],
     });
+	
+    // Document Processing
+    addMethods({
+        processAnnotations: ['annotationChange', 'processedDocumentPath', 'callback', 'annotationType'],
+    });
 };
 module.exports = PSPDFKitPlugin;
 

@@ -131,19 +131,19 @@ The plugin functions currently implemented are:
 
     present(path, [callback], [options]);
     
-Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
+Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a `~`, e.g. `"~/Documents/mypdf.pdf"` or `"~/Library/Application Support/mypdf.pdf"`. Path can be null, but must not be omitted
 
-The options parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
+The `options` parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
 
 The optional callback will be called once the PDF controller has fully appeared on screen. Calling present() when there is already a PDF presented will load the new PDF in the current modal (in which case the callback will fire immediately).
 
     presentWithXFDF(path, xfdfPath, [callback], [options]);
 
-Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/mypdf.pdf" or "~/Library/Application Support/mypdf.pdf". Path can be null, but must not be omitted
+Displays a PDF in a full-screen modal. The path should be a string containing the file path (not URL) for the PDF. Relative paths are assumed to be relative to the www directory (if the path has a different base URL set, this will be ignored). To specify a path inside the application documents or library directory, use a `~`, e.g. `"~/Documents/mypdf.pdf"` or `"~/Library/Application Support/mypdf.pdf"`. Path can be null, but must not be omitted
 
-The xfdfPath should be a  string containing the file path (not URL) for the XFDF file backing the PDF document. Relative paths are assumed to be relative to the www directory (if the xfdf path has a different base URL set, we will create an XFDF file in '"~/Documents/" + xfdfPath'). To specify a path inside the application documents or library directory, use a ~, e.g. "~/Documents/myXFDF.xfdf" or "~/Library/Application Support/myXFDF.xfdf". The xfdfPath cannot be null and must not be omitted.
+The `xfdfPath` should be a string containing the file path (not URL) for the XFDF file backing the PDF document. Relative paths are assumed to be relative to the www directory (if the xfdf path has a different base URL set, we will create an XFDF file in `'"~/Documents/" + xfdfPath'`). To specify a path inside the application documents or library directory, use a ~, e.g. `"~/Documents/myXFDF.xfdf"` or `"~/Library/Application Support/myXFDF.xfdf"`. The xfdfPath cannot be null and must not be omitted.
 
-The options parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
+The `options` parameter is an optional object containing configuration properties for the PDF document and/or view controller. All currently supported values are listed below under Options.
 
 The optional callback will be called once the PDF controller has fully appeared on screen. Calling present() when there is already a PDF presented will load the new PDF in the current modal (in which case the callback will fire immediately).
 
@@ -444,10 +444,29 @@ The following methods allow you to import and export from/to a given XFDF file.
     // Exports all annotations from the current document to the specified XFDF file path in '"~/Documents/" + xfdfPath'.
     exportXFDF(xfdfPath, [callback]);
     
+
+Document Processing API
+-----------------------
+
+The following method allows you to process annotations (embed, remove, flatten, or print) and save the processed document to the given document path.
+
+    // Processes the current document's annotations and saves the processed document at the specified path.
+    processAnnotations(annotationChange, processedDocumentPath, [callback], [annotationType])
+	
+
+The `annotationChange` is a string parameter. Can be `flatten`, `remove`, `embed` or `print`.
+
+The `processedDocumentPath` should be a string containing the file path (not URL) for the processed PDF document. Relative paths are assumed to be relative to the www directory (if the 
+processed document path has a different base URL set, we will create a processed file in '"~/Documents/" + processedDocumentPath'). To specify a path inside the application documents or library directory, use a `~,` e.g. `"~/Documents/processedDocument.pdf"` or `"~/Library/Application Support/processedDocument.pdf"`. The `processedDocumentPath` cannot be null and must not be omitted.
+
+The optional callback will be called when the PDF is processed.
+
+The optional string `annotationType` argument. If omitted, we process `'All'` annotations. The annotation type can have one of the following values: None, Undefined, Link, Highlight, StrikeOut, Underline, Squiggly, FreeText, Ink, Square, Circle, Line, Text, Stamp, Caret, RichMedia, Screen, Widget, Sound, FileAttachment, Polygon, PolyLine, Popup, Watermark, TrapNet, 3D, Redact, All. 
+
 License
 ------------
 
-Copyright 2011-2018 PSPDFKit GmbH. All rights reserved.
+Copyright 2011-2019 PSPDFKit GmbH. All rights reserved.
 
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW
 AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT.

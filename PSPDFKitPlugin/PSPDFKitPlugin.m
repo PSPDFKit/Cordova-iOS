@@ -15,7 +15,7 @@
 #import <PSPDFKit/PSPDFKit.h>
 #import <PSPDFKitUI/PSPDFKitUI.h>
 
-#define VALIDATE_DOCUMENT(document, ...) { if (!document.isValid) { NSLog(@"Document is invalid."); return __VA_ARGS__; }}
+#define VALIDATE_DOCUMENT(document, ...) { if (!document.isValid) { [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Document is invalid."] callbackId:command.callbackId]; return __VA_ARGS__; }}
 
 @interface PSPDFKitPlugin () <PSPDFViewControllerDelegate, PSPDFFlexibleToolbarContainerDelegate>
 
@@ -710,6 +710,13 @@ void runOnMainQueueWithoutDeadlocking(void (^block)(void)) {
                             @{@"default": @(PSPDFAppearanceModeDefault),
                               @"sepia": @(PSPDFAppearanceModeSepia),
                               @"night": @(PSPDFAppearanceModeNight)},
+
+                        @"PSPDFAnnotationChange":
+
+                            @{@"flatten": @(PSPDFAnnotationChangeFlatten),
+                              @"remove": @(PSPDFAnnotationChangeRemove),
+                              @"embed": @(PSPDFAnnotationChangeEmbed),
+                              @"print": @(PSPDFAnnotationChangePrint)},
 
                         //                        @"PSPDFDocumentSharingOptions":
                         //
@@ -1741,6 +1748,40 @@ static NSString *PSPDFStringFromCGRect(CGRect rect) {
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
     } else {
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }
+}
+
+- (void)processAnnotations:(CDVInvokedUrlCommand *)command {
+    PSPDFAnnotationChange change = (PSPDFAnnotationChange)[self optionsValueForKeys:@[[command argumentAtIndex:0]] ofType:@"PSPDFAnnotationChange" withDefault:PSPDFAnnotationChangeEmbed];
+    NSURL *processedDocumentURL = [self writableFileURLWithPath:[command argumentAtIndex:1] override:YES copyIfNeeded:NO];
+
+    // The annotation type is optional. We default to `All` if it's not specified.
+    NSString *typeString = [command argumentAtIndex:2] ?: [command argumentAtIndex:3];
+    PSPDFAnnotationType type = PSPDFAnnotationTypeAll;
+    if (typeString.length > 0) {
+        type = (PSPDFAnnotationType) [self optionsValueForKeys:@[typeString] ofType:@"PSPDFAnnotationType" withDefault:PSPDFAnnotationTypeAll];
+    }
+
+    PSPDFDocument *document = self.pdfController.document;
+    VALIDATE_DOCUMENT(document)
+
+    // Create a processor configuration with the current document.
+    PSPDFProcessorConfiguration *configuration = [[PSPDFProcessorConfiguration alloc] initWithDocument:document];
+
+    // Modify annotations.
+    [configuration modifyAnnotationsOfTypes:type change:change];
+
+    // Create the PDF processor and write the processed file.
+    PSPDFProcessor *processor = [[PSPDFProcessor alloc] initWithConfiguration:configuration securityOptions:nil];
+    NSError *error;
+    BOOL success = [processor writeToFileURL:processedDocumentURL error:&error];
+    if (success) {
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:success] callbackId:command.callbackId];
+    }
+    else {
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                       messageAsDictionary:@{@"localizedDescription": error.localizedDescription, @"domain": error.domain}];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];

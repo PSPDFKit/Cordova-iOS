@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin id="pspdfkit-cordova-ios" version="1.2.9" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+<plugin id="pspdfkit-cordova-ios" version="1.3.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 	<engines>
 		<engine name="cordova" version=">=6.3.1"/>
 	</engines>
 	<name>PSPDFKitPlugin</name>
-	<license>Copyright 2011-2018 PSPDFKit GmbH. All rights reserved.
+	<license>Copyright 2011-2019 PSPDFKit GmbH. All rights reserved.
 THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY AUSTRIAN COPYRIGHT LAW AND MAY NOT BE RESOLD OR REDISTRIBUTED. USAGE IS BOUND TO THE PSPDFKIT LICENSE AGREEMENT. UNAUTHORIZED REPRODUCTION OR DISTRIBUTION IS SUBJECT TO CIVIL AND CRIMINAL PENALTIES.
 http://pspdfkit.com/license.html</license>
 	<platform name="ios">
