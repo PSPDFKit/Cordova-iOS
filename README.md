@@ -454,7 +454,7 @@ The following method allows you to process annotations (embed, remove, flatten, 
     processAnnotations(annotationChange, processedDocumentPath, [callback], [annotationType])
 	
 
-The annotationChange is a string parameter. Can be flatten, remove, embed or print.
+The `annotationChange` is a string parameter. Can be `flatten`, `remove`, `embed` or `print`.
 
 The processedDocumentPath should be a string containing the file path (not URL) for the processed PDF document. Relative paths are assumed to be relative to the www directory (if the 
 processed document path has a different base URL set, we will create a processed file in '"~/Documents/" + processedDocumentPath'). To specify a path inside the application documents or library directory, use a `~,` e.g. `"~/Documents/processedDocument.pdf"` or `"~/Library/Application Support/processedDocument.pdf"`. The processedDocumentPath cannot be null and must not be omitted.
