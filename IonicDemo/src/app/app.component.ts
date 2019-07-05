@@ -18,7 +18,7 @@ export class MyApp {
         splashScreen.hide();
 
         PSPDFKitPlugin.setLicenseKey('YOUR KEY');
-        PSPDFKitPlugin.present('pdf/document.pdf', {});
+        PSPDFKitPlugin.present('pdf/PSPDFKit 8 QuickStart Guide.pdf', {});
       });
   }
 }
