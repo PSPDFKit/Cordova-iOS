@@ -32,9 +32,9 @@ var PSPDFKitPlugin = new function() {
                         }
                     }
                     cordova.exec(function (result) {
-                        if (callback) callback(result);
+                        if (callback) callback(result, null);
                     }, function (error) {
-                        alert(error);
+                        if (callback) callback(null, error); else console.log(error);
                     }, 'PSPDFKitPlugin', methodName, argArray);
                 }
             })();
