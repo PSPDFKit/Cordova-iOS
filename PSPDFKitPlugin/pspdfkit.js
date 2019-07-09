@@ -1,5 +1,5 @@
 //
-//  PSPDFKit.h
+//  PSPDFKit.js
 //  PSPDFPlugin for Apache Cordova
 //
 //  Copyright © 2013-2019 PSPDFKit GmbH. All rights reserved.
