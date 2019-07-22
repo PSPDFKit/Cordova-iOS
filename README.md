@@ -8,6 +8,11 @@ PSPDFKit comes with open source wrappers for Cordova on both [iOS](https://pspdf
 **This plugin works with Cordova version 8.1.2 and above.**  
 **Please also make sure that you're using the latest version of Xcode 10.**
 
+Announcements
+-------------
+
+- [How to Manipulate Annotations Programmatically in Cordova](https://pspdfkit.com/blog/2019/how-to-manipulate-annotations-programmatically-in-cordova/)
+
 Install
 -----------
 
