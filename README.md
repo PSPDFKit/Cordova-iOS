@@ -12,6 +12,7 @@ Announcements
 -------------
 
 - [How to Manipulate Annotations Programmatically in Cordova](https://pspdfkit.com/blog/2019/how-to-manipulate-annotations-programmatically-in-cordova/)
+- [How to Expose Native iOS APIs to Cordova](https://pspdfkit.com/blog/2019/how-to-expose-ios-api-to-cordova/)
 
 Install
 -----------
