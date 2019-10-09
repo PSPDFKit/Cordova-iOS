@@ -10,7 +10,7 @@ http://pspdfkit.com/license.html</license>
 	<platform name="ios">
 	</platform>
 	<!-- don't indent the info block, because it will also indent the console output -->
-	<info>
+	<info><![CDATA[
 ⚠️ IMPORTANT: This plugin has been deprecated in favor of PSPDFKit-Cordova. To migrate to the new plugin, please follow the steps in the migration guide here: https://github.com/PSPDFKit/PSPDFKit-Cordova/tree/master/docs/ios#migration-guide-from-cordova-ios
-	</info>
+]]>	</info>
 </plugin>
