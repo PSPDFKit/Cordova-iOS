@@ -1,8 +1,0 @@
-{
-  "name": "IonicDemo",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "ionic-angular",
-  "id": "com.pspdfkit.ionic.starter"
-}
